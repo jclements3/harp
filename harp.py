@@ -329,9 +329,10 @@ def calculate_disc_position_from_physics(
     """
     Calculate disc position from physics.
 
-    The disc CENTER is positioned ON the actual string line (soundboard to
-    tangent point on flat pin) at the distance corresponding to the semitone
-    pitch change.
+    The disc center is positioned so that:
+    1. Its projection onto the string line is at the engagement distance
+    2. It is offset perpendicular to the string so the prong contacts
+       the string when rotated to engagement angle
 
     Args:
         disc_data: Dict with disc properties (major_radius_mm, prong_diameter_mm, etc.)
@@ -343,19 +344,38 @@ def calculate_disc_position_from_physics(
     """
     SEMITONE_RATIO = 2 ** (1/12)  # ≈ 1.0595
 
-    # Calculate where disc center should be on the string
+    # Calculate where prong should contact string (engagement point)
     # Each semitone shortens effective length by factor of 1/SEMITONE_RATIO
     engagement_distance = string_length_mm / (SEMITONE_RATIO ** semitones_from_flat)
 
-    # String direction unit vector (from soundboard to tangent point - the actual string path)
+    # String direction unit vector (from soundboard to tangent point)
     dx = x_tangent - x_soundboard
     dz = z_tangent - z_soundboard
     string_geom_len = math.sqrt(dx*dx + dz*dz)
     ux, uz = dx / string_geom_len, dz / string_geom_len
 
-    # Disc center is ON the string at the engagement distance from soundboard
-    disc_x = x_soundboard + engagement_distance * ux
-    disc_z = z_soundboard + engagement_distance * uz
+    # Perpendicular to string (pointing to +Y side, i.e., toward player)
+    # In XZ plane, perpendicular to (ux, uz) is (-uz, ux) for CCW rotation
+    perp_x = -uz
+    perp_z = ux
+
+    # Prong arm length (from disc center to prong center)
+    major_radius = disc_data['major_radius_mm']
+    prong_radius = disc_data['prong_diameter_mm'] / 2
+    prong_arm = major_radius - prong_radius
+
+    # Perpendicular offset: disc center is raised so prong contacts at 90° rotation (sharp)
+    # At sharp position, prong swings directly toward string
+    # Offset = prong_arm (so prong tip reaches the string)
+    perp_offset = prong_arm
+
+    # Position along string where prong will contact
+    contact_x = x_soundboard + engagement_distance * ux
+    contact_z = z_soundboard + engagement_distance * uz
+
+    # Disc center is offset perpendicular to string from contact point
+    disc_x = contact_x + perp_offset * perp_x
+    disc_z = contact_z + perp_offset * perp_z
 
     # Store string direction for rendering (unit vector)
     disc_data['string_ux'] = ux
@@ -1212,8 +1232,8 @@ class HarpRenderer:
         # Reference lines
         self._draw_reference_lines(dwg)
 
-        # Draw discs at appropriate rotation (commented out for now)
-        # self._draw_discs(dwg, pedal_position)
+        # Draw discs at appropriate rotation
+        self._draw_discs(dwg, pedal_position)
 
         # Draw strings with deflection at engagement points
         self._draw_strings(dwg, pedal_position)
@@ -1246,6 +1266,17 @@ class HarpRenderer:
             stroke='#8B4513',
             stroke_width=0.8
         ))
+
+        # Black thin line: soundboard spline (through string bottom positions)
+        soundboard_points = []
+        for s in self.harp.strings:
+            soundboard_points.append((self._tx(s.x_soundboard_mm), self._tz(s.z_soundboard_mm)))
+
+        if len(soundboard_points) >= 2:
+            path_data = f"M {soundboard_points[0][0]:.1f},{soundboard_points[0][1]:.1f}"
+            for px, pz in soundboard_points[1:]:
+                path_data += f" L {px:.1f},{pz:.1f}"
+            dwg.add(dwg.path(d=path_data, fill='none', stroke='black', stroke_width=0.5))
 
     def _draw_disc(self, dwg, disc: Disc, rotation_override: float = None):
         """Draw a single disc with prongs.
