@@ -560,63 +560,102 @@ def load_harp_from_json(json_path: str, tuning_pin_mode: str = "angle_45", neck_
             tp_z = neckref_z_at_x(tp_x)
             tuning_positions.append((tp_x, tp_z))
     elif tuning_pin_mode == "endpoint_angle":
-        # c1 and g7 positioned by their angles FROM THE NECKREF LINE
-        # g7 side lowered by g7_drop percentage, others evenly distributed
+        # Constraints:
+        # 1. c1 tuning pin: 60° from neckref AND 50mm delta Z
+        # 2. g7 tuning pin: 45° from neckref AND 25mm delta Z
+        # 3. Other tuning pins evenly distributed between c1 and g7
+        #
+        # NECKREF = line between flat pins (fixed reference)
+        # NECK PLATES = line between tuning pins (what we compute)
         n = len(strings_data)
 
-        # Neckref line angle from horizontal
-        neckref_dx = neck.g7_x_mm - neck.c1_x_mm
-        neckref_dz = neck.g7_z_mm - neck.c1_z_mm
-        neckref_angle = math.atan2(neckref_dz, neckref_dx)  # Angle from horizontal
+        # Neckref angle (line between FLAT pins, from JSON)
+        neckref_c1_x = neck_data['c1_x_mm']
+        neckref_c1_z = neck_data['c1_z_mm']
+        neckref_g7_x = neck_data['g7_x_mm']
+        neckref_g7_z = neck_data['g7_z_mm']
+        neckref_angle = math.atan2(neckref_g7_z - neckref_c1_z, neckref_g7_x - neckref_c1_x)
 
-        # Calculate c1 tuning pin position
-        # c1_angle is measured from neckref line toward vertical
+        # c1: 60° from neckref AND 50mm delta Z
         c1_flat_x = strings_data[0]['x_top_mm']
         c1_flat_z = strings_data[0]['z_top_mm']
         c1_tp_radius = 3.0  # Bass string M6
+        c1_delta_z = 50.0
 
-        # String angle from horizontal = neckref_angle + c1_angle
         c1_string_angle = neckref_angle + math.radians(c1_angle)
-        c1_tp_x = c1_flat_x + 50  # Initial guess
-        for _ in range(10):
-            neckref_z = neckref_z_at_x(c1_tp_x)
-            c1_tp_center_z = neckref_z + c1_tp_radius
-            # Distance from flat pin to tuning pin center
-            dist = math.sqrt((c1_tp_x - c1_flat_x)**2 + (c1_tp_center_z - c1_flat_z)**2)
-            # Position based on angle from horizontal
-            c1_tp_x = c1_flat_x + dist * math.cos(c1_string_angle)
-            # Recalculate Z on neckref
-            neckref_z = neckref_z_at_x(c1_tp_x)
-            c1_tp_center_z = neckref_z + c1_tp_radius
-        c1_tp_z = neckref_z_at_x(c1_tp_x)
+        c1_delta_x = c1_delta_z / math.tan(c1_string_angle)
+        c1_tp_x = c1_flat_x + c1_delta_x
+        c1_tp_center_z = c1_flat_z + c1_delta_z
+        c1_tp_z = c1_tp_center_z - c1_tp_radius  # Neck position (pin rests on it)
 
-        # Calculate g7 tuning pin position
+        # g7: 45° from neckref AND 25mm delta Z
         g7_flat_x = strings_data[-1]['x_top_mm']
         g7_flat_z = strings_data[-1]['z_top_mm']
         g7_tp_radius = 2.0  # Treble string M4
+        g7_delta_z = 25.0
 
         g7_string_angle = neckref_angle + math.radians(g7_angle)
-        g7_tp_x = g7_flat_x + 50  # Initial guess
-        for _ in range(10):
-            neckref_z = neckref_z_at_x(g7_tp_x)
-            g7_tp_center_z = neckref_z + g7_tp_radius
-            dist = math.sqrt((g7_tp_x - g7_flat_x)**2 + (g7_tp_center_z - g7_flat_z)**2)
-            g7_tp_x = g7_flat_x + dist * math.cos(g7_string_angle)
-            neckref_z = neckref_z_at_x(g7_tp_x)
-            g7_tp_center_z = neckref_z + g7_tp_radius
-        g7_tp_z = neckref_z_at_x(g7_tp_x)
+        g7_delta_x = g7_delta_z / math.tan(g7_string_angle)
+        g7_tp_x = g7_flat_x + g7_delta_x
+        g7_tp_center_z = g7_flat_z + g7_delta_z
+        g7_tp_z = g7_tp_center_z - g7_tp_radius  # Neck position (pin rests on it)
 
-        # Apply g7_drop as percentage (lower g7 side)
-        # g7_drop is a percentage (e.g., 30 means 30%)
-        z_diff = c1_tp_z - g7_tp_z  # How much lower g7 is than c1
-        g7_tp_z = c1_tp_z - z_diff * (1 + g7_drop / 100)
+        # Update neck to be the line between tuning pins
+        neck.c1_x_mm = c1_tp_x
+        neck.c1_z_mm = c1_tp_z
+        neck.g7_x_mm = g7_tp_x
+        neck.g7_z_mm = g7_tp_z
 
-        # Distribute other tuning pins evenly between c1 and g7
+        # Redefine neckref_z_at_x for the neck plates line
+        def neckref_z_at_x(x):
+            if abs(neck.g7_x_mm - neck.c1_x_mm) < 0.001:
+                return neck.c1_z_mm
+            t = (x - neck.c1_x_mm) / (neck.g7_x_mm - neck.c1_x_mm)
+            return neck.c1_z_mm + t * (neck.g7_z_mm - neck.c1_z_mm)
+
+        # Distribute tuning pins with EQUAL GAPS (not equal center spacing)
+        # First, get all tuning pin diameters
+        tuning_diameters = []
+        for s in strings_data:
+            if s['number'] <= 14:  # Bass
+                tuning_diameters.append(6.0)
+            elif s['number'] <= 28:  # Mid
+                tuning_diameters.append(5.0)
+            else:  # Treble
+                tuning_diameters.append(4.0)
+
+        # Total length from c1 to g7 (center to center)
+        total_length = math.sqrt((g7_tp_x - c1_tp_x)**2 + (g7_tp_z - c1_tp_z)**2)
+
+        # Sum of all diameters
+        sum_diameters = sum(tuning_diameters)
+
+        # Gap = (total_length - sum_diameters + first_radius + last_radius) / (n-1)
+        # Because first and last pins only use half their diameter at the ends
+        first_r = tuning_diameters[0] / 2
+        last_r = tuning_diameters[-1] / 2
+        gap = (total_length - sum_diameters + first_r + last_r) / (n - 1) if n > 1 else 0
+
+        # Direction vector along neck plates
+        dx = g7_tp_x - c1_tp_x
+        dz = g7_tp_z - c1_tp_z
+        ux = dx / total_length
+        uz = dz / total_length
+
+        # Position each pin
         tuning_positions = []
+        current_pos = 0  # Distance from c1 center along the line
         for i in range(n):
-            t = i / (n - 1) if n > 1 else 0
-            tp_x = c1_tp_x + t * (g7_tp_x - c1_tp_x)
-            tp_z = c1_tp_z + t * (g7_tp_z - c1_tp_z)
+            if i == 0:
+                pos = 0
+            else:
+                prev_r = tuning_diameters[i-1] / 2
+                curr_r = tuning_diameters[i] / 2
+                current_pos += prev_r + gap + curr_r
+                pos = current_pos
+
+            tp_x = c1_tp_x + pos * ux
+            tp_z = c1_tp_z + pos * uz
             tuning_positions.append((tp_x, tp_z))
     else:
         # Default: tuning pin at +X offset from flat pin, on neckref line
