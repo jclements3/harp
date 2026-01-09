@@ -2545,19 +2545,19 @@ class HarpRenderer:
             total_tp_fx += tp_fx
             total_tp_fz += tp_fz
 
-            # Draw individual reaction vectors (small, per-string)
+            # Draw individual reaction vectors (per-string)
             # Soundboard reaction (red arrow) - pushes into soundboard structure
             self._draw_arrow(dwg,
                 self._tx(s.x_soundboard_mm), self._tz(s.z_soundboard_mm),
                 sb_fx * force_scale, -sb_fz * force_scale,  # Flip Z for SVG
-                color='#FF6666', width=0.5, head_size=2
+                color='#FF0000', width=1.0, head_size=3
             )
 
             # Tuning pin reaction (blue arrow) - force pin must resist
             self._draw_arrow(dwg,
                 self._tx(s.tuning_pin.x_mm), self._tz(s.tuning_pin.z_mm),
                 tp_fx * force_scale, -tp_fz * force_scale,  # Flip Z for SVG
-                color='#6666FF', width=0.5, head_size=2
+                color='#0000FF', width=1.0, head_size=3
             )
 
         # Draw total reaction vectors (larger, summary)
@@ -2780,7 +2780,7 @@ def main():
         # harp.svg - Normal view with reaction force vectors
         # Full hardware visible, normal string paths, force vectors overlaid
         renderer.render(args.output, pedal_position="flat",
-                       show_force_vectors=True, force_scale=0.08)
+                       show_force_vectors=True, force_scale=0.15)
 
         print(f"\nGenerated SVGs:")
         print(f"  {base_output}0.svg - Flat position (strings straight)")
