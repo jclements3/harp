@@ -1820,7 +1820,11 @@ class HarpRenderer:
             force_scale: Scale factor for force vector length (pixels per Newton)
         """
 
-        dwg = svgwrite.Drawing(output_path, size=(self.width, self.height))
+        # Use viewBox for scaling to fit browser, preserve aspect ratio
+        dwg = svgwrite.Drawing(output_path,
+                               size=('100%', '100%'),
+                               viewBox=f'0 0 {self.width} {self.height}',
+                               preserveAspectRatio='xMidYMid meet')
 
         # White background
         dwg.add(dwg.rect((0, 0), (self.width, self.height), fill='white'))
@@ -2645,24 +2649,28 @@ class HarpRenderer:
             color=PEG_COLOR, width=1.5, head_size=5
         )
 
-        # Force magnitude labels
+        # Force magnitude labels - bottom right corner
         sb_total = math.sqrt(total_sb_fx**2 + total_sb_fz**2)
         pin_total = math.sqrt(total_pin_fx**2 + total_pin_fz**2)
         peg_total = math.sqrt(total_peg_fx**2 + total_peg_fz**2)
 
+        # Position in bottom right
+        label_x = self.width - 120
+        label_y = self.height - 50
+
         dwg.add(dwg.text(f"sb: {sb_total:.0f}N ({sb_total/4.448:.0f}lbf)",
-            insert=(self._tx(sb_center_x) + 10, self._tz(sb_center_z) + 15),
-            font_size="8px", fill=SB_COLOR, font_family='sans-serif'
+            insert=(label_x, label_y),
+            font_size="9px", fill=SB_COLOR, font_family='sans-serif'
         ))
 
         dwg.add(dwg.text(f"pins: {pin_total:.0f}N ({pin_total/4.448:.0f}lbf)",
-            insert=(self._tx(pin_center_x) + 10, self._tz(pin_center_z) + 15),
-            font_size="8px", fill=PIN_COLOR, font_family='sans-serif'
+            insert=(label_x, label_y + 12),
+            font_size="9px", fill=PIN_COLOR, font_family='sans-serif'
         ))
 
         dwg.add(dwg.text(f"pegs: {peg_total:.0f}N ({peg_total/4.448:.0f}lbf)",
-            insert=(self._tx(peg_center_x) + 10, self._tz(peg_center_z) - 5),
-            font_size="8px", fill=PEG_COLOR, font_family='sans-serif'
+            insert=(label_x, label_y + 24),
+            font_size="9px", fill=PEG_COLOR, font_family='sans-serif'
         ))
 
     def _draw_arrow(self, dwg, x: float, y: float, dx: float, dy: float,
@@ -2842,7 +2850,7 @@ def main():
         # harp.svg - Normal view with reaction force vectors
         # Full hardware visible, normal string paths, force vectors overlaid
         renderer.render(args.output, pedal_position="flat",
-                       show_force_vectors=True, force_scale=0.15)
+                       show_force_vectors=True, force_scale=0.05)
 
         print(f"\nGenerated SVGs:")
         print(f"  {base_output}0.svg - Flat position (strings straight)")
