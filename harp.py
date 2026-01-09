@@ -2505,102 +2505,164 @@ class HarpRenderer:
             ))
 
     def _draw_force_vectors(self, dwg, force_scale: float, string_path_mode: str):
-        """Draw reaction force vectors at soundboard and tuning pins.
+        """Draw reaction force vectors at soundboard, pins, and pegs.
 
-        Shows the forces the structure must provide to resist string tension.
-        These are the opposing forces from the perspective of the peg center
-        and soundboard connection point.
+        Terminology:
+          - pegs: tuning pegs (brown #654321)
+          - pins: flat pins (gray #888)
+          - sb: soundboard (black)
+
+        Shows the forces each component must resist.
 
         Args:
             dwg: SVG drawing object
             force_scale: Pixels per Newton for vector length
             string_path_mode: "normal" or "direct" - affects force directions
         """
+        # Colors matching the parts
+        PEG_COLOR = '#654321'  # brown (tuning pegs)
+        PIN_COLOR = '#888888'  # gray (flat pins)
+        SB_COLOR = '#000000'   # black (soundboard)
+
         # Accumulate total reaction forces
         total_sb_fx, total_sb_fz = 0.0, 0.0
-        total_tp_fx, total_tp_fz = 0.0, 0.0
+        total_pin_fx, total_pin_fz = 0.0, 0.0
+        total_peg_fx, total_peg_fz = 0.0, 0.0
 
         for s in self.harp.strings:
-            # Get string tension (from JSON data)
             T = s.tension_n
 
-            # Calculate string direction (soundboard to tuning pin)
-            dx = s.tuning_pin.x_mm - s.x_soundboard_mm
-            dz = s.tuning_pin.z_mm - s.z_soundboard_mm
-            length = math.sqrt(dx*dx + dz*dz)
-            ux, uz = dx/length, dz/length  # Unit vector toward tuning pin
+            # === SOUNDBOARD (sb) ===
+            # String pulls from soundboard toward flat pin
+            # Direction: soundboard to flat pin
+            sb_to_pin_dx = s.x_flat_mm - s.x_soundboard_mm
+            sb_to_pin_dz = s.z_flat_mm - s.z_soundboard_mm
+            sb_to_pin_len = math.sqrt(sb_to_pin_dx**2 + sb_to_pin_dz**2)
+            sb_ux = sb_to_pin_dx / sb_to_pin_len
+            sb_uz = sb_to_pin_dz / sb_to_pin_len
 
-            # REACTION force at soundboard: must resist string pulling toward tuning pin
-            # Soundboard pushes AWAY from tuning pin (opposite of string tension direction)
-            sb_fx = -T * ux
-            sb_fz = -T * uz
+            # Reaction at soundboard: opposite of string pull
+            sb_fx = -T * sb_ux
+            sb_fz = -T * sb_uz
             total_sb_fx += sb_fx
             total_sb_fz += sb_fz
 
-            # REACTION force at tuning pin center: must resist string forces
-            # String exerts: entry pull (down) + exit pull (toward soundboard)
-            # Reaction is opposite: push up + push away from soundboard
-            tp_fx = T * ux  # Opposite of exit direction
-            tp_fz = T * (1 + uz)  # Opposite of (entry down + exit toward soundboard)
-            total_tp_fx += tp_fx
-            total_tp_fz += tp_fz
+            # === FLAT PIN (pin) ===
+            # String enters from soundboard, exits toward tuning peg
+            # Entry direction: from soundboard toward pin
+            pin_entry_ux = sb_ux
+            pin_entry_uz = sb_uz
+            # Exit direction: from pin toward peg
+            pin_to_peg_dx = s.tuning_pin.x_mm - s.x_flat_mm
+            pin_to_peg_dz = s.tuning_pin.z_mm - s.z_flat_mm
+            pin_to_peg_len = math.sqrt(pin_to_peg_dx**2 + pin_to_peg_dz**2)
+            pin_exit_ux = pin_to_peg_dx / pin_to_peg_len
+            pin_exit_uz = pin_to_peg_dz / pin_to_peg_len
 
-            # Draw individual reaction vectors (per-string)
-            # Soundboard reaction (red arrow) - pushes into soundboard structure
+            # Force on pin: string pulls toward soundboard AND toward peg
+            # Entry segment pulls toward soundboard: T * (-pin_entry)
+            # Exit segment pulls toward peg: T * (pin_exit)
+            # Net force on pin = T * (-pin_entry + pin_exit) = T * (pin_exit - pin_entry)
+            # Reaction (opposing) force = T * (pin_entry - pin_exit)
+            pin_fx = T * (pin_entry_ux - pin_exit_ux)
+            pin_fz = T * (pin_entry_uz - pin_exit_uz)
+            total_pin_fx += pin_fx
+            total_pin_fz += pin_fz
+
+            # === TUNING PEG (peg) ===
+            # String enters from flat pin, exits downward (wrapped around peg)
+            # Entry direction: from pin toward peg (same as pin_exit)
+            peg_entry_ux = pin_exit_ux
+            peg_entry_uz = pin_exit_uz
+            # Exit direction: string goes down from peg (toward tuning mechanism)
+            peg_exit_ux = 0.0
+            peg_exit_uz = -1.0  # straight down
+
+            # Force on peg: string pulls toward pin AND pulls down
+            # Entry segment pulls toward pin: T * (-peg_entry)
+            # Exit segment pulls down: T * (peg_exit)
+            # Net force on peg = T * (-peg_entry + peg_exit)
+            # Reaction (opposing) force = T * (peg_entry - peg_exit)
+            peg_fx = T * (peg_entry_ux - peg_exit_ux)
+            peg_fz = T * (peg_entry_uz - peg_exit_uz)
+            total_peg_fx += peg_fx
+            total_peg_fz += peg_fz
+
+            # Draw individual reaction vectors (thin, part-colored)
+            # Soundboard reaction (black)
             self._draw_arrow(dwg,
                 self._tx(s.x_soundboard_mm), self._tz(s.z_soundboard_mm),
-                sb_fx * force_scale, -sb_fz * force_scale,  # Flip Z for SVG
-                color='#FF0000', width=1.0, head_size=3
+                sb_fx * force_scale, -sb_fz * force_scale,
+                color=SB_COLOR, width=0.5, head_size=2
             )
 
-            # Tuning pin reaction (blue arrow) - force pin must resist
+            # Flat pin reaction (gray)
+            self._draw_arrow(dwg,
+                self._tx(s.x_flat_mm), self._tz(s.z_flat_mm),
+                pin_fx * force_scale, -pin_fz * force_scale,
+                color=PIN_COLOR, width=0.5, head_size=2
+            )
+
+            # Tuning peg reaction (brown)
             self._draw_arrow(dwg,
                 self._tx(s.tuning_pin.x_mm), self._tz(s.tuning_pin.z_mm),
-                tp_fx * force_scale, -tp_fz * force_scale,  # Flip Z for SVG
-                color='#0000FF', width=1.0, head_size=3
+                peg_fx * force_scale, -peg_fz * force_scale,
+                color=PEG_COLOR, width=0.5, head_size=2
             )
 
         # Draw total reaction vectors (larger, summary)
         c1 = self.harp.strings[0]
         g7 = self.harp.strings[-1]
 
-        # Total soundboard reaction at center of soundboard
+        # Center points for totals
         sb_center_x = (c1.x_soundboard_mm + g7.x_soundboard_mm) / 2
         sb_center_z = (c1.z_soundboard_mm + g7.z_soundboard_mm) / 2
+        pin_center_x = (c1.x_flat_mm + g7.x_flat_mm) / 2
+        pin_center_z = (c1.z_flat_mm + g7.z_flat_mm) / 2
+        peg_center_x = (c1.tuning_pin.x_mm + g7.tuning_pin.x_mm) / 2
+        peg_center_z = (c1.tuning_pin.z_mm + g7.tuning_pin.z_mm) / 2
 
-        # Total tuning pin reaction at center of neck
-        tp_center_x = (c1.tuning_pin.x_mm + g7.tuning_pin.x_mm) / 2
-        tp_center_z = (c1.tuning_pin.z_mm + g7.tuning_pin.z_mm) / 2
-
-        # Scale total forces to be visible but not overwhelming
         total_scale = force_scale * 0.05
 
-        # Total soundboard reaction (dark red, thick)
+        # Total soundboard reaction
         self._draw_arrow(dwg,
             self._tx(sb_center_x), self._tz(sb_center_z),
             total_sb_fx * total_scale, -total_sb_fz * total_scale,
-            color='#CC0000', width=2.0, head_size=6
+            color=SB_COLOR, width=1.5, head_size=5
         )
 
-        # Total tuning pin reaction (dark blue, thick)
+        # Total pin reaction
         self._draw_arrow(dwg,
-            self._tx(tp_center_x), self._tz(tp_center_z),
-            total_tp_fx * total_scale, -total_tp_fz * total_scale,
-            color='#0000CC', width=2.0, head_size=6
+            self._tx(pin_center_x), self._tz(pin_center_z),
+            total_pin_fx * total_scale, -total_pin_fz * total_scale,
+            color=PIN_COLOR, width=1.5, head_size=5
         )
 
-        # Add force magnitude labels
-        sb_total = math.sqrt(total_sb_fx**2 + total_sb_fz**2)
-        tp_total = math.sqrt(total_tp_fx**2 + total_tp_fz**2)
+        # Total peg reaction
+        self._draw_arrow(dwg,
+            self._tx(peg_center_x), self._tz(peg_center_z),
+            total_peg_fx * total_scale, -total_peg_fz * total_scale,
+            color=PEG_COLOR, width=1.5, head_size=5
+        )
 
-        dwg.add(dwg.text(f"Soundboard reaction: {sb_total:.0f}N ({sb_total/4.448:.0f}lbf)",
+        # Force magnitude labels
+        sb_total = math.sqrt(total_sb_fx**2 + total_sb_fz**2)
+        pin_total = math.sqrt(total_pin_fx**2 + total_pin_fz**2)
+        peg_total = math.sqrt(total_peg_fx**2 + total_peg_fz**2)
+
+        dwg.add(dwg.text(f"sb: {sb_total:.0f}N ({sb_total/4.448:.0f}lbf)",
             insert=(self._tx(sb_center_x) + 10, self._tz(sb_center_z) + 15),
-            font_size="8px", fill='#CC0000', font_family='sans-serif'
+            font_size="8px", fill=SB_COLOR, font_family='sans-serif'
         ))
 
-        dwg.add(dwg.text(f"Neck reaction: {tp_total:.0f}N ({tp_total/4.448:.0f}lbf)",
-            insert=(self._tx(tp_center_x) + 10, self._tz(tp_center_z) - 5),
-            font_size="8px", fill='#0000CC', font_family='sans-serif'
+        dwg.add(dwg.text(f"pins: {pin_total:.0f}N ({pin_total/4.448:.0f}lbf)",
+            insert=(self._tx(pin_center_x) + 10, self._tz(pin_center_z) + 15),
+            font_size="8px", fill=PIN_COLOR, font_family='sans-serif'
+        ))
+
+        dwg.add(dwg.text(f"pegs: {peg_total:.0f}N ({peg_total/4.448:.0f}lbf)",
+            insert=(self._tx(peg_center_x) + 10, self._tz(peg_center_z) - 5),
+            font_size="8px", fill=PEG_COLOR, font_family='sans-serif'
         ))
 
     def _draw_arrow(self, dwg, x: float, y: float, dx: float, dy: float,
