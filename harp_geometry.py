@@ -155,6 +155,222 @@ def calculate_disc_position_from_physics(
 
 
 # =============================================================================
+# STRING PHYSICS COMPUTATION
+# =============================================================================
+
+# Material properties for string tension/diameter calculation
+STRING_MATERIALS = {
+    "Steel": {"density_kg_m3": 7800, "min_diameter_mm": 0.3, "max_diameter_mm": 1.2},
+    "Nylon": {"density_kg_m3": 1150, "min_diameter_mm": 0.5, "max_diameter_mm": 3.0},
+    "Bronze": {"density_kg_m3": 8800},  # For wrap wire
+}
+
+def compute_frequency(note: str, base_freq: float = 32.7) -> float:
+    """Compute frequency from note name using equal temperament.
+
+    Base is c1 = 32.7 Hz. Notes go c, d, e, f, g, a, b with octave number.
+    """
+    note_offsets = {'c': 0, 'd': 2, 'e': 4, 'f': 5, 'g': 7, 'a': 9, 'b': 11}
+    letter = note[0].lower()
+    octave = int(note[1])
+
+    # Semitones from c1
+    semitones = note_offsets[letter] + (octave - 1) * 12
+    return base_freq * (2 ** (semitones / 12))
+
+
+def compute_string_diameter(length_mm: float, freq_hz: float, tension_n: float,
+                           core_material: str, wrap_material: str = None) -> dict:
+    """Compute string diameter to achieve target tension.
+
+    From vibrating string equation: T = 4 * L² * f² * μ
+    where μ = mass per unit length = ρ * A = ρ * π * (d/2)²
+
+    Solving for d: d = 2 * sqrt(T / (π * ρ * 4 * L² * f²))
+    """
+    import math
+
+    # Convert to SI units
+    L = length_mm / 1000  # meters
+    f = freq_hz
+    T = tension_n
+
+    if wrap_material and wrap_material != "None":
+        # Wound string: core + wrap
+        # Effective density is higher due to wrap
+        core_density = STRING_MATERIALS[core_material]["density_kg_m3"]
+        wrap_density = STRING_MATERIALS.get(wrap_material, {}).get("density_kg_m3", core_density)
+
+        # For wound strings, assume wrap adds ~60% to effective density
+        # This is approximate - real calculation depends on wrap pitch
+        effective_density = core_density * 0.4 + wrap_density * 0.6
+
+        # Compute outer diameter
+        d_m = 2 * math.sqrt(T / (math.pi * effective_density * 4 * L**2 * f**2))
+        d_mm = d_m * 1000
+
+        # Core is typically 40-50% of outer diameter for wound strings
+        core_d_mm = d_mm * 0.45
+        wrap_d_mm = (d_mm - core_d_mm) / 2  # Wrap wire diameter
+
+        return {
+            "outer_diameter_mm": round(d_mm, 3),
+            "core_diameter_mm": round(core_d_mm, 3),
+            "wrap_diameter_mm": round(wrap_d_mm, 3)
+        }
+    else:
+        # Plain string
+        density = STRING_MATERIALS[core_material]["density_kg_m3"]
+        d_m = 2 * math.sqrt(T / (math.pi * density * 4 * L**2 * f**2))
+        d_mm = d_m * 1000
+
+        return {
+            "outer_diameter_mm": round(d_mm, 3),
+            "core_diameter_mm": round(d_mm, 3),
+            "wrap_diameter_mm": None
+        }
+
+
+def compute_target_tension(string_number: int, length_mm: float) -> float:
+    """Compute target tension based on string position and length.
+
+    Bass strings (long): higher tension ~220-240N
+    Mid strings: ~150-200N
+    Treble strings (short): ~50-100N
+
+    Tension roughly proportional to length for consistent feel.
+    """
+    # Linear interpolation based on typical harp tensions
+    # c1 (1514mm) -> 235N, g7 (60mm) -> 50N
+    max_len, max_tension = 1515, 235
+    min_len, min_tension = 60, 50
+
+    t = (length_mm - min_len) / (max_len - min_len)
+    t = max(0, min(1, t))  # Clamp to [0, 1]
+
+    return min_tension + t * (max_tension - min_tension)
+
+
+def compute_disc_geometry(string_diameter_mm: float) -> dict:
+    """Compute disc major/minor radius based on string diameter.
+
+    Disc needs to be large enough for string to wrap around prongs
+    without excessive bending stress.
+    """
+    # Major radius: 2.5-3x string diameter, min 6mm, max 10mm
+    major_r = max(6.0, min(10.0, string_diameter_mm * 3.0))
+
+    # Minor radius: about half of major, sized for prong spacing
+    minor_r = max(3.0, min(5.5, major_r * 0.5))
+
+    return {
+        "major_radius_mm": round(major_r, 1),
+        "minor_radius_mm": round(minor_r, 1)
+    }
+
+
+def expand_simplified_json(data: dict) -> dict:
+    """Expand simplified JSON to full format with computed values."""
+
+    meta = data['metadata']
+    geometry = data.get('geometry', {})
+    materials = data.get('materials', {})
+    tuning = data.get('tuning', {})
+
+    # Build material lookup by string number
+    def get_material(string_num):
+        for mat_name, mat_info in materials.items():
+            str_range = mat_info.get('strings', [1, 47])
+            if str_range[0] <= string_num <= str_range[1]:
+                return mat_info['core'], mat_info.get('wrap')
+        return "Nylon", None
+
+    base_freq = tuning.get('base_frequency_hz', 32.7)
+
+    # Expand each string
+    expanded_strings = []
+    for s in data['strings']:
+        num = s['number']
+        note = s['note']
+
+        # Get positions (handle both old and new field names)
+        flat_x = s.get('flat_x_mm', s.get('x_top_mm', 0))
+        flat_z = s.get('flat_z_mm', s.get('z_top_mm', 0))
+        sb_x = s.get('soundboard_x_mm', s.get('x_bottom_mm', 0))
+        sb_z = s.get('soundboard_z_mm', 0)
+        length = s.get('length_mm', 1000)
+
+        # Compute frequency
+        freq = compute_frequency(note, base_freq)
+
+        # Get material
+        core_mat, wrap_mat = get_material(num)
+
+        # Compute tension
+        tension = compute_target_tension(num, length)
+
+        # Compute string diameter
+        diameters = compute_string_diameter(length, freq, tension, core_mat, wrap_mat)
+
+        # Compute disc geometry
+        disc_geom = compute_disc_geometry(diameters['outer_diameter_mm'])
+
+        # Build expanded string entry
+        expanded = {
+            "number": num,
+            "note": note,
+            "frequency_hz": round(freq, 1),
+            "x_mm": sb_x,
+            "x_bottom_mm": sb_x,
+            "x_top_mm": flat_x,
+            "soundboard_z_mm": sb_z,
+            "z_top_mm": flat_z,
+            "length_mm": length,
+            "core_material": core_mat,
+            "wrap_material": wrap_mat,
+            "outer_diameter_mm": diameters['outer_diameter_mm'],
+            "core_diameter_mm": diameters['core_diameter_mm'],
+            "tension_n": round(tension, 1),
+            "natural_disc": {
+                "x_mm": 0,  # Will be computed by calculate_disc_position_from_physics
+                "z_mm": 0,
+                "y_mm": 10 if num % 2 == 1 else -10,
+                "major_radius_mm": disc_geom['major_radius_mm'],
+                "minor_radius_mm": disc_geom['minor_radius_mm'],
+                "plate": "+Y" if num % 2 == 1 else "-Y"
+            },
+            "sharp_disc": {
+                "x_mm": 0,
+                "z_mm": 0,
+                "y_mm": 10 if num % 2 == 1 else -10,
+                "major_radius_mm": disc_geom['major_radius_mm'],
+                "minor_radius_mm": disc_geom['minor_radius_mm'],
+                "plate": "+Y" if num % 2 == 1 else "-Y"
+            }
+        }
+        expanded_strings.append(expanded)
+
+    # Build expanded metadata (compatible with old format)
+    expanded_meta = {
+        "name": meta.get('name', 'CLEMENTS47'),
+        "string_count": meta.get('string_count', 47),
+        "string_tilt_degrees": meta.get('string_tilt_degrees', -3),
+        "finger_gap_mm": meta.get('finger_gap_mm', 14.0),
+        "finger_gap_perpendicular_mm": meta.get('finger_gap_perpendicular_mm', 14.0),
+        "constraint": f"{meta.get('finger_gap_mm', 14)}mm finger gap, parallel strings",
+        "soundboard_spline_control_points": geometry.get('soundboard_curve', []),
+        "soundboard_curve": "8-point cubic spline",
+        "neckref": geometry.get('neckref', {}),
+        "neck_line": geometry.get('neck_line', geometry.get('neckref', {})),
+    }
+
+    return {
+        "metadata": expanded_meta,
+        "strings": expanded_strings
+    }
+
+
+# =============================================================================
 # DATA LOADING
 # =============================================================================
 
@@ -170,10 +386,19 @@ def load_harp_from_json(
     c1_angle: float = 60.0,
     g7_angle: float = 45.0
 ) -> Harp:
-    """Load harp configuration from JSON file."""
+    """Load harp configuration from JSON file.
+
+    Supports both simplified format (with computed values) and full format.
+    Simplified format has 'geometry' and 'materials' sections instead of
+    full per-string data.
+    """
 
     with open(json_path, 'r') as f:
         data = json.load(f)
+
+    # Detect simplified format and expand if needed
+    if 'geometry' in data or 'materials' in data:
+        data = expand_simplified_json(data)
 
     meta = data['metadata']
     strings_data = data['strings']
