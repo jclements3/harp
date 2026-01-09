@@ -1902,7 +1902,10 @@ class HarpRenderer:
             dwg.add(dwg.path(d=path_data, fill='none', stroke='black', stroke_width=0.5))
 
     def _draw_disc(self, dwg, disc: Disc, rotation_override: float = None, opacity: float = 1.0):
-        """Draw a single disc with prongs.
+        """Draw a single disc with prongs using stadium shape for consistent material thickness.
+
+        The disc is drawn as two semicircular arcs around each prong, connected by
+        straight lines. This ensures consistent material thickness around the prongs.
 
         Args:
             disc: The disc to draw
@@ -1922,8 +1925,6 @@ class HarpRenderer:
         string_angle_svg = math.degrees(math.atan2(svg_dy, svg_dx))
 
         # For prongs to be perpendicular to string:
-        # String is at string_angle_svg. Perpendicular is string_angle_svg + 90°.
-        # Prong axis starts at 0° (horizontal). To get perpendicular to string, rotate by (string_angle_svg + 90°).
         base_rotation = string_angle_svg + 90.0
 
         # Total rotation = base (perpendicular to string) + pedal rotation
@@ -1939,36 +1940,54 @@ class HarpRenderer:
         disc_group = dwg.g(transform=f"rotate({total_rotation:.1f}, {cx_svg:.1f}, {cy_svg:.1f})",
                           opacity=opacity)
 
-        # Disc (ellipse) - thin stroke to show true boundary
-        disc_group.add(dwg.ellipse(
-            center=(cx_svg, cy_svg),
-            r=(self._scale(disc.major_radius_mm), self._scale(disc.minor_radius_mm)),
+        # Stadium shape dimensions
+        # Prong centers are inset from major radius by prong diameter
+        prong_r_mm = disc.prong_diameter_mm / 2
+        inset_distance = disc.major_radius_mm - disc.prong_diameter_mm
+        # Arc radius around prongs = minor_radius (consistent material thickness)
+        arc_r_mm = disc.minor_radius_mm
+
+        prong_r = self._scale(prong_r_mm)
+        arc_r = self._scale(arc_r_mm)
+        inset = self._scale(inset_distance)
+
+        # Prong centers in local coords (relative to disc center)
+        # +X prong (3 o'clock)
+        p1_cx = cx_svg + inset
+        p1_cy = cy_svg
+        # -X prong (9 o'clock)
+        p2_cx = cx_svg - inset
+        p2_cy = cy_svg
+
+        # Stadium path: two semicircular arcs connected by lines
+        # Start at top of +X prong arc, go clockwise
+        path_data = (
+            f"M {p1_cx:.2f},{p1_cy - arc_r:.2f} "  # Start at top of +X arc
+            f"A {arc_r:.2f},{arc_r:.2f} 0 0,1 {p1_cx:.2f},{p1_cy + arc_r:.2f} "  # +X arc (right semicircle)
+            f"L {p2_cx:.2f},{p2_cy + arc_r:.2f} "  # Line to bottom of -X arc
+            f"A {arc_r:.2f},{arc_r:.2f} 0 0,1 {p2_cx:.2f},{p2_cy - arc_r:.2f} "  # -X arc (left semicircle)
+            f"L {p1_cx:.2f},{p1_cy - arc_r:.2f} "  # Line back to start
+            "Z"
+        )
+
+        disc_group.add(dwg.path(
+            d=path_data,
             fill=fill,
             stroke=stroke,
             stroke_width=0.15
         ))
 
-        # Prongs at 3 o'clock and 9 o'clock (in disc's local coordinate system)
-        # These are drawn at 0° rotation, then the group rotation handles the rest
-        prong_r = self._scale(disc.prong_diameter_mm / 2)
-        inset_distance = disc.major_radius_mm - disc.prong_diameter_mm
-
-        # +X prong (3 o'clock in local coords, perpendicular to string after base rotation)
-        plus_x_prong_cx = cx_svg + self._scale(inset_distance)
-        plus_x_prong_cy = cy_svg
+        # Prongs at 3 o'clock and 9 o'clock
         disc_group.add(dwg.circle(
-            center=(plus_x_prong_cx, plus_x_prong_cy),
+            center=(p1_cx, p1_cy),
             r=prong_r,
             fill='#888',
             stroke='#444',
             stroke_width=0.1
         ))
 
-        # -X prong (9 o'clock in local coords)
-        minus_x_prong_cx = cx_svg - self._scale(inset_distance)
-        minus_x_prong_cy = cy_svg
         disc_group.add(dwg.circle(
-            center=(minus_x_prong_cx, minus_x_prong_cy),
+            center=(p2_cx, p2_cy),
             r=prong_r,
             fill='#888',
             stroke='#444',
