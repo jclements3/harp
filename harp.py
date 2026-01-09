@@ -1755,12 +1755,32 @@ def print_bom(bom: Dict):
 class HarpRenderer:
     """Renders a Harp to SVG using svgwrite."""
 
-    # Disc colors by type
+    # Plate color palettes: +Y (left/blue) and -Y (right/warm)
+    PLATE_COLORS = {
+        "+Y": {
+            "disc_fill": "#A8C4E8",      # Light blue
+            "disc_stroke": "#4A6B8B",    # Dark blue
+            "prong_fill": "#6688AA",     # Medium blue
+            "prong_stroke": "#334455",   # Dark blue-gray
+            "pin_fill": "#7799BB",       # Blue-gray
+            "pin_stroke": "#445566",     # Dark blue-gray
+        },
+        "-Y": {
+            "disc_fill": "#E8C4A8",      # Light orange/peach
+            "disc_stroke": "#8B6B4A",    # Dark orange/brown
+            "prong_fill": "#AA8866",     # Medium orange
+            "prong_stroke": "#554433",   # Dark brown
+            "pin_fill": "#BB9977",       # Orange-brown
+            "pin_stroke": "#665544",     # Dark brown
+        },
+    }
+
+    # Legacy disc colors (fallback)
     DISC_COLORS = {
-        "natural": ("#B8A8D4", "#55438B"),      # Purple fill, dark purple stroke
-        "sharp": ("#D4C4A8", "#8B7355"),        # Tan fill, brown stroke
-        "double_flat": ("#E8D4A8", "#8B7355"),  # Light tan fill
-        "double_sharp": ("#C4A8E8", "#55438B"), # Light purple fill
+        "natural": ("#B8A8D4", "#55438B"),
+        "sharp": ("#D4C4A8", "#8B7355"),
+        "double_flat": ("#E8D4A8", "#8B7355"),
+        "double_sharp": ("#C4A8E8", "#55438B"),
     }
 
     def __init__(self, harp: Harp, scale: float = 0.5, padding: float = 20):
@@ -1907,6 +1927,9 @@ class HarpRenderer:
         The disc is drawn as two semicircular arcs around each prong, connected by
         straight lines. This ensures consistent material thickness around the prongs.
 
+        Colors are based on plate assignment (+Y = blue, -Y = orange/warm).
+        Opacity is reduced when disc is engaged (blocking the string).
+
         Args:
             disc: The disc to draw
             rotation_override: If provided, draw disc at this pedal rotation angle.
@@ -1930,7 +1953,17 @@ class HarpRenderer:
         # Total rotation = base (perpendicular to string) + pedal rotation
         total_rotation = base_rotation + pedal_rotation
 
-        fill, stroke = self.DISC_COLORS.get(disc.disc_type, ('#888', '#444'))
+        # Get plate-based colors
+        plate_colors = self.PLATE_COLORS.get(disc.plate, self.PLATE_COLORS["+Y"])
+        fill = plate_colors["disc_fill"]
+        stroke = plate_colors["disc_stroke"]
+        prong_fill = plate_colors["prong_fill"]
+        prong_stroke = plate_colors["prong_stroke"]
+
+        # Reduce opacity when disc is engaged (blocking string)
+        # pedal_rotation > 0 means disc is rotated to engage string
+        if pedal_rotation > 0:
+            opacity = opacity * 0.5  # Make engaged discs more transparent
 
         # Disc center in SVG coordinates
         cx_svg = self._tx(disc.x_mm)
@@ -1977,20 +2010,20 @@ class HarpRenderer:
             stroke_width=0.15
         ))
 
-        # Prongs at 3 o'clock and 9 o'clock
+        # Prongs at 3 o'clock and 9 o'clock (plate-colored)
         disc_group.add(dwg.circle(
             center=(p1_cx, p1_cy),
             r=prong_r,
-            fill='#888',
-            stroke='#444',
+            fill=prong_fill,
+            stroke=prong_stroke,
             stroke_width=0.1
         ))
 
         disc_group.add(dwg.circle(
             center=(p2_cx, p2_cy),
             r=prong_r,
-            fill='#888',
-            stroke='#444',
+            fill=prong_fill,
+            stroke=prong_stroke,
             stroke_width=0.1
         ))
 
@@ -2517,22 +2550,28 @@ class HarpRenderer:
                 dwg.add(dwg.path(d=path_data, fill='none', stroke=color, stroke_width=sw))
 
             # Draw flat pin - thin stroke to show true boundary
+            # Use plate-based colors (same plate as string's tuning pin)
             if show_flat_pins:
+                fp_plate = s.tuning_pin.plate
+                fp_colors = self.PLATE_COLORS.get(fp_plate, self.PLATE_COLORS["+Y"])
                 dwg.add(dwg.circle(
                     center=(self._tx(s.x_flat_mm), self._tz(s.z_flat_mm)),
                     r=self._scale(flat_r),
-                    fill='#888',
-                    stroke='#444',
+                    fill=fp_colors["pin_fill"],
+                    stroke=fp_colors["pin_stroke"],
                     stroke_width=0.15,
                     opacity=flat_pin_opacity
                 ))
 
             # 6. Draw tuning pin - thin stroke to show true boundary
+            # Use plate-based colors
+            tp_plate = s.tuning_pin.plate
+            tp_colors = self.PLATE_COLORS.get(tp_plate, self.PLATE_COLORS["+Y"])
             dwg.add(dwg.circle(
                 center=(self._tx(s.tuning_pin.x_mm), self._tz(s.tuning_pin.z_mm)),
                 r=self._scale(tuning_r),
-                fill='#654321',
-                stroke='#333',
+                fill=tp_colors["pin_fill"],
+                stroke=tp_colors["pin_stroke"],
                 stroke_width=0.15
             ))
 
