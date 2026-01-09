@@ -354,28 +354,10 @@ def calculate_disc_position_from_physics(
     string_geom_len = math.sqrt(dx*dx + dz*dz)
     ux, uz = dx / string_geom_len, dz / string_geom_len
 
-    # Perpendicular to string (pointing to +Y side, i.e., toward player)
-    # In XZ plane, perpendicular to (ux, uz) is (-uz, ux) for CCW rotation
-    perp_x = -uz
-    perp_z = ux
-
-    # Prong arm length (from disc center to prong center)
-    major_radius = disc_data['major_radius_mm']
-    prong_radius = disc_data['prong_diameter_mm'] / 2
-    prong_arm = major_radius - prong_radius
-
-    # Perpendicular offset: disc center is raised so prong contacts at 90° rotation (sharp)
-    # At sharp position, prong swings directly toward string
-    # Offset = prong_arm (so prong tip reaches the string)
-    perp_offset = prong_arm
-
-    # Position along string where prong will contact
-    contact_x = x_soundboard + engagement_distance * ux
-    contact_z = z_soundboard + engagement_distance * uz
-
-    # Disc center is offset perpendicular to string from contact point
-    disc_x = contact_x + perp_offset * perp_x
-    disc_z = contact_z + perp_offset * perp_z
+    # Disc center is ON the string line at engagement distance from soundboard
+    # The prongs rotate in Y (perpendicular to XZ plane), so in XZ view the disc center IS on the string
+    disc_x = x_soundboard + engagement_distance * ux
+    disc_z = z_soundboard + engagement_distance * uz
 
     # Store string direction for rendering (unit vector)
     disc_data['string_ux'] = ux
