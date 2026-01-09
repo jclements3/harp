@@ -1801,7 +1801,8 @@ class HarpRenderer:
     def render(self, output_path: str, pedal_position: str = "flat",
                 show_discs: bool = True, show_flat_pins: bool = True,
                 show_reference_lines: bool = True, hardware_opacity: float = 1.0,
-                string_path_mode: str = "normal"):
+                string_path_mode: str = "normal", show_force_vectors: bool = False,
+                force_scale: float = 0.1):
         """Render the harp to an SVG file.
 
         Args:
@@ -1815,6 +1816,8 @@ class HarpRenderer:
             show_reference_lines: If True, draw reference lines (neckref, flat pin line)
             hardware_opacity: Opacity for non-essential hardware (0.0-1.0)
             string_path_mode: "normal" (wraps flat pin) or "direct" (soundboard to tuning pin only)
+            show_force_vectors: If True, draw force vectors at soundboard and tuning pins
+            force_scale: Scale factor for force vector length (pixels per Newton)
         """
 
         dwg = svgwrite.Drawing(output_path, size=(self.width, self.height))
@@ -1832,6 +1835,10 @@ class HarpRenderer:
         # Draw strings with deflection at engagement points
         self._draw_strings(dwg, pedal_position, show_flat_pins=show_flat_pins,
                           flat_pin_opacity=hardware_opacity, string_path_mode=string_path_mode)
+
+        # Draw force vectors
+        if show_force_vectors:
+            self._draw_force_vectors(dwg, force_scale, string_path_mode)
 
         dwg.save()
         print(f"SVG saved to {output_path} (pedal position: {pedal_position})")
@@ -2497,6 +2504,140 @@ class HarpRenderer:
                 stroke_width=0.15
             ))
 
+    def _draw_force_vectors(self, dwg, force_scale: float, string_path_mode: str):
+        """Draw reaction force vectors at soundboard and tuning pins.
+
+        Shows the forces the structure must provide to resist string tension.
+        These are the opposing forces from the perspective of the peg center
+        and soundboard connection point.
+
+        Args:
+            dwg: SVG drawing object
+            force_scale: Pixels per Newton for vector length
+            string_path_mode: "normal" or "direct" - affects force directions
+        """
+        # Accumulate total reaction forces
+        total_sb_fx, total_sb_fz = 0.0, 0.0
+        total_tp_fx, total_tp_fz = 0.0, 0.0
+
+        for s in self.harp.strings:
+            # Get string tension (from JSON data)
+            T = s.tension_n
+
+            # Calculate string direction (soundboard to tuning pin)
+            dx = s.tuning_pin.x_mm - s.x_soundboard_mm
+            dz = s.tuning_pin.z_mm - s.z_soundboard_mm
+            length = math.sqrt(dx*dx + dz*dz)
+            ux, uz = dx/length, dz/length  # Unit vector toward tuning pin
+
+            # REACTION force at soundboard: must resist string pulling toward tuning pin
+            # Soundboard pushes AWAY from tuning pin (opposite of string tension direction)
+            sb_fx = -T * ux
+            sb_fz = -T * uz
+            total_sb_fx += sb_fx
+            total_sb_fz += sb_fz
+
+            # REACTION force at tuning pin center: must resist string forces
+            # String exerts: entry pull (down) + exit pull (toward soundboard)
+            # Reaction is opposite: push up + push away from soundboard
+            tp_fx = T * ux  # Opposite of exit direction
+            tp_fz = T * (1 + uz)  # Opposite of (entry down + exit toward soundboard)
+            total_tp_fx += tp_fx
+            total_tp_fz += tp_fz
+
+            # Draw individual reaction vectors (small, per-string)
+            # Soundboard reaction (red arrow) - pushes into soundboard structure
+            self._draw_arrow(dwg,
+                self._tx(s.x_soundboard_mm), self._tz(s.z_soundboard_mm),
+                sb_fx * force_scale, -sb_fz * force_scale,  # Flip Z for SVG
+                color='#FF6666', width=0.5, head_size=2
+            )
+
+            # Tuning pin reaction (blue arrow) - force pin must resist
+            self._draw_arrow(dwg,
+                self._tx(s.tuning_pin.x_mm), self._tz(s.tuning_pin.z_mm),
+                tp_fx * force_scale, -tp_fz * force_scale,  # Flip Z for SVG
+                color='#6666FF', width=0.5, head_size=2
+            )
+
+        # Draw total reaction vectors (larger, summary)
+        c1 = self.harp.strings[0]
+        g7 = self.harp.strings[-1]
+
+        # Total soundboard reaction at center of soundboard
+        sb_center_x = (c1.x_soundboard_mm + g7.x_soundboard_mm) / 2
+        sb_center_z = (c1.z_soundboard_mm + g7.z_soundboard_mm) / 2
+
+        # Total tuning pin reaction at center of neck
+        tp_center_x = (c1.tuning_pin.x_mm + g7.tuning_pin.x_mm) / 2
+        tp_center_z = (c1.tuning_pin.z_mm + g7.tuning_pin.z_mm) / 2
+
+        # Scale total forces to be visible but not overwhelming
+        total_scale = force_scale * 0.05
+
+        # Total soundboard reaction (dark red, thick)
+        self._draw_arrow(dwg,
+            self._tx(sb_center_x), self._tz(sb_center_z),
+            total_sb_fx * total_scale, -total_sb_fz * total_scale,
+            color='#CC0000', width=2.0, head_size=6
+        )
+
+        # Total tuning pin reaction (dark blue, thick)
+        self._draw_arrow(dwg,
+            self._tx(tp_center_x), self._tz(tp_center_z),
+            total_tp_fx * total_scale, -total_tp_fz * total_scale,
+            color='#0000CC', width=2.0, head_size=6
+        )
+
+        # Add force magnitude labels
+        sb_total = math.sqrt(total_sb_fx**2 + total_sb_fz**2)
+        tp_total = math.sqrt(total_tp_fx**2 + total_tp_fz**2)
+
+        dwg.add(dwg.text(f"Soundboard reaction: {sb_total:.0f}N ({sb_total/4.448:.0f}lbf)",
+            insert=(self._tx(sb_center_x) + 10, self._tz(sb_center_z) + 15),
+            font_size="8px", fill='#CC0000', font_family='sans-serif'
+        ))
+
+        dwg.add(dwg.text(f"Neck reaction: {tp_total:.0f}N ({tp_total/4.448:.0f}lbf)",
+            insert=(self._tx(tp_center_x) + 10, self._tz(tp_center_z) - 5),
+            font_size="8px", fill='#0000CC', font_family='sans-serif'
+        ))
+
+    def _draw_arrow(self, dwg, x: float, y: float, dx: float, dy: float,
+                    color: str = 'black', width: float = 1.0, head_size: float = 4):
+        """Draw an arrow from (x,y) with direction (dx,dy).
+
+        Args:
+            dwg: SVG drawing object
+            x, y: Starting point in SVG coordinates
+            dx, dy: Vector direction and magnitude in SVG coordinates
+            color: Arrow color
+            width: Line width
+            head_size: Size of arrowhead
+        """
+        # Arrow shaft
+        end_x = x + dx
+        end_y = y + dy
+        dwg.add(dwg.line((x, y), (end_x, end_y), stroke=color, stroke_width=width))
+
+        # Arrowhead
+        length = math.sqrt(dx*dx + dy*dy)
+        if length > 0:
+            # Unit vector along arrow
+            ux, uy = dx/length, dy/length
+            # Perpendicular vector
+            px, py = -uy, ux
+
+            # Arrowhead points
+            head_back = head_size * 0.8
+            head_width = head_size * 0.4
+            p1 = (end_x - head_back*ux + head_width*px, end_y - head_back*uy + head_width*py)
+            p2 = (end_x - head_back*ux - head_width*px, end_y - head_back*uy - head_width*py)
+
+            # Draw arrowhead as filled triangle
+            points = [(end_x, end_y), p1, p2]
+            dwg.add(dwg.polygon(points, fill=color, stroke=color, stroke_width=0.5))
+
 
 # =============================================================================
 # MAIN
@@ -2636,17 +2777,16 @@ def main():
         # harp2.svg - Sharp position (both discs engaged)
         renderer.render(f"{base_output}2.svg", pedal_position="sharp")
 
-        # harp.svg - Direct string paths with faded hardware
-        # Shows strings going directly from soundboard to tuning pin
-        # Hardware (discs, flat pins, reference lines) are faded but visible
+        # harp.svg - Normal view with reaction force vectors
+        # Full hardware visible, normal string paths, force vectors overlaid
         renderer.render(args.output, pedal_position="flat",
-                       hardware_opacity=0.15, string_path_mode="direct")
+                       show_force_vectors=True, force_scale=0.08)
 
         print(f"\nGenerated SVGs:")
         print(f"  {base_output}0.svg - Flat position (strings straight)")
         print(f"  {base_output}1.svg - Natural position (natural disc engaged, string deflected)")
         print(f"  {base_output}2.svg - Sharp position (both discs engaged, string deflected twice)")
-        print(f"  {args.output} - Direct string paths (soundboard to tuning pin, hardware faded)")
+        print(f"  {args.output} - Normal view with reaction force vectors")
 
 
 if __name__ == '__main__':
