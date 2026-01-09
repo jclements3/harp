@@ -192,13 +192,14 @@ def load_harp_from_json(
         z_flat = s['z_top_mm']
         string_length = s['length_mm']
 
-        # Calculate flat pin radius based on string range
-        if s['number'] <= 14:  # Bass
-            flat_r = 3.5  # M8 pin
-        elif s['number'] <= 28:  # Mid
-            flat_r = 2.5  # M6 pin
-        else:  # Treble
-            flat_r = 2.0  # M5 pin
+        # Calculate flat pin radius based on string range and force analysis
+        # Bass strings have highest tension (~237N), need larger pins for bending strength
+        if s['number'] <= 9:  # Bass (steel/bronze wound, highest tension)
+            flat_r = 4.0  # M10 pin, 8mm shaft
+        elif s['number'] <= 28:  # Mid (nylon wound and plain)
+            flat_r = 3.0  # M8 pin, 6mm shaft
+        else:  # Treble (plain nylon, lowest tension)
+            flat_r = 2.5  # M6 pin, 5mm shaft
 
         # String radius (outer diameter / 2)
         string_r = s['outer_diameter_mm'] / 2
@@ -303,12 +304,12 @@ def load_harp_from_json(
             flat_x = s['x_top_mm']
             flat_z = s['z_top_mm']
 
-            # Determine tuning pin radius based on string number
-            if s['number'] <= 14:
+            # Determine tuning pin radius based on string number (matches force analysis)
+            if s['number'] <= 9:  # Bass
                 tp_radius = 3.0  # M6
-            elif s['number'] <= 28:
+            elif s['number'] <= 28:  # Mid
                 tp_radius = 2.5  # M5
-            else:
+            else:  # Treble
                 tp_radius = 2.0  # M4
 
             # Iteratively find tp_x that gives target angle
@@ -338,12 +339,12 @@ def load_harp_from_json(
             flat_x = s['x_top_mm']
             flat_z = s['z_top_mm']
 
-            # Determine tuning pin radius based on string number
-            if s['number'] <= 14:
+            # Determine tuning pin radius based on string number (matches force analysis)
+            if s['number'] <= 9:  # Bass
                 tp_radius = 3.0  # M6
-            elif s['number'] <= 28:
+            elif s['number'] <= 28:  # Mid
                 tp_radius = 2.5  # M5
-            else:
+            else:  # Treble
                 tp_radius = 2.0  # M4
 
             # Iteratively find tp_x that gives target angle
@@ -412,15 +413,15 @@ def load_harp_from_json(
             return neck.c1_z_mm + t * (neck.g7_z_mm - neck.c1_z_mm)
 
         # Distribute tuning pins with EQUAL GAPS (not equal center spacing)
-        # First, get all tuning pin diameters
+        # First, get all tuning pin diameters (matches force analysis)
         tuning_diameters = []
         for s in strings_data:
-            if s['number'] <= 14:  # Bass
-                tuning_diameters.append(6.0)
+            if s['number'] <= 9:  # Bass
+                tuning_diameters.append(6.0)  # M6
             elif s['number'] <= 28:  # Mid
-                tuning_diameters.append(5.0)
+                tuning_diameters.append(5.0)  # M5
             else:  # Treble
-                tuning_diameters.append(4.0)
+                tuning_diameters.append(4.0)  # M4
 
         # Total length from c1 to g7 (center to center)
         total_length = math.sqrt((g7_tp_x - c1_tp_x)**2 + (g7_tp_z - c1_tp_z)**2)
@@ -467,29 +468,36 @@ def load_harp_from_json(
     # Build strings with all components
     strings = []
     for i, s in enumerate(strings_data):
-        # Determine pin sizes based on string range
-        if s['number'] <= 14:  # Bass (C1-B2)
-            flat_thread = "M8"
-            flat_shaft = 7.0
+        # Determine pin sizes based on string range and force analysis
+        # Flat pins sized for bending strength (cantilever load from string wrap)
+        # Tuning pins sized for pull-out resistance and tuning torque
+        if s['number'] <= 9:  # Bass (C1-D2) - steel/bronze wound, ~220-237N tension
+            flat_thread = "M10"
+            flat_shaft = 8.0   # SF=3.1 at 237N
             tuning_thread = "M6"
             tuning_diameter = 6.0
-        elif s['number'] <= 28:  # Mid (C3-B4)
-            flat_thread = "M6"
-            flat_shaft = 5.0
+            prong_diameter = 5.0
+            disc_thickness = 5.0
+        elif s['number'] <= 28:  # Mid (E2-B4) - nylon wound and plain, ~100-220N
+            flat_thread = "M8"
+            flat_shaft = 6.0   # SF=2.1 at 180N
             tuning_thread = "M5"
             tuning_diameter = 5.0
-        else:  # Treble (C5-G7)
-            flat_thread = "M5"
-            flat_shaft = 4.0
+            prong_diameter = 4.0
+            disc_thickness = 4.0
+        else:  # Treble (C5-G7) - plain nylon, ~50-100N
+            flat_thread = "M6"
+            flat_shaft = 5.0   # SF=3+ at 100N
             tuning_thread = "M4"
             tuning_diameter = 4.0
+            prong_diameter = 3.0
+            disc_thickness = 3.0
 
-        # Prong diameter scales with disc
+        # Get disc geometry from JSON (positions calculated earlier)
         nd = s['natural_disc']
         sd = s['sharp_disc']
-        prong_d = nd.get('prong_diameter_mm', 5.0)
 
-        # Build discs
+        # Build discs with computed prong diameter and thickness based on force analysis
         # Plate assignment: odd strings on +Y, even strings on -Y
         expected_plate = "+Y" if s['number'] % 2 == 1 else "-Y"
 
@@ -500,8 +508,9 @@ def load_harp_from_json(
             major_radius_mm=nd['major_radius_mm'],
             minor_radius_mm=nd['minor_radius_mm'],
             disc_type="natural",
-            prong_diameter_mm=prong_d,
+            prong_diameter_mm=prong_diameter,  # From force analysis
             plate=nd.get('plate', expected_plate),
+            thickness_mm=disc_thickness,  # From force analysis
             rotation_degrees=nd.get('rotation_degrees', NATURAL_ROTATION_DEG),
             string_ux=nd.get('string_ux', 0),
             string_uz=nd.get('string_uz', 1),
@@ -514,8 +523,9 @@ def load_harp_from_json(
             major_radius_mm=sd['major_radius_mm'],
             minor_radius_mm=sd['minor_radius_mm'],
             disc_type="sharp",
-            prong_diameter_mm=prong_d,
+            prong_diameter_mm=prong_diameter,  # From force analysis
             plate=sd.get('plate', expected_plate),
+            thickness_mm=disc_thickness,  # From force analysis
             rotation_degrees=sd.get('rotation_degrees', SHARP_ROTATION_DEG),
             string_ux=sd.get('string_ux', 0),
             string_uz=sd.get('string_uz', 1),
