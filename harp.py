@@ -1820,15 +1820,16 @@ class HarpRenderer:
             force_scale: Scale factor for force vector length (pixels per Newton)
         """
 
-        # Use viewBox for scaling - fit to viewport height, align left
-        # Calculate width in vh to maintain aspect ratio (height is 100vh)
-        aspect_ratio = self.width / self.height
-        width_vh = aspect_ratio * 100
+        # Use viewBox to zoom in on upper part (discs and pegs)
+        # Pegs are around y=44, discs around y=100-150, so show y=0 to y=200
+        view_height = 200
+        aspect_ratio = self.width / view_height
+        height_vw = 100 / aspect_ratio  # height in vw to maintain aspect ratio
         dwg = svgwrite.Drawing(output_path,
-                               size=(f'{width_vh:.1f}vh', '100vh'),
-                               viewBox=f'0 0 {self.width} {self.height}',
+                               size=('100vw', f'{height_vw:.1f}vw'),
+                               viewBox=f'0 0 {self.width} {view_height}',
                                preserveAspectRatio='xMinYMin meet',
-                               debug=False)  # Disable validation for vh units
+                               debug=False)  # Disable validation for vw units
 
         # White background
         dwg.add(dwg.rect((0, 0), (self.width, self.height), fill='white'))
