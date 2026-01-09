@@ -1011,10 +1011,14 @@ def load_harp_from_json(json_path: str, tuning_pin_mode: str = "angle_45", neck_
         else:  # Treble
             flat_r = 2.0  # M5 pin
 
-        # Calculate tangent point on flat pin (where string actually touches)
+        # String radius (outer diameter / 2)
+        string_r = s['outer_diameter_mm'] / 2
+
+        # Calculate tangent point on flat pin (where string centerline touches)
+        # Use flat_r + string_r for effective radius (string wraps around pin)
         x_tangent, z_tangent = tangent_point_on_circle(
             x_soundboard, z_soundboard,
-            x_flat, z_flat, flat_r
+            x_flat, z_flat, flat_r + string_r
         )
 
         # Natural disc: 1 semitone up from flat, 45° rotation
