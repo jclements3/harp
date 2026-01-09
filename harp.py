@@ -1798,7 +1798,10 @@ class HarpRenderer:
         """Scale a dimension to SVG space."""
         return val_mm * self.scale
 
-    def render(self, output_path: str, pedal_position: str = "flat"):
+    def render(self, output_path: str, pedal_position: str = "flat",
+                show_discs: bool = True, show_flat_pins: bool = True,
+                show_reference_lines: bool = True, hardware_opacity: float = 1.0,
+                string_path_mode: str = "normal"):
         """Render the harp to an SVG file.
 
         Args:
@@ -1807,6 +1810,11 @@ class HarpRenderer:
                 - flat: all discs at 0° rotation, strings straight
                 - natural: natural disc at 45°, strings deflect at natural engagement
                 - sharp: natural at 45°, sharp at 90°, strings deflect at both
+            show_discs: If True, draw discs and prongs
+            show_flat_pins: If True, draw flat pins
+            show_reference_lines: If True, draw reference lines (neckref, flat pin line)
+            hardware_opacity: Opacity for non-essential hardware (0.0-1.0)
+            string_path_mode: "normal" (wraps flat pin) or "direct" (soundboard to tuning pin only)
         """
 
         dwg = svgwrite.Drawing(output_path, size=(self.width, self.height))
@@ -1814,45 +1822,55 @@ class HarpRenderer:
         # White background
         dwg.add(dwg.rect((0, 0), (self.width, self.height), fill='white'))
 
-        # Reference lines
-        self._draw_reference_lines(dwg)
+        # Reference lines (soundboard always drawn, other lines optional)
+        self._draw_reference_lines(dwg, show_all=show_reference_lines, opacity=hardware_opacity)
 
         # Draw discs at appropriate rotation
-        self._draw_discs(dwg, pedal_position)
+        if show_discs:
+            self._draw_discs(dwg, pedal_position, opacity=hardware_opacity)
 
         # Draw strings with deflection at engagement points
-        self._draw_strings(dwg, pedal_position)
+        self._draw_strings(dwg, pedal_position, show_flat_pins=show_flat_pins,
+                          flat_pin_opacity=hardware_opacity, string_path_mode=string_path_mode)
 
         dwg.save()
         print(f"SVG saved to {output_path} (pedal position: {pedal_position})")
 
-    def _draw_reference_lines(self, dwg):
-        """Draw reference lines."""
+    def _draw_reference_lines(self, dwg, show_all: bool = True, opacity: float = 1.0):
+        """Draw reference lines.
 
-        # Green dashed line: flat pins c1 to g7
+        Args:
+            show_all: If True, draw all reference lines. If False, only draw soundboard.
+            opacity: Opacity for reference lines (0.0-1.0)
+        """
+
         c1 = self.harp.strings[0]
         g7 = self.harp.strings[-1]
 
-        dwg.add(dwg.line(
-            (self._tx(c1.x_flat_mm), self._tz(c1.z_flat_mm)),
-            (self._tx(g7.x_flat_mm), self._tz(g7.z_flat_mm)),
-            stroke='#90EE90',
-            stroke_width=0.5,
-            stroke_dasharray='4,2'
-        ))
+        if show_all:
+            # Green dashed line: flat pins c1 to g7
+            dwg.add(dwg.line(
+                (self._tx(c1.x_flat_mm), self._tz(c1.z_flat_mm)),
+                (self._tx(g7.x_flat_mm), self._tz(g7.z_flat_mm)),
+                stroke='#90EE90',
+                stroke_width=0.5,
+                stroke_dasharray='4,2',
+                opacity=opacity
+            ))
 
-        # Brown solid line: neckref from c1 tuning pin to g7 tuning pin (bottom of pins)
-        # Use actual tuning pin positions, offset down by pin radius so line is at pin bottoms
-        c1_tp = c1.tuning_pin
-        g7_tp = g7.tuning_pin
-        dwg.add(dwg.line(
-            (self._tx(c1_tp.x_mm), self._tz(c1_tp.z_mm - c1_tp.radius_mm())),
-            (self._tx(g7_tp.x_mm), self._tz(g7_tp.z_mm - g7_tp.radius_mm())),
-            stroke='#8B4513',
-            stroke_width=0.8
-        ))
+            # Brown solid line: neckref from c1 tuning pin to g7 tuning pin (bottom of pins)
+            # Use actual tuning pin positions, offset down by pin radius so line is at pin bottoms
+            c1_tp = c1.tuning_pin
+            g7_tp = g7.tuning_pin
+            dwg.add(dwg.line(
+                (self._tx(c1_tp.x_mm), self._tz(c1_tp.z_mm - c1_tp.radius_mm())),
+                (self._tx(g7_tp.x_mm), self._tz(g7_tp.z_mm - g7_tp.radius_mm())),
+                stroke='#8B4513',
+                stroke_width=0.8,
+                opacity=opacity
+            ))
 
-        # Black thin line: soundboard spline (through string bottom positions)
+        # Black thin line: soundboard spline (through string bottom positions) - always draw
         soundboard_points = []
         for s in self.harp.strings:
             soundboard_points.append((self._tx(s.x_soundboard_mm), self._tz(s.z_soundboard_mm)))
@@ -1863,13 +1881,14 @@ class HarpRenderer:
                 path_data += f" L {px:.1f},{pz:.1f}"
             dwg.add(dwg.path(d=path_data, fill='none', stroke='black', stroke_width=0.5))
 
-    def _draw_disc(self, dwg, disc: Disc, rotation_override: float = None):
+    def _draw_disc(self, dwg, disc: Disc, rotation_override: float = None, opacity: float = 1.0):
         """Draw a single disc with prongs.
 
         Args:
             disc: The disc to draw
             rotation_override: If provided, draw disc at this pedal rotation angle.
                              Use 0 for flat position, None for engaged position.
+            opacity: Opacity for the disc (0.0-1.0)
         """
         # Pedal rotation (0 = flat, 45 = natural, 90 = sharp)
         pedal_rotation = rotation_override if rotation_override is not None else disc.rotation_degrees
@@ -1897,7 +1916,8 @@ class HarpRenderer:
         cy_svg = self._tz(disc.z_mm)
 
         # Create a group for the disc and prongs, rotated about disc center
-        disc_group = dwg.g(transform=f"rotate({total_rotation:.1f}, {cx_svg:.1f}, {cy_svg:.1f})")
+        disc_group = dwg.g(transform=f"rotate({total_rotation:.1f}, {cx_svg:.1f}, {cy_svg:.1f})",
+                          opacity=opacity)
 
         # Disc (ellipse) - thin stroke to show true boundary
         disc_group.add(dwg.ellipse(
@@ -1937,25 +1957,26 @@ class HarpRenderer:
 
         dwg.add(disc_group)
 
-    def _draw_discs(self, dwg, pedal_position: str = "flat"):
+    def _draw_discs(self, dwg, pedal_position: str = "flat", opacity: float = 1.0):
         """Draw all discs for all strings.
 
         Args:
             pedal_position: "flat" (0°), "natural" (45°), or "sharp" (90°)
+            opacity: Opacity for discs (0.0-1.0)
         """
         for s in self.harp.strings:
             if pedal_position == "flat":
                 # Both discs at 0° pedal rotation (prongs perpendicular to string)
-                self._draw_disc(dwg, s.natural_disc, rotation_override=0)
-                self._draw_disc(dwg, s.sharp_disc, rotation_override=0)
+                self._draw_disc(dwg, s.natural_disc, rotation_override=0, opacity=opacity)
+                self._draw_disc(dwg, s.sharp_disc, rotation_override=0, opacity=opacity)
             elif pedal_position == "natural":
                 # Natural disc engaged (45°), sharp disc at 0°
-                self._draw_disc(dwg, s.natural_disc, rotation_override=NATURAL_ROTATION_DEG)
-                self._draw_disc(dwg, s.sharp_disc, rotation_override=0)
+                self._draw_disc(dwg, s.natural_disc, rotation_override=NATURAL_ROTATION_DEG, opacity=opacity)
+                self._draw_disc(dwg, s.sharp_disc, rotation_override=0, opacity=opacity)
             elif pedal_position == "sharp":
                 # Both discs engaged: natural at 45°, sharp at 90°
-                self._draw_disc(dwg, s.natural_disc, rotation_override=NATURAL_ROTATION_DEG)
-                self._draw_disc(dwg, s.sharp_disc, rotation_override=SHARP_ROTATION_DEG)
+                self._draw_disc(dwg, s.natural_disc, rotation_override=NATURAL_ROTATION_DEG, opacity=opacity)
+                self._draw_disc(dwg, s.sharp_disc, rotation_override=SHARP_ROTATION_DEG, opacity=opacity)
 
     def _tangent_point_left(self, px: float, pz: float, cx: float, cz: float, r: float) -> Tuple[float, float]:
         """Calculate LEFT side tangent point on circle centered at (cx,cz) from external point (px,pz)."""
@@ -2152,7 +2173,8 @@ class HarpRenderer:
         path_data += f"{self._tx(exit_x):.1f},{self._tz(exit_z):.1f}"
         dwg.add(dwg.path(d=path_data, fill='none', stroke=color, stroke_width=stroke_width))
 
-    def _draw_strings(self, dwg, pedal_position: str = "flat"):
+    def _draw_strings(self, dwg, pedal_position: str = "flat", show_flat_pins: bool = True,
+                      flat_pin_opacity: float = 1.0, string_path_mode: str = "normal"):
         """Draw all strings with their pins.
 
         Args:
@@ -2160,6 +2182,9 @@ class HarpRenderer:
                 - flat: strings go straight from soundboard to flat pin
                 - natural: strings wrap around engaged natural disc prong
                 - sharp: strings wrap around both engaged prongs (sharp then natural)
+            show_flat_pins: If True, draw flat pin circles
+            flat_pin_opacity: Opacity for flat pins (0.0-1.0)
+            string_path_mode: "normal" (wraps flat pin) or "direct" (soundboard to tuning pin only)
         """
 
         for s in self.harp.strings:
@@ -2178,8 +2203,40 @@ class HarpRenderer:
                 s.x_flat_mm, s.z_flat_mm, flat_r + string_r
             )
 
-            # Draw string path based on pedal position
-            if pedal_position == "flat":
+            # Direct path mode: string goes directly from soundboard to tuning pin (no flat pin)
+            if string_path_mode == "direct":
+                eff_tp_r = tuning_r + string_r
+
+                # Calculate tangent point on tuning pin from soundboard
+                tp_tangent_x, tp_tangent_z = self._tangent_point_left(
+                    s.x_soundboard_mm, s.z_soundboard_mm,
+                    s.tuning_pin.x_mm, s.tuning_pin.z_mm, eff_tp_r
+                )
+
+                # Calculate angles for tuning pin arc
+                tp_tangent_angle = math.atan2(tp_tangent_z - s.tuning_pin.z_mm,
+                                               tp_tangent_x - s.tuning_pin.x_mm)
+                tp_start_angle = -math.pi / 2  # 6 o'clock
+
+                # Build tuning pin arc (from 6 o'clock to tangent point, CCW)
+                tp_arc_segments = 24
+                tp_end_angle = tp_tangent_angle
+                if tp_end_angle < tp_start_angle:
+                    tp_end_angle += 2 * math.pi
+
+                tp_arc_path = f"M {self._tx(s.tuning_pin.x_mm + eff_tp_r * math.cos(tp_start_angle)):.2f},{self._tz(s.tuning_pin.z_mm + eff_tp_r * math.sin(tp_start_angle)):.2f}"
+                for i in range(1, tp_arc_segments + 1):
+                    angle = tp_start_angle + (tp_end_angle - tp_start_angle) * i / tp_arc_segments
+                    x = s.tuning_pin.x_mm + eff_tp_r * math.cos(angle)
+                    z = s.tuning_pin.z_mm + eff_tp_r * math.sin(angle)
+                    tp_arc_path += f" L {self._tx(x):.2f},{self._tz(z):.2f}"
+
+                # Complete path: tuning pin arc → straight line to soundboard
+                path_data = tp_arc_path + f" L {self._tx(s.x_soundboard_mm):.2f},{self._tz(s.z_soundboard_mm):.2f}"
+                dwg.add(dwg.path(d=path_data, fill='none', stroke=color, stroke_width=sw))
+
+            # Draw string path based on pedal position (normal mode)
+            elif pedal_position == "flat":
                 # String path: 6 o'clock on tuning pin → CCW arc → exit tangent to flat pin
                 # Then tangent line to flat pin → CCW arc around flat pin → line to soundboard
 
@@ -2421,13 +2478,15 @@ class HarpRenderer:
                 dwg.add(dwg.path(d=path_data, fill='none', stroke=color, stroke_width=sw))
 
             # Draw flat pin - thin stroke to show true boundary
-            dwg.add(dwg.circle(
-                center=(self._tx(s.x_flat_mm), self._tz(s.z_flat_mm)),
-                r=self._scale(flat_r),
-                fill='#888',
-                stroke='#444',
-                stroke_width=0.15
-            ))
+            if show_flat_pins:
+                dwg.add(dwg.circle(
+                    center=(self._tx(s.x_flat_mm), self._tz(s.z_flat_mm)),
+                    r=self._scale(flat_r),
+                    fill='#888',
+                    stroke='#444',
+                    stroke_width=0.15,
+                    opacity=flat_pin_opacity
+                ))
 
             # 6. Draw tuning pin - thin stroke to show true boundary
             dwg.add(dwg.circle(
@@ -2577,13 +2636,17 @@ def main():
         # harp2.svg - Sharp position (both discs engaged)
         renderer.render(f"{base_output}2.svg", pedal_position="sharp")
 
-        # Also save harp.svg as the flat position
-        renderer.render(args.output, pedal_position="flat")
+        # harp.svg - Direct string paths with faded hardware
+        # Shows strings going directly from soundboard to tuning pin
+        # Hardware (discs, flat pins, reference lines) are faded but visible
+        renderer.render(args.output, pedal_position="flat",
+                       hardware_opacity=0.15, string_path_mode="direct")
 
         print(f"\nGenerated SVGs:")
         print(f"  {base_output}0.svg - Flat position (strings straight)")
         print(f"  {base_output}1.svg - Natural position (natural disc engaged, string deflected)")
         print(f"  {base_output}2.svg - Sharp position (both discs engaged, string deflected twice)")
+        print(f"  {args.output} - Direct string paths (soundboard to tuning pin, hardware faded)")
 
 
 if __name__ == '__main__':
