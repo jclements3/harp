@@ -6,12 +6,49 @@ Contains:
 - HarpRenderer: Complete SVG renderer with disc, string, and force vector drawing
 """
 
+import json
 import math
+import os
 from typing import Tuple
 
 import svgwrite
 
 from harp_models import Harp, Disc, NATURAL_ROTATION_DEG, SHARP_ROTATION_DEG
+
+# Default node config path
+NODE_CONFIG_PATH = os.path.join(os.path.dirname(__file__), "node_config.json")
+
+
+def load_node_config(config_path: str = None) -> dict:
+    """Load node configuration from JSON file."""
+    path = config_path or NODE_CONFIG_PATH
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            return json.load(f)
+    return {
+        "plate": {
+            "p5_raise": 70,
+            "left_bulge": -25,
+            "right_bulge": 25,
+            "p1_1_extend": 50,
+            "p2_2_extend": 50,
+            "p2_1_extend": 150,
+            "p2_1_drop": 80,
+            "p4_x_offset": -15
+        },
+        "neck": {
+            "neck_margin": 20,
+            "n4_x_offset": -20,
+            "neck_left_bulge": -20,
+            "neck_right_bulge": 25,
+            "n1_1_extend": 50,
+            "n2_2_extend": 50,
+            "n2_1_extend": 150,
+            "n2_1_drop": 80,
+            "c1_extend": 100,
+            "g7_extend": 50
+        }
+    }
 
 
 class HarpRenderer:
@@ -45,10 +82,11 @@ class HarpRenderer:
         "double_sharp": ("#C4A8E8", "#55438B"),
     }
 
-    def __init__(self, harp: Harp, scale: float = 0.5, padding: float = 20):
+    def __init__(self, harp: Harp, scale: float = 0.5, padding: float = 20, config_path: str = None):
         self.harp = harp
         self.scale = scale
         self.padding = padding
+        self.node_config = load_node_config(config_path)
 
         # Calculate bounds
         self._calculate_bounds()
@@ -88,7 +126,7 @@ class HarpRenderer:
                 show_discs: bool = True, show_flat_pins: bool = True,
                 show_reference_lines: bool = True, hardware_opacity: float = 1.0,
                 string_path_mode: str = "normal", show_force_vectors: bool = False,
-                force_scale: float = 0.1):
+                force_scale: float = 0.1, show_rear_view: bool = False):
         """Render the harp to an SVG file.
 
         Args:
@@ -119,6 +157,9 @@ class HarpRenderer:
 
         # White background
         dwg.add(dwg.rect((0, 0), (self.width, self.height), fill='white'))
+
+        # Draw plate and neck outlines first (behind other elements)
+        self._draw_plates_and_neck_outline(dwg)
 
         # Reference lines (soundboard always drawn, other lines optional)
         self._draw_reference_lines(dwg, show_all=show_reference_lines, opacity=hardware_opacity)
@@ -735,3 +776,133 @@ class HarpRenderer:
 
             points = [(end_x, end_y), p1, p2]
             dwg.add(dwg.polygon(points, fill=color, stroke=color, stroke_width=0.5, opacity=opacity))
+
+    def _draw_plates_and_neck_outline(self, dwg, group=None):
+        """Draw plate and neck outlines using configurable bezier curves."""
+        target = group if group else dwg
+
+        if not self.harp.strings:
+            return
+
+        pc = self.node_config["plate"]
+        nc = self.node_config["neck"]
+
+        # Get reference positions from harp geometry
+        c1_fp = self.harp.strings[0].flat_pin
+        g7_fp = self.harp.strings[-1].flat_pin
+        c1_tp = self.harp.strings[0].tuning_pin
+        g7_tp = self.harp.strings[-1].tuning_pin
+        peg_r = c1_tp.diameter_mm / 2
+
+        # Get disc positions
+        disc_positions = []
+        for s in self.harp.strings:
+            disc_positions.append((s.natural_disc.x_mm, s.natural_disc.z_mm))
+            disc_positions.append((s.sharp_disc.x_mm, s.sharp_disc.z_mm))
+
+        plate_margin = 15
+
+        # Base positions matching interactive editor
+        p1 = (c1_fp.x_mm, max(d[1] for d in disc_positions) + plate_margin)
+        p2 = (g7_fp.x_mm + plate_margin,
+              max(d[1] for d in disc_positions if d[0] > g7_fp.x_mm - 100) + plate_margin)
+        bot_trough_z = min(d[1] for d in disc_positions) - plate_margin
+        p4 = (p1[0] + pc["p4_x_offset"], bot_trough_z)
+        p5_x = (p2[0] + p4[0]) / 2
+        p5 = (p5_x, bot_trough_z + pc["p5_raise"])
+
+        # Neckpeg direction (from c1 tuning pin to g7 tuning pin bottom)
+        neckpeg_c1 = (c1_tp.x_mm, c1_tp.z_mm - peg_r)
+        neckpeg_g7 = (g7_tp.x_mm, g7_tp.z_mm - peg_r)
+        dx = neckpeg_g7[0] - neckpeg_c1[0]
+        dz = neckpeg_g7[1] - neckpeg_c1[1]
+        neckpeg_len = math.sqrt(dx**2 + dz**2)
+        neckpeg_ux = dx / neckpeg_len
+        neckpeg_uz = dz / neckpeg_len
+
+        # Plate control points
+        p1_1 = (p1[0] + neckpeg_ux * pc["p1_1_extend"],
+                p1[1] + neckpeg_uz * pc["p1_1_extend"])
+        p1_2 = (p1[0] + pc["left_bulge"], p1[1])
+
+        # p2 direction for smooth transition
+        p2_1_dir_x = neckpeg_ux * pc["p2_1_extend"]
+        p2_1_dir_z = neckpeg_uz * pc["p2_1_extend"] - pc["p2_1_drop"]
+        p2_1_dir_len = math.sqrt(p2_1_dir_x**2 + p2_1_dir_z**2)
+        p2_1_dir_ux = p2_1_dir_x / p2_1_dir_len
+        p2_1_dir_uz = p2_1_dir_z / p2_1_dir_len
+
+        p2_2 = (p2[0] - p2_1_dir_ux * pc["p2_2_extend"],
+                p2[1] - p2_1_dir_uz * pc["p2_2_extend"])
+        p2_1 = (p2[0] + p2_1_dir_ux * pc["p2_1_extend"],
+                p2[1] + p2_1_dir_uz * pc["p2_1_extend"])
+
+        p5_2 = ((p2[0] + p5[0]) / 2, p5[1])
+        p5_1 = ((p4[0] + p5[0]) / 2, p5[1])
+        p4_2 = ((p5[0] + p4[0]) / 2, p4[1])
+        p4_1 = (p4[0] + pc["left_bulge"], p4[1])
+
+        # Build plate SVG path
+        plate_path = f"M {self._tx(p1[0]):.1f},{self._tz(p1[1]):.1f} "
+        plate_path += f"C {self._tx(p1_1[0]):.1f},{self._tz(p1_1[1]):.1f} "
+        plate_path += f"{self._tx(p2_2[0]):.1f},{self._tz(p2_2[1]):.1f} "
+        plate_path += f"{self._tx(p2[0]):.1f},{self._tz(p2[1]):.1f} "
+        plate_path += f"C {self._tx(p2_1[0]):.1f},{self._tz(p2_1[1]):.1f} "
+        plate_path += f"{self._tx(p5_2[0]):.1f},{self._tz(p5_2[1]):.1f} "
+        plate_path += f"{self._tx(p5[0]):.1f},{self._tz(p5[1]):.1f} "
+        plate_path += f"C {self._tx(p5_1[0]):.1f},{self._tz(p5_1[1]):.1f} "
+        plate_path += f"{self._tx(p4_2[0]):.1f},{self._tz(p4_2[1]):.1f} "
+        plate_path += f"{self._tx(p4[0]):.1f},{self._tz(p4[1]):.1f} "
+        plate_path += f"C {self._tx(p4_1[0]):.1f},{self._tz(p4_1[1]):.1f} "
+        plate_path += f"{self._tx(p1_2[0]):.1f},{self._tz(p1_2[1]):.1f} "
+        plate_path += f"{self._tx(p1[0]):.1f},{self._tz(p1[1]):.1f} Z"
+
+        target.add(dwg.path(d=plate_path, fill='#FFD700', fill_opacity=0.08,
+                           stroke='#B8860B', stroke_width=0.4))
+
+        # Neck nodes
+        n1 = neckpeg_c1
+        n2 = neckpeg_g7
+        n4 = (p4[0] - nc["neck_margin"] + nc["n4_x_offset"], p4[1] - nc["neck_margin"])
+        n5 = (p5[0], p5[1] - nc["neck_margin"])
+
+        # Neck control points
+        n1_1 = (n1[0] + neckpeg_ux * nc["n1_1_extend"],
+                n1[1] + neckpeg_uz * nc["n1_1_extend"])
+        n1_2 = (n1[0] - neckpeg_ux * nc["c1_extend"],
+                n1[1] - neckpeg_uz * nc["c1_extend"])
+
+        # n2 direction for smooth transition
+        n2_1_dir_x = neckpeg_ux * nc["n2_1_extend"]
+        n2_1_dir_z = neckpeg_uz * nc["n2_1_extend"] - nc["n2_1_drop"]
+        n2_1_dir_len = math.sqrt(n2_1_dir_x**2 + n2_1_dir_z**2)
+        n2_1_dir_ux = n2_1_dir_x / n2_1_dir_len
+        n2_1_dir_uz = n2_1_dir_z / n2_1_dir_len
+
+        n2_2 = (n2[0] - n2_1_dir_ux * nc["n2_2_extend"],
+                n2[1] - n2_1_dir_uz * nc["n2_2_extend"])
+        n2_1 = (n2[0] + n2_1_dir_ux * nc["n2_1_extend"],
+                n2[1] + n2_1_dir_uz * nc["n2_1_extend"])
+
+        n5_2 = ((n2[0] + n5[0]) / 2, n5[1])
+        n5_1 = ((n4[0] + n5[0]) / 2, n5[1])
+        n4_2 = ((n5[0] + n4[0]) / 2, n4[1])
+        n4_1 = (n4[0] + nc["neck_left_bulge"], n4[1])
+
+        # Build neck SVG path
+        neck_path = f"M {self._tx(n1[0]):.1f},{self._tz(n1[1]):.1f} "
+        neck_path += f"C {self._tx(n1_1[0]):.1f},{self._tz(n1_1[1]):.1f} "
+        neck_path += f"{self._tx(n2_2[0]):.1f},{self._tz(n2_2[1]):.1f} "
+        neck_path += f"{self._tx(n2[0]):.1f},{self._tz(n2[1]):.1f} "
+        neck_path += f"C {self._tx(n2_1[0]):.1f},{self._tz(n2_1[1]):.1f} "
+        neck_path += f"{self._tx(n5_2[0]):.1f},{self._tz(n5_2[1]):.1f} "
+        neck_path += f"{self._tx(n5[0]):.1f},{self._tz(n5[1]):.1f} "
+        neck_path += f"C {self._tx(n5_1[0]):.1f},{self._tz(n5_1[1]):.1f} "
+        neck_path += f"{self._tx(n4_2[0]):.1f},{self._tz(n4_2[1]):.1f} "
+        neck_path += f"{self._tx(n4[0]):.1f},{self._tz(n4[1]):.1f} "
+        neck_path += f"C {self._tx(n4_1[0]):.1f},{self._tz(n4_1[1]):.1f} "
+        neck_path += f"{self._tx(n1_2[0]):.1f},{self._tz(n1_2[1]):.1f} "
+        neck_path += f"{self._tx(n1[0]):.1f},{self._tz(n1[1]):.1f} Z"
+
+        target.add(dwg.path(d=neck_path, fill='#2F4F4F', fill_opacity=0.08,
+                           stroke='#1C3030', stroke_width=0.6))

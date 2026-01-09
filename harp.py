@@ -168,16 +168,16 @@ def main():
         # harp2.svg - Sharp position (both discs engaged)
         renderer.render(f"{base_output}2.svg", pedal_position="sharp")
 
-        # harp.svg - Normal view with reaction force vectors
-        # Full hardware visible, normal string paths, force vectors overlaid
+        # harp.svg - Normal view with plate/neck outlines
         renderer.render(args.output, pedal_position="flat",
-                       show_force_vectors=True, force_scale=0.05)
+                       show_reference_lines=False,
+                       show_force_vectors=False)
 
         print(f"\nGenerated SVGs:")
         print(f"  {base_output}0.svg - Flat position (strings straight)")
         print(f"  {base_output}1.svg - Natural position (natural disc engaged, string deflected)")
         print(f"  {base_output}2.svg - Sharp position (both discs engaged, string deflected twice)")
-        print(f"  {args.output} - Normal view with reaction force vectors")
+        print(f"  {args.output} - Side view with rear view (Y alignment) and force vectors")
 
 
 if __name__ == '__main__':
