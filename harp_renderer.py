@@ -648,19 +648,19 @@ class HarpRenderer:
             self._draw_arrow(dwg,
                 self._tx(s.x_soundboard_mm), self._tz(s.z_soundboard_mm),
                 sb_fx * force_scale, -sb_fz * force_scale,
-                color=SB_COLOR, width=0.5, head_size=2
+                color=SB_COLOR, width=0.5, head_size=2, opacity=0.25
             )
 
             self._draw_arrow(dwg,
                 self._tx(s.x_flat_mm), self._tz(s.z_flat_mm),
                 pin_fx * force_scale, -pin_fz * force_scale,
-                color=PIN_COLOR, width=0.5, head_size=2
+                color=PIN_COLOR, width=0.5, head_size=2, opacity=0.25
             )
 
             self._draw_arrow(dwg,
                 self._tx(s.tuning_pin.x_mm), self._tz(s.tuning_pin.z_mm),
                 peg_fx * force_scale, -peg_fz * force_scale,
-                color=PEG_COLOR, width=0.5, head_size=2
+                color=PEG_COLOR, width=0.5, head_size=2, opacity=0.25
             )
 
         c1 = self.harp.strings[0]
@@ -716,11 +716,12 @@ class HarpRenderer:
         ))
 
     def _draw_arrow(self, dwg, x: float, y: float, dx: float, dy: float,
-                    color: str = 'black', width: float = 1.0, head_size: float = 4):
+                    color: str = 'black', width: float = 1.0, head_size: float = 4,
+                    opacity: float = 1.0):
         """Draw an arrow from (x,y) with direction (dx,dy)."""
         end_x = x + dx
         end_y = y + dy
-        dwg.add(dwg.line((x, y), (end_x, end_y), stroke=color, stroke_width=width))
+        dwg.add(dwg.line((x, y), (end_x, end_y), stroke=color, stroke_width=width, opacity=opacity))
 
         length = math.sqrt(dx*dx + dy*dy)
         if length > 0:
@@ -733,4 +734,4 @@ class HarpRenderer:
             p2 = (end_x - head_back*ux - head_width*px, end_y - head_back*uy - head_width*py)
 
             points = [(end_x, end_y), p1, p2]
-            dwg.add(dwg.polygon(points, fill=color, stroke=color, stroke_width=0.5))
+            dwg.add(dwg.polygon(points, fill=color, stroke=color, stroke_width=0.5, opacity=opacity))
