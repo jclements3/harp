@@ -102,16 +102,16 @@ def build_groups(data):
             stroke
         ))
 
-        # pin, ndisc, sdisc are mechanism reference markers (thin lines)
+        # peg, pin, ndisc, sdisc tangent markers (1mm vertical lines on right of string)
         marker_edges = []
-        marker_half_width = 5.0  # mm
-        for key in ['pin', 'ndisc', 'sdisc']:
+        marker_half_height = 0.5  # mm (1mm total)
+        for key in ['peg', 'pin', 'ndisc', 'sdisc']:
             m = s.get(key)
             if m:
-                # Create horizontal marker line centered at point
+                # Create vertical marker line at tangent point (right side of string)
                 marker_edges.append(cq.Edge.makeLine(
-                    cq.Vector(m['x'] - marker_half_width, m['y'], 0),
-                    cq.Vector(m['x'] + marker_half_width, m['y'], 0)
+                    cq.Vector(m['x'] + 0.01, m['y'] - marker_half_height, 0),
+                    cq.Vector(m['x'] + 0.01, m['y'] + marker_half_height, 0)
                 ))
 
         if note == 'C':
