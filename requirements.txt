@@ -1,0 +1,15 @@
+# Harp CAD project dependencies
+# Pin versions to ensure reproducibility
+
+# CadQuery with OpenCascade bindings
+# cq_plate.py vendors the SVG export code but still depends on:
+# - cadquery.occ_impl.shapes (Shape, Compound, TOLERANCE)
+# - cadquery.occ_impl.geom (BoundBox)
+# - OCP.* (OpenCascade Python bindings)
+cadquery-ocp==2.4.0
+
+# DXF file support (for reading erand.dxf)
+ezdxf>=1.0.0
+
+# JSON schema validation (optional)
+# jsonschema>=4.0.0
