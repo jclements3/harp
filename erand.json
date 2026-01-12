@@ -168,6 +168,40 @@
           "depth_mm": 8.0,
           "spacing_mm": 7.0
         }
+      },
+      "connecting_links": {
+        "description": "Links between adjacent bell cranks, transfers motion along note chain",
+        "naming": "{note}{oct1}{note}{oct2}l{action} e.g. c1c2ln = C1-C2 natural link",
+        "material": "Brass",
+        "total_count": 84,
+        "bass": {
+          "strings": "1-9",
+          "length_mm": 29.0,
+          "width_mm": 6.0,
+          "thickness_mm": 3.0,
+          "hole_diameter_mm": 2.5
+        },
+        "mid": {
+          "strings": "10-28",
+          "length_mm": 29.0,
+          "width_mm": 5.0,
+          "thickness_mm": 2.5,
+          "hole_diameter_mm": 2.0
+        },
+        "treble": {
+          "strings": "29-38",
+          "length_mm": 29.0,
+          "width_mm": 4.0,
+          "thickness_mm": 2.0,
+          "hole_diameter_mm": 1.5
+        },
+        "high": {
+          "strings": "39-47",
+          "length_mm": 29.0,
+          "width_mm": 3.5,
+          "thickness_mm": 1.5,
+          "hole_diameter_mm": 1.5
+        }
       }
     }
   },

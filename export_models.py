@@ -21,6 +21,7 @@ import cadquery as cq
 
 from disc_assembly import make_disc_assembly, DISC_SPECS
 from bell_crank import make_bell_crank, BELL_CRANK_SPECS
+from connecting_links import make_connecting_link, LINK_SPECS
 
 
 def export_step(solid, filepath):
@@ -102,8 +103,33 @@ def export_bell_crank(register, output_dir, formats=('step', 'stl')):
     return exported
 
 
+def export_connecting_link(register, output_dir, formats=('step', 'stl')):
+    """Export a connecting link to specified formats."""
+    spec = LINK_SPECS[register]
+    link = make_connecting_link(spec)
+
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    exported = []
+
+    if 'step' in formats:
+        step_path = output_dir / f"link_{register}.step"
+        export_step(link, step_path)
+        exported.append(step_path)
+        print(f"  STEP: {step_path}")
+
+    if 'stl' in formats:
+        stl_path = output_dir / f"link_{register}.stl"
+        export_stl(link, stl_path)
+        exported.append(stl_path)
+        print(f"  STL:  {stl_path}")
+
+    return exported
+
+
 def export_all(output_dir=None, formats=('step', 'stl')):
-    """Export all disc assemblies and bell cranks.
+    """Export all disc assemblies, bell cranks, and connecting links.
 
     Args:
         output_dir: Output directory (default: ./exports)
@@ -134,6 +160,14 @@ def export_all(output_dir=None, formats=('step', 'stl')):
     for register in BELL_CRANK_SPECS.keys():
         print(f"  {register.upper()}:")
         exported = export_bell_crank(register, output_dir / "bell_cranks", formats)
+        all_exported.extend(exported)
+    print()
+
+    # Export connecting links
+    print("Connecting Links:")
+    for register in LINK_SPECS.keys():
+        print(f"  {register.upper()}:")
+        exported = export_connecting_link(register, output_dir / "links", formats)
         all_exported.extend(exported)
     print()
 

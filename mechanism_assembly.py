@@ -32,6 +32,7 @@ from cq_plate import plate
 # Import component generators
 from disc_assembly import make_disc_assembly, DISC_SPECS
 from bell_crank import make_bell_crank, BELL_CRANK_SPECS
+from connecting_links import make_connecting_link, LINK_SPECS
 
 
 def make_front_plate_section(width, height, thickness, axle_hole_d):
@@ -216,6 +217,84 @@ def make_assembly_plate(register='bass'):
     return svg
 
 
+def make_bell_crank_chain(register='bass', num_cranks=3):
+    """Create a chain of bell cranks connected by links.
+
+    Shows how motion transfers from one crank to the next via connecting links.
+
+    Args:
+        register: 'bass', 'mid', 'treble', or 'high'
+        num_cranks: Number of bell cranks in chain (2-4)
+
+    Returns:
+        Dict with 'cranks' list and 'links' list
+    """
+    crank_spec = BELL_CRANK_SPECS[register]
+    link_spec = LINK_SPECS[register]
+
+    # Finger gap spacing between strings
+    finger_gap = 29.16  # mm from erand.json
+
+    # Bell crank dimensions
+    arm_length = crank_spec['arm_length']
+
+    cranks = []
+    links = []
+
+    for i in range(num_cranks):
+        # Position each crank along X axis (string direction)
+        x_pos = i * finger_gap
+
+        crank = make_bell_crank(crank_spec)
+        # Rotate so fork points up (+Z) and arm extends in -Y
+        crank = crank.rotate((0, 0, 0), (1, 0, 0), 90)
+        crank = crank.translate((x_pos, 0, 0))
+        cranks.append(crank)
+
+        # Add connecting link between this crank and the next
+        if i < num_cranks - 1:
+            link = make_connecting_link(link_spec)
+            # Position link to connect arm ends of adjacent cranks
+            # Link lies flat in XY plane, spanning between cranks
+            link_x = x_pos + finger_gap / 2
+            link_y = -arm_length  # At end of bell crank arm
+            link = link.translate((link_x, link_y, 0))
+            links.append(link)
+
+    return {
+        'cranks': cranks,
+        'links': links
+    }
+
+
+def make_chain_plate(register='bass', num_cranks=3):
+    """Generate SVG plate showing bell crank chain with links."""
+
+    chain = make_bell_crank_chain(register, num_cranks)
+
+    groups = []
+
+    # Add all cranks (brass color)
+    for crank in chain['cranks']:
+        groups.append((crank, '#cc8844', 0.4))
+
+    # Add all links (slightly different brass)
+    for link in chain['links']:
+        groups.append((link, '#ddaa66', 0.4))
+
+    svg = plate(
+        groups,
+        UL='XZ',   # Side view
+        LL='XY',   # Top view (shows chain layout)
+        UR='ISO',  # Isometric
+        LR='YZ',   # End view
+        grid='light',
+        units='mm'
+    )
+
+    return svg
+
+
 def generate_all_assemblies():
     """Generate assembly views for all registers."""
 
@@ -235,6 +314,23 @@ def generate_all_assemblies():
 
     print()
     print("Assembly shows: disc + front plate + bell crank + back plate + string")
+
+    # Also generate bell crank chain views
+    print()
+    print("=== Bell Crank Chain Views ===")
+    print()
+
+    for register in ['bass', 'mid', 'treble', 'high']:
+        svg = make_chain_plate(register, num_cranks=3)
+
+        output_path = output_dir / f"bell_crank_chain_{register}.svg"
+        output_path.write_text(svg)
+
+        print(f"{register.upper()} chain:")
+        print(f"  Output: {output_path}")
+
+    print()
+    print("Chain shows: 3 bell cranks connected by 2 links")
 
 
 def main():
