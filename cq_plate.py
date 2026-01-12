@@ -101,9 +101,10 @@ def _makeSVGedge(e):
     if points.IsDone():
         point_it = (points.Value(i + 1) for i in range(points.NbPoints()))
         p = next(point_it)
-        cs.write("M{},{} ".format(p.X(), p.Y()))
+        # Use fixed-point notation to avoid scientific notation breaking SVG paths
+        cs.write("M{:.4f},{:.4f} ".format(p.X(), p.Y()))
         for p in point_it:
-            cs.write("L{},{} ".format(p.X(), p.Y()))
+            cs.write("L{:.4f},{:.4f} ".format(p.X(), p.Y()))
 
     return cs.getvalue()
 
@@ -496,9 +497,136 @@ def _transform_paths(paths, scale, offset_x, offset_y, view_type='XY'):
     return result
 
 
+def _generate_zoomed_plate(geometry_groups, zoom_quadrant, zoom_region,
+                           UL, LL, UR, LR, width, height, grid, units, show_axes):
+    """Generate a single zoomed view at full plate size.
+
+    Args:
+        geometry_groups: List of (geom, color, stroke_width) tuples
+        zoom_quadrant: Which quadrant's view to show ('UL', 'LL', 'UR', 'LR')
+        zoom_region: (x_min, y_min, x_max, y_max) in model coords, or None for full view
+        UL, LL, UR, LR: View types for each quadrant
+        width, height: Plate dimensions in mm
+        grid: Grid style
+        units: 'mm' or 'in'
+        show_axes: Show axes indicator
+    """
+    # Map quadrant to view type
+    view_types = {'UL': UL, 'LL': LL, 'UR': UR, 'LR': LR}
+    view_type = view_types.get(zoom_quadrant, 'XY')
+
+    margin = 10
+
+    # Generate SVG data for all geometry groups
+    all_groups_data = []
+    for geom, color, stroke_width in geometry_groups:
+        shape = _get_shape(geom)
+        svg_str = _generate_view_svg(shape, view_type, show_axes=False)
+        paths_data = _extract_paths_and_bounds(svg_str)
+        all_groups_data.append({
+            'visible': paths_data['visible_paths'],
+            'hidden': paths_data['hidden_paths'],
+            'color': color,
+            'stroke_width': stroke_width
+        })
+
+    # Collect all paths to determine bounds
+    all_paths = []
+    for group in all_groups_data:
+        all_paths.extend(group['visible'] + group['hidden'])
+
+    # Apply view-specific coordinate corrections
+    def correct_path(p):
+        if view_type == 'XZ':
+            return _swap_coordinates(p)
+        elif view_type == 'YZ':
+            return _negate_y(p)
+        return p
+
+    corrected_paths = [correct_path(p) for p in all_paths]
+
+    if not corrected_paths:
+        # Empty view
+        return f'''<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="{width}mm" height="{height}mm" viewBox="0 0 {width} {height}">
+</svg>'''
+
+    # Get bounds of all geometry
+    full_bounds = _get_path_bounds(corrected_paths)
+
+    # Use zoom_region if specified, otherwise use full bounds
+    if zoom_region is not None:
+        x_min, y_min, x_max, y_max = zoom_region
+    else:
+        x_min, y_min, x_max, y_max = full_bounds
+
+    region_w = x_max - x_min
+    region_h = y_max - y_min
+
+    if region_w <= 0 or region_h <= 0:
+        region_w = max(region_w, 1)
+        region_h = max(region_h, 1)
+
+    # Calculate scale to fit region in plate with margins
+    available_w = width - 2 * margin
+    available_h = height - 2 * margin
+    scale = min(available_w / region_w, available_h / region_h)
+
+    # Center the view
+    scaled_w = region_w * scale
+    scaled_h = region_h * scale
+    offset_x = margin + (available_w - scaled_w) / 2 - x_min * scale
+    offset_y = margin + (available_h - scaled_h) / 2 - y_min * scale
+
+    # Build SVG
+    svg_parts = []
+    svg_parts.append(f'''<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="{width}mm" height="{height}mm"
+     viewBox="0 0 {width} {height}">
+  <!-- Zoomed view: {zoom_quadrant} ({view_type}) -->
+  <!-- Region: x=[{x_min:.1f}, {x_max:.1f}] y=[{y_min:.1f}, {y_max:.1f}] -->
+  <g transform="translate(0,{height}) scale(1,-1)">
+''')
+
+    if grid:
+        grid_svg = _render_grid(width, height, grid, units)
+        svg_parts.append(f'    <!-- Grid -->\n    {grid_svg}\n')
+
+    # Render geometry
+    svg_parts.append(f'    <g>')
+
+    for group in all_groups_data:
+        color = group['color']
+        stroke_width = group.get('stroke_width', 0.5) * scale
+
+        # Transform paths with coordinate correction
+        hidden = _transform_paths(group['hidden'], scale, offset_x, offset_y, view_type=view_type)
+        visible = _transform_paths(group['visible'], scale, offset_x, offset_y, view_type=view_type)
+
+        if hidden:
+            hidden_sw = stroke_width * 0.6
+            svg_parts.append(f'      <g stroke="{color}" stroke-opacity="0.4" stroke-dasharray="2,2" stroke-width="{hidden_sw}" fill="none">')
+            for p in hidden:
+                svg_parts.append(f'        <path d="{p}"/>')
+            svg_parts.append(f'      </g>')
+
+        if visible:
+            svg_parts.append(f'      <g stroke="{color}" stroke-width="{stroke_width}" fill="none">')
+            for p in visible:
+                svg_parts.append(f'        <path d="{p}"/>')
+            svg_parts.append(f'      </g>')
+
+    svg_parts.append(f'    </g>')
+    svg_parts.append('  </g>')
+    svg_parts.append('</svg>')
+
+    return '\n'.join(svg_parts)
+
+
 def plate(workplane, UL='XZ', LL='XY', UR='ISO', LR='YZ',
           width=297, height=420, grid=None, units='mm', show_axes=False,
-          colors=None):
+          colors=None, zoom=None, zoom_region=None):
     """
     Generate a multi-view mechanical drawing plate.
 
@@ -518,6 +646,8 @@ def plate(workplane, UL='XZ', LL='XY', UR='ISO', LR='YZ',
         grid: Engineering grid style (None, 'light', 'medium', 'heavy')
         units: 'mm' (metric) or 'in' (imperial) - affects grid spacing
         show_axes: Show axis indicator on ISO view (default False)
+        zoom: Quadrant to zoom into ('UL', 'LL', 'UR', 'LR') - shows single view full size
+        zoom_region: (x_min, y_min, x_max, y_max) in model coords to focus on within zoom view
 
     Returns:
         SVG string with origin at lower-left corner
@@ -534,6 +664,14 @@ def plate(workplane, UL='XZ', LL='XY', UR='ISO', LR='YZ',
         geometry_groups = [(workplane, '#000000', 0.5)]
 
     shape = _get_shape(geometry_groups[0][0])
+
+    # Handle zoom mode - single view at full size
+    if zoom is not None:
+        return _generate_zoomed_plate(
+            geometry_groups, zoom, zoom_region,
+            UL=UL, LL=LL, UR=UR, LR=LR,
+            width=width, height=height, grid=grid, units=units, show_axes=show_axes
+        )
 
     quadrant_w = width / 2
     quadrant_h = height / 2
@@ -581,7 +719,8 @@ def plate(workplane, UL='XZ', LL='XY', UR='ISO', LR='YZ',
             return [_negate_y(p) for p in paths]
         return paths
 
-    max_extent = 0
+    # Calculate bounds for each orthographic view
+    view_bounds = {}
     for quad in ortho_views:
         data = view_data[quad]
         all_paths = []
@@ -589,12 +728,34 @@ def plate(workplane, UL='XZ', LL='XY', UR='ISO', LR='YZ',
             all_paths.extend(group['visible'] + group['hidden'])
         if all_paths:
             corrected = correct_paths_for_view(all_paths, data['view_type'])
-            bounds = _get_path_bounds(corrected)
-            extent = max(bounds[2] - bounds[0], bounds[3] - bounds[1])
-            max_extent = max(max_extent, extent)
+            view_bounds[quad] = _get_path_bounds(corrected)
 
-    available_size = min(quadrant_w, quadrant_h) - 2 * margin
-    ortho_scale = available_size / max_extent if max_extent > 0 else 1.0
+    # 3rd angle projection alignment:
+    # - UL (Top/XZ) and LL (Front/XY) share X axis
+    # - LL (Front/XY) and LR (Side/YZ) share Y axis
+    # Calculate shared extents for proper alignment
+
+    # X extent: max of Top and Front X ranges
+    x_extent = 0
+    for quad in ['UL', 'LL']:
+        if quad in view_bounds:
+            b = view_bounds[quad]
+            x_extent = max(x_extent, b[2] - b[0])
+
+    # Y extent: max of Front and Side Y ranges
+    y_extent = 0
+    for quad in ['LL', 'LR']:
+        if quad in view_bounds:
+            b = view_bounds[quad]
+            y_extent = max(y_extent, b[3] - b[1])
+
+    # Calculate scales to fit with minimum margins
+    margin = 2  # Reduced margin for tighter fit
+    x_scale = (quadrant_w - 2 * margin) / x_extent if x_extent > 0 else 1.0
+    y_scale = (quadrant_h - 2 * margin) / y_extent if y_extent > 0 else 1.0
+
+    # Use uniform scale to maintain proportions (smaller of the two)
+    ortho_scale = min(x_scale, y_scale)
 
     svg_parts = []
 
@@ -614,6 +775,24 @@ def plate(workplane, UL='XZ', LL='XY', UR='ISO', LR='YZ',
     <line x1="{quadrant_w}" y1="0" x2="{quadrant_w}" y2="{height}" stroke="#cccccc" stroke-width="0.5"/>
     <line x1="0" y1="{quadrant_h}" x2="{width}" y2="{quadrant_h}" stroke="#cccccc" stroke-width="0.5"/>
 ''')
+
+    # Calculate aligned offsets for orthographic views
+    # UL (Top) and LL (Front) align on right edge (X)
+    # LL (Front) and LR (Side) align on top edge (Y)
+
+    # Find the X range union for left column (UL, LL)
+    left_x_min = min(view_bounds.get(q, (0,0,0,0))[0] for q in ['UL', 'LL'] if q in view_bounds) if any(q in view_bounds for q in ['UL', 'LL']) else 0
+    left_x_max = max(view_bounds.get(q, (0,0,0,0))[2] for q in ['UL', 'LL'] if q in view_bounds) if any(q in view_bounds for q in ['UL', 'LL']) else 0
+
+    # Find the Y range union for bottom row (LL, LR)
+    bottom_y_min = min(view_bounds.get(q, (0,0,0,0))[1] for q in ['LL', 'LR'] if q in view_bounds) if any(q in view_bounds for q in ['LL', 'LR']) else 0
+    bottom_y_max = max(view_bounds.get(q, (0,0,0,0))[3] for q in ['LL', 'LR'] if q in view_bounds) if any(q in view_bounds for q in ['LL', 'LR']) else 0
+
+    # Common X offset for left column (aligns UL and LL)
+    left_col_offset_x = margin - left_x_min * ortho_scale
+
+    # Common Y offset for bottom row (aligns LL and LR)
+    bottom_row_offset_y = margin - bottom_y_min * ortho_scale
 
     for quad, data in view_data.items():
         view_type = data['view_type']
@@ -643,20 +822,27 @@ def plate(workplane, UL='XZ', LL='XY', UR='ISO', LR='YZ',
         if view_type == 'ISO':
             scale = min((quadrant_w - 2*margin) / path_w,
                        (quadrant_h - 2*margin) / path_h) if path_w > 0 and path_h > 0 else 1.0
+            offset_x = quad_x + (quadrant_w - path_w * scale) / 2 - bounds[0] * scale
+            offset_y = quad_y + (quadrant_h - path_h * scale) / 2 - bounds[1] * scale
         else:
             scale = ortho_scale
+            # Aligned offsets based on quadrant position
+            if quad in ['UL', 'LL']:  # Left column - use common X offset
+                offset_x = quad_x + left_col_offset_x
+            else:  # Right column
+                offset_x = quad_x + margin - bounds[0] * scale
 
-        scaled_w = path_w * scale
-        scaled_h = path_h * scale
-        offset_x = quad_x + (quadrant_w - scaled_w) / 2 - bounds[0] * scale
-        offset_y = quad_y + (quadrant_h - scaled_h) / 2 - bounds[1] * scale
+            if quad in ['LL', 'LR']:  # Bottom row - use common Y offset
+                offset_y = quad_y + bottom_row_offset_y
+            else:  # Top row
+                offset_y = quad_y + margin - bounds[1] * scale
 
         svg_parts.append(f'    <!-- {quad} view: {view_type} -->')
         svg_parts.append(f'    <g>')
 
         for group in data['groups']:
             color = group['color']
-            stroke_width = group.get('stroke_width', 0.5)
+            stroke_width = group.get('stroke_width', 0.5) * scale  # Scale stroke with geometry
             hidden = _transform_paths(group['hidden'], scale, offset_x, offset_y, view_type=view_type)
             visible = _transform_paths(group['visible'], scale, offset_x, offset_y, view_type=view_type)
 
