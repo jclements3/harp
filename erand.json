@@ -138,9 +138,10 @@
       },
       "back_plate": {
         "thickness_mm": 4,
-        "gap_from_front_mm": 9,
+        "gap_from_front_mm": 12,
         "engagement_mm": 4,
-        "material": "316 Stainless Steel"
+        "material": "316 Stainless Steel",
+        "note": "Gap accommodates 7 link rows (1mm each) + spacing"
       },
       "clearance_mm": 1,
       "return_spring": {
@@ -160,8 +161,10 @@
         "material": "316 Stainless Steel",
         "thread": "M3",
         "pedal_arrangement": {
+          "order_plus_z_to_minus_z": ["D", "C", "B", "gap", "E", "F", "G", "A"],
           "left_foot": ["D", "C", "B"],
-          "right_foot": ["E", "F", "G", "A"]
+          "right_foot": ["E", "F", "G", "A"],
+          "crossover": "Rods cross Z axis between pedals and link rows"
         },
         "neck_channel": {
           "width_mm": 5.0,
@@ -170,36 +173,40 @@
         }
       },
       "connecting_links": {
-        "description": "Links between adjacent bell cranks, transfers motion along note chain",
+        "description": "Links between adjacent bell cranks, transfers motion along note chain. 7 rows stacked in Z between plates. Row order matches pedal arrangement with crossover.",
         "naming": "{note}{oct1}{note}{oct2}l{action} e.g. c1c2ln = C1-C2 natural link",
-        "material": "Brass",
+        "material": "316 Stainless Steel",
         "total_count": 84,
+        "rows": 7,
+        "row_order_front_to_back": ["D", "C", "B", "E", "F", "G", "A"],
+        "row_spacing_mm": 0.6,
+        "note": "Pedals +Z to -Z: D C B (gap) E F G A. Rods cross over Z axis.",
         "bass": {
           "strings": "1-9",
           "length_mm": 29.0,
-          "width_mm": 6.0,
-          "thickness_mm": 3.0,
+          "width_mm": 5.0,
+          "thickness_mm": 1.0,
           "hole_diameter_mm": 2.5
         },
         "mid": {
           "strings": "10-28",
           "length_mm": 29.0,
-          "width_mm": 5.0,
-          "thickness_mm": 2.5,
+          "width_mm": 4.5,
+          "thickness_mm": 1.0,
           "hole_diameter_mm": 2.0
         },
         "treble": {
           "strings": "29-38",
           "length_mm": 29.0,
           "width_mm": 4.0,
-          "thickness_mm": 2.0,
+          "thickness_mm": 1.0,
           "hole_diameter_mm": 1.5
         },
         "high": {
           "strings": "39-47",
           "length_mm": 29.0,
           "width_mm": 3.5,
-          "thickness_mm": 1.5,
+          "thickness_mm": 1.0,
           "hole_diameter_mm": 1.5
         }
       }

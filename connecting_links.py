@@ -33,29 +33,31 @@ from cq_plate import plate
 
 
 # Link specifications by register
-# Link length is approximately finger_gap (29.16mm) but adjusted for bell crank geometry
+# Material: 316 Stainless Steel sheet (1mm)
+# Link length is approximately finger_gap (29.16mm)
+# 7 rows of links (A-G) stacked in Z between front and back plates
 LINK_SPECS = {
     'bass': {
         'strings': '1-9',
         'length': 29.0,           # mm - center-to-center of pivot holes
-        'width': 6.0,             # mm - bar width
-        'thickness': 3.0,         # mm - bar thickness
-        'hole_diameter': 2.5,     # mm - pivot hole (matches action_rod_hole)
-        'end_radius': 4.0,        # mm - rounded end radius
+        'width': 5.0,             # mm - bar width
+        'thickness': 1.0,         # mm - 1mm stainless sheet
+        'hole_diameter': 2.5,     # mm - pivot hole
+        'end_radius': 3.5,        # mm - rounded end radius
     },
     'mid': {
         'strings': '10-28',
         'length': 29.0,
-        'width': 5.0,
-        'thickness': 2.5,
+        'width': 4.5,
+        'thickness': 1.0,
         'hole_diameter': 2.0,
-        'end_radius': 3.5,
+        'end_radius': 3.0,
     },
     'treble': {
         'strings': '29-38',
         'length': 29.0,
         'width': 4.0,
-        'thickness': 2.0,
+        'thickness': 1.0,
         'hole_diameter': 1.5,
         'end_radius': 2.5,
     },
@@ -63,14 +65,17 @@ LINK_SPECS = {
         'strings': '39-47',
         'length': 29.0,
         'width': 3.5,
-        'thickness': 1.5,
+        'thickness': 1.0,
         'hole_diameter': 1.5,
         'end_radius': 2.0,
     },
 }
 
 # All link names
-NOTES = ['c', 'd', 'e', 'f', 'g', 'a', 'b']
+# Row order matches pedal arrangement: D C B (gap) E F G A from +Z to -Z
+# Rods cross over Z axis, so row order front plate to back plate is:
+ROW_ORDER = ['d', 'c', 'b', 'e', 'f', 'g', 'a']  # Front plate to back plate
+NOTES = ['c', 'd', 'e', 'f', 'g', 'a', 'b']  # Alphabetical for iteration
 OCTAVE_PAIRS = [(1, 2), (2, 3), (3, 4), (4, 5), (5, 6), (6, 7)]
 ACTIONS = ['n', 's']  # natural, sharp
 
@@ -121,6 +126,31 @@ def get_register_for_link(note, octave):
     note_index = NOTES.index(note)
     string_num = (octave - 1) * 7 + note_index + 1
     return get_register_for_string(string_num)
+
+
+def get_row_z_offset(note):
+    """Get Z offset for a note's link row relative to front plate back face.
+
+    Returns negative Z value (going toward back plate).
+    Row order: D, C, B, E, F, G, A (front to back)
+    """
+    row_index = ROW_ORDER.index(note.lower())
+    thickness = 1.0  # mm - all links are 1mm thick
+    spacing = 0.6    # mm - between rows
+
+    # First row starts with small clearance from front plate
+    clearance = 0.5
+    z_offset = -(clearance + row_index * (thickness + spacing) + thickness / 2)
+
+    return z_offset
+
+
+def get_row_positions():
+    """Get Z positions for all 7 link rows.
+
+    Returns dict mapping note to Z offset from front plate back face.
+    """
+    return {note: get_row_z_offset(note) for note in ROW_ORDER}
 
 
 def make_connecting_link(spec):
@@ -253,11 +283,25 @@ def generate_link_report():
     print("=== Complete Link Inventory ===")
     print()
 
+    # Show row order and Z positions
+    print("Row order (front plate to back plate):")
+    print("  Pedals +Z to -Z: D C B (gap) E F G A")
+    print("  Rods cross over Z axis")
+    print()
+    positions = get_row_positions()
+    print("  Row   Z offset (from front plate)")
+    print("  ---   --------------------------")
+    for note in ROW_ORDER:
+        z = positions[note]
+        print(f"  {note.upper()}     {z:.1f}mm")
+    print()
+
     all_links = get_all_link_names()
 
-    # Group by note
-    for note in NOTES:
-        print(f"{note.upper()} Links:")
+    # Group by note in row order
+    print("Links by row (front to back):")
+    for note in ROW_ORDER:
+        print(f"{note.upper()} Links (z={positions[note]:.1f}mm):")
         for action in ACTIONS:
             action_name = "Natural" if action == 'n' else "Sharp"
             links = [n for n in all_links if n.startswith(note) and n.endswith(action)]
