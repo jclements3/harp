@@ -68,56 +68,90 @@
     },
     "discs": {
       "type": "elliptical",
-      "description": "Elliptical disc body with dome-tip prongs at major axis ends. Scoop groove for string. major_radius = sphere_radius + prong_diameter",
+      "description": "Elliptical disc body with dome-tip prongs at major axis ends. Scoop groove for string. major_radius = sphere_radius + prong_diameter. N and S discs staggered in Z for treble strings where spacing is tight.",
       "natural_rotation_deg": 45.0,
       "sharp_rotation_deg": 90.0,
+      "z_stagger_mm": 4.0,
+      "z_stagger_note": "N disc at z=0, S disc at z=-4mm (behind). Required from ~C5 upward where N-S distance < 2*major_radius",
       "bass": {
         "strings": "1-9",
-        "sphere_radius_mm": 23,
+        "note": "Optimized sphere_radius based on vibration amplitude at disc position (33.6% of max)",
+        "sphere_radius_mm": 4.5,
         "thickness_mm": 3.0,
         "prong_diameter_mm": 3.0,
-        "prong_length_mm": 23.0,
-        "major_radius_mm": 26.0,
+        "prong_length_mm": 8.0,
+        "major_radius_mm": 7.5,
         "minor_radius_mm": 5.0,
         "scoop_radius_mm": 1.0,
         "axle_diameter_mm": 4.0,
-        "axle_length_mm": 20.0
+        "axle_length_mm": 20.0,
+        "prongs": 2
       },
       "mid": {
         "strings": "10-28",
-        "sphere_radius_mm": 20,
+        "note": "Optimized sphere_radius based on vibration amplitude at disc position",
+        "sphere_radius_mm": 3.0,
         "thickness_mm": 2.5,
         "prong_diameter_mm": 2.5,
-        "prong_length_mm": 20.0,
-        "major_radius_mm": 22.5,
+        "prong_length_mm": 6.0,
+        "major_radius_mm": 5.5,
         "minor_radius_mm": 4.0,
         "scoop_radius_mm": 0.8,
         "axle_diameter_mm": 3.0,
-        "axle_length_mm": 20.0
+        "axle_length_mm": 20.0,
+        "prongs": 2
       },
       "treble": {
         "strings": "29-38",
-        "sphere_radius_mm": 6,
+        "note": "Optimized sphere_radius based on vibration amplitude at disc position",
+        "sphere_radius_mm": 2.0,
         "thickness_mm": 2.0,
         "prong_diameter_mm": 2.0,
-        "prong_length_mm": 6.0,
-        "major_radius_mm": 8.0,
+        "prong_length_mm": 5.0,
+        "major_radius_mm": 4.0,
         "minor_radius_mm": 3.0,
         "scoop_radius_mm": 0.5,
         "axle_diameter_mm": 2.0,
-        "axle_length_mm": 20.0
+        "axle_length_mm": 20.0,
+        "prongs": 2
       },
       "high": {
         "strings": "39-47",
-        "sphere_radius_mm": 3,
+        "note": "Dual-position discs - single disc handles both N and S. major_radius is per-string (prong_reach + prong_d)",
+        "design": "dual_position",
+        "sphere_radius_mm": 1.5,
         "thickness_mm": 1.5,
         "prong_diameter_mm": 1.5,
-        "prong_length_mm": 3.0,
-        "major_radius_mm": 4.5,
+        "prong_length_mm": 4.0,
+        "major_radius_mm": 3.0,
+        "minor_radius_mm": 2.0,
+        "scoop_radius_mm": 0.4,
+        "axle_diameter_mm": 1.5,
+        "axle_length_mm": 20.0,
+        "prongs": 2
+      },
+      "dual_position": {
+        "description": "Single disc handles both natural and sharp positions. CW rotation engages natural, CCW engages sharp. Used only where N-S distance < 2×major_radius.",
+        "strings": "39-47",
+        "prong_reach_note": "Prong reach = (N-S distance) / 2, calculated per-string from vibrating length",
+        "prong_diameter_mm": 1.5,
+        "prong_length_mm": 4.0,
+        "disc_thickness_mm": 1.5,
         "minor_radius_mm": 2.0,
         "scoop_radius_mm": 0.4,
         "axle_diameter_mm": 1.5,
         "axle_length_mm": 20.0
+      },
+      "summary": {
+        "total_discs": 85,
+        "breakdown": "38 N + 38 S (strings 1-38) + 9 dual-position (strings 39-47)",
+        "optimization": "sphere_radius based on actual vibration at disc position (33.6% of max amplitude)",
+        "scoop_position": "Prong scoops positioned at z=0 (string plane)",
+        "collision_prevention": {
+          "strings_1_38": "Optimized disc sizes provide adequate N-S clearance in flat position",
+          "strings_39_47": "Dual-position (single disc per string)",
+          "adjacent_strings": "Finger gap (29.16mm) exceeds max disc pair width"
+        }
       }
     },
     "constants": {
@@ -210,6 +244,37 @@
           "hole_diameter_mm": 1.5
         }
       }
+    },
+    "base": {
+      "description": "Ergonomic parallel pedal base with bell cranks",
+      "width_mm": 440,
+      "depth_mm": 200,
+      "height_mm": 50,
+      "wall_thickness_mm": 10,
+      "material": "Maple",
+      "pillar": {
+        "x_mm": 220,
+        "y_mm": 180,
+        "diameter_mm": 60
+      },
+      "pedals": {
+        "spacing_mm": 60,
+        "gap_mm": 80,
+        "width_mm": 25,
+        "length_mm": 100,
+        "thickness_mm": 8,
+        "positions": {
+          "D": {"x_mm": 30, "foot": "left"},
+          "C": {"x_mm": 90, "foot": "left"},
+          "B": {"x_mm": 150, "foot": "left"},
+          "E": {"x_mm": 230, "foot": "right"},
+          "F": {"x_mm": 290, "foot": "right"},
+          "G": {"x_mm": 350, "foot": "right"},
+          "A": {"x_mm": 410, "foot": "right"}
+        }
+      },
+      "bell_crank_y_mm": 120,
+      "rod_diameter_mm": 4
     }
   },
   "strings": [

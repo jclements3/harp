@@ -16,7 +16,11 @@ from pathlib import Path
 
 import cadquery as cq
 from cq_plate import plate
-from disc_assembly import make_disc_assembly, DISC_SPECS
+from disc_assembly import (
+    make_disc_assembly, DISC_SPECS,
+    make_dual_position_disc, DUAL_POSITION_SPECS,
+    get_scoop_z_offset, get_dual_scoop_z_offset
+)
 
 
 # =============================================================================
@@ -289,6 +293,7 @@ def get_disc_spec_for_string(string_num):
     """Get the disc spec dict for a string number.
 
     Maps string number to bass/mid/treble/high register.
+    Optimized boundaries based on collision analysis.
     """
     if string_num <= 9:
         return DISC_SPECS['bass']
@@ -303,7 +308,7 @@ def get_disc_spec_for_string(string_num):
 def make_positioned_disc(cx, cy, rotation_deg, string_num):
     """Create an elliptical disc assembly positioned for a string.
 
-    The disc is positioned so prong tips are at z=0 (string level).
+    The disc is positioned so the prong SCOOP is at z=0 (string level).
 
     Args:
         cx, cy: Position of disc center on string (at *n or *s position)
@@ -318,21 +323,46 @@ def make_positioned_disc(cx, cy, rotation_deg, string_num):
     # Create disc assembly (without engagement pin for clean rendering)
     disc = make_disc_assembly(spec, include_engagement_pin=False)
 
-    # The disc assembly is built with:
-    # - Disc centered at z=0 (from -disc_t/2 to +disc_t/2)
-    # - Prongs extending from disc front face (+Z direction)
-    # - Prong tips at z = disc_t/2 + prong_length
-    # - Axle extending from disc back face (-Z direction)
-    #
-    # We need to translate so prong tips are at z=0 (string level)
-    disc_t = spec['disc_thickness']
-    prong_l = spec['prong_length']
-    z_offset = -(disc_t / 2 + prong_l)
+    # Position so scoop groove is at z=0 (where string sits)
+    z_offset = get_scoop_z_offset(spec)
 
     # Apply rotation around Z axis (disc orientation)
     disc = disc.rotate((0, 0, 0), (0, 0, 1), rotation_deg)
 
     # Position at string location
+    disc = disc.translate((cx, cy, z_offset))
+
+    return disc
+
+
+def make_positioned_dual_disc(cx, cy, rotation_deg, prong_reach, string_num):
+    """Create a dual-position disc positioned at the N-S midpoint.
+
+    This disc handles both natural and sharp positions with a single disc.
+    The disc is centered between N and S, with prongs reaching to each.
+    Scoop grooves are positioned at z=0.
+
+    Args:
+        cx, cy: Position of disc center (midpoint between N and S)
+        rotation_deg: Rotation angle around Z axis
+        prong_reach: Distance from disc center to prong center (N-S distance / 2)
+        string_num: String number to determine disc specs
+
+    Returns:
+        CadQuery solid of positioned dual-position disc
+    """
+    spec = DUAL_POSITION_SPECS['high']
+
+    # Create dual-position disc (without engagement pin for clean rendering)
+    disc = make_dual_position_disc(prong_reach, spec, include_engagement_pin=False)
+
+    # Position so scoop groove is at z=0
+    z_offset = get_dual_scoop_z_offset(spec)
+
+    # Apply rotation around Z axis
+    disc = disc.rotate((0, 0, 0), (0, 0, 1), rotation_deg)
+
+    # Position at N-S midpoint
     disc = disc.translate((cx, cy, z_offset))
 
     return disc
@@ -517,14 +547,16 @@ def build_groups(computed):
     # Collect 3D solid models
     peg_solids = []
     pin_solids = []
-    ndisc_solids = []
-    sdisc_solids = []
+    ndisc_solids = []  # Separate N discs for strings 1-41
+    sdisc_solids = []  # Separate S discs for strings 1-41
+    dual_disc_solids = []  # Combined N+S discs for strings 42-47
 
     peg_height = 30
     pin_height = 15
 
     for s in strings:
         string_d = s['diameter']
+        string_num = s['num']
 
         # Tuning pegs
         peg = s.get('peg')
@@ -544,25 +576,48 @@ def build_groups(computed):
             )
             pin_solids.append(pin_solid)
 
-        # Natural discs - using new elliptical disc design
+        # Discs: use dual-position for strings 42-47, separate for 1-41
         ndisc = s.get('ndisc')
-        if ndisc:
-            ndisc_solid = make_positioned_disc(
-                ndisc['x'], ndisc['y'],
-                ndisc.get('rotation_deg', 45.0),  # Natural position
-                s['num']
-            )
-            ndisc_solids.append(ndisc_solid)
-
-        # Sharp discs - using new elliptical disc design
         sdisc = s.get('sdisc')
-        if sdisc:
-            sdisc_solid = make_positioned_disc(
-                sdisc['x'], sdisc['y'],
-                sdisc.get('rotation_deg', 90.0),  # Sharp position
-                s['num']
-            )
-            sdisc_solids.append(sdisc_solid)
+
+        if string_num >= 39:
+            # Dual-position disc for high register (strings 39-47)
+            if ndisc and sdisc:
+                # Calculate midpoint between N and S positions
+                mid_x = (ndisc['x'] + sdisc['x']) / 2
+                mid_y = (ndisc['y'] + sdisc['y']) / 2
+
+                # Calculate prong reach from N-S distance
+                ns_distance = math.sqrt(
+                    (ndisc['x'] - sdisc['x'])**2 +
+                    (ndisc['y'] - sdisc['y'])**2
+                )
+                prong_reach = ns_distance / 2
+
+                dual_disc = make_positioned_dual_disc(
+                    mid_x, mid_y,
+                    rotation_deg=45.0,  # Show in natural position
+                    prong_reach=prong_reach,
+                    string_num=string_num
+                )
+                dual_disc_solids.append(dual_disc)
+        else:
+            # Separate N and S discs for bass/mid/treble (strings 1-38)
+            if ndisc:
+                ndisc_solid = make_positioned_disc(
+                    ndisc['x'], ndisc['y'],
+                    ndisc.get('rotation_deg', 45.0),  # Natural position
+                    string_num
+                )
+                ndisc_solids.append(ndisc_solid)
+
+            if sdisc:
+                sdisc_solid = make_positioned_disc(
+                    sdisc['x'], sdisc['y'],
+                    sdisc.get('rotation_deg', 90.0),  # Sharp position
+                    string_num
+                )
+                sdisc_solids.append(sdisc_solid)
 
     # Union solids by type
     if peg_solids:
@@ -588,6 +643,12 @@ def build_groups(computed):
         for d in sdisc_solids[1:]:
             all_sdiscs = all_sdiscs.union(d)
         groups.append((all_sdiscs, '#0066ff', 0.2))
+
+    if dual_disc_solids:
+        all_dual_discs = dual_disc_solids[0]
+        for d in dual_disc_solids[1:]:
+            all_dual_discs = all_dual_discs.union(d)
+        groups.append((all_dual_discs, '#00aa88', 0.3))  # Teal for dual-position
 
     # Build strings as cylindrical wires
     for s in strings:
