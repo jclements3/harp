@@ -42,7 +42,7 @@ def compute_sp(config):
     length = math.sqrt(dx*dx + dy*dy)
     ux, uy = dx/length, dy/length
 
-    extension = 2 * finger_gap
+    extension = 1 * finger_gap  # 1 finger gap beyond c1b for pillar
     start = (c1b['x'] - ux * extension, c1b['y'] - uy * extension)
     end = (g7b['x'] + ux * extension, g7b['y'] + uy * extension)
 
@@ -502,7 +502,8 @@ def make_base_2d(config, sp):
 
     # Base box - floor level below c1b
     base_y = c1b_y - 150
-    x_left = sp_start_x - base_cfg['pillar']['diameter_mm']  # Pillar side
+    pillar_x_r = base_cfg['pillar']['x_radius_mm']
+    x_left = sp_start_x - 2 * pillar_x_r  # Pillar side (pillar right edge at sp_start)
     x_right = x_left + depth  # Player side
     y_bottom = base_y
     y_top = base_y + height
@@ -559,26 +560,81 @@ def make_base_2d(config, sp):
                       .close())
         wires.append((notch_wire, '#2F4F4F', 0.3))
 
-    # Pillar - touches sp start, extends up to c1s (sharp disc of lowest string)
+    # Pillar outline (XY view shows X dimension of ellipse)
+    # Elliptical pillar: long axis along Z, short axis along X
     c1_vib_length = config['strings'][0]['vib_length']
     semitone_ratio = config['physics']['semitone_ratio']
     c1s_y = c1b_y + c1_vib_length / (semitone_ratio ** 2)
 
-    pillar_d = base_cfg['pillar']['diameter_mm']
+    pillar_cfg = base_cfg['pillar']
+    pillar_x_r = pillar_cfg['x_radius_mm']  # Short axis (X direction)
     pillar_x_right = sp_start_x  # Touch soundboard
-    pillar_x_left = pillar_x_right - pillar_d
+    pillar_x_left = pillar_x_right - 2 * pillar_x_r
     pillar_y_bottom = y_top
     pillar_y_top = c1s_y + 20  # Extend slightly above c1s for neck
 
+    # In XY view, ellipse appears as rectangle (X dimension)
     pillar_wire = (cq.Workplane("XY")
                    .moveTo(pillar_x_left, pillar_y_bottom)
                    .lineTo(pillar_x_right, pillar_y_bottom)
                    .lineTo(pillar_x_right, pillar_y_top)
                    .lineTo(pillar_x_left, pillar_y_top)
                    .close())
-    wires.append((pillar_wire, '#8B4513', 0.8))
+    wires.append((pillar_wire, '#333333', 0.8))  # Dark gray for carbon fiber
 
     return wires
+
+
+def make_pillar_3d(config, sp):
+    """Create 3D elliptical pillar with rectangular rod cutout.
+
+    Pillar is an ellipse extruded along Y axis:
+    - Long axis along Z (z_radius_mm)
+    - Short axis along X (x_radius_mm)
+    - Rectangular cutout for action rods
+    """
+    base_cfg = config['hardware']['base']
+    pillar_cfg = base_cfg['pillar']
+
+    x_r = pillar_cfg['x_radius_mm']
+    z_r = pillar_cfg['z_radius_mm']
+    cutout = pillar_cfg['rod_cutout']
+    cutout_x = cutout['x_mm']
+    cutout_z = cutout['z_mm']
+
+    # Pillar position
+    sp_start_x = sp['start'][0]
+    c1b_y = sp['c1b'][1]
+    base_y = c1b_y - 150
+    base_height = base_cfg['height_mm']
+
+    c1_vib_length = config['strings'][0]['vib_length']
+    semitone_ratio = config['physics']['semitone_ratio']
+    c1s_y = c1b_y + c1_vib_length / (semitone_ratio ** 2)
+
+    pillar_y_bottom = base_y + base_height
+    pillar_y_top = c1s_y + 20
+    pillar_height = pillar_y_top - pillar_y_bottom
+
+    # Pillar center X: right edge touches soundboard at sp_start_x
+    pillar_cx = sp_start_x - x_r
+
+    # Create ellipse in XZ plane, extrude along Y
+    pillar = (cq.Workplane("XZ")
+              .ellipse(x_r, z_r)
+              .extrude(pillar_height))
+
+    # Rectangular cutout for rods (centered in ellipse)
+    cutout_solid = (cq.Workplane("XZ")
+                    .rect(cutout_x, cutout_z)
+                    .extrude(pillar_height))
+
+    pillar = pillar.cut(cutout_solid)
+
+    # Position pillar
+    pillar = pillar.translate((pillar_cx, pillar_y_bottom, 0))
+
+    return pillar
 
 
 def make_wire_segment(x1, y1, z1, x2, y2, z2, diameter):
@@ -644,6 +700,10 @@ def build_groups(computed, config=None):
     if config and 'hardware' in config and 'base' in config['hardware']:
         base_wires = make_base_2d(config, sp)
         groups.extend(base_wires)
+
+        # 3D elliptical pillar with rod cutout
+        pillar_solid = make_pillar_3d(config, sp)
+        groups.append((pillar_solid, '#333333', 0.5))  # Dark gray carbon fiber
 
     # Collect 3D solid models
     peg_solids = []
