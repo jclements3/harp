@@ -485,6 +485,102 @@ def make_flat_pin(cx, cy, cz, pin_diameter, string_diameter, height):
     return pin
 
 
+def make_base_2d(config, sp):
+    """Create 2D outlines of the pedal base in XY plane.
+
+    Returns list of (wire, color, stroke_width) tuples.
+    """
+    base_cfg = config['hardware']['base']
+
+    width = base_cfg['width_mm']   # Pedal arrangement (along Z, not visible in XY)
+    depth = base_cfg['depth_mm']   # Front-to-back (along X)
+    height = base_cfg['height_mm'] # Vertical (along Y)
+
+    # Position: pillar touches sp start, base extends in +X toward player
+    sp_start_x = sp['start'][0]
+    c1b_y = sp['c1b'][1]
+
+    # Base box - floor level below c1b
+    base_y = c1b_y - 150
+    x_left = sp_start_x - base_cfg['pillar']['diameter_mm']  # Pillar side
+    x_right = x_left + depth  # Player side
+    y_bottom = base_y
+    y_top = base_y + height
+
+    wires = []
+
+    # Base outline
+    base_wire = (cq.Workplane("XY")
+                 .moveTo(x_left, y_bottom)
+                 .lineTo(x_right, y_bottom)
+                 .lineTo(x_right, y_top)
+                 .lineTo(x_left, y_top)
+                 .close())
+    wires.append((base_wire, '#8B4513', 0.8))
+
+    # Pedal - comes through base, extends in +X
+    pedal_cfg = base_cfg['pedals']
+    pedal_l = pedal_cfg['length_mm']
+    pedal_t = pedal_cfg['thickness_mm']
+
+    pivot_x = x_right - 20
+    pivot_y = y_bottom + height * 0.6
+
+    # Pedal in natural position (slight upward angle)
+    pedal_angle = 10
+    pedal_end_x = pivot_x + pedal_l * math.cos(math.radians(pedal_angle))
+    pedal_end_y = pivot_y + pedal_l * math.sin(math.radians(pedal_angle))
+
+    pedal_wire = (cq.Workplane("XY")
+                  .moveTo(pivot_x, pivot_y - pedal_t/2)
+                  .lineTo(pedal_end_x, pedal_end_y - pedal_t/2)
+                  .lineTo(pedal_end_x, pedal_end_y + pedal_t/2)
+                  .lineTo(pivot_x, pivot_y + pedal_t/2)
+                  .close())
+    wires.append((pedal_wire, '#2F4F4F', 0.5))
+
+    # Slot in base
+    slot_wire = (cq.Workplane("XY")
+                 .moveTo(x_right, pivot_y - 6)
+                 .lineTo(x_right + 5, pivot_y - 6)
+                 .lineTo(x_right + 5, pivot_y + 6)
+                 .lineTo(x_right, pivot_y + 6)
+                 .close())
+    wires.append((slot_wire, '#2F4F4F', 0.3))
+
+    # Three notches for pedal positions
+    notch_x = pivot_x + pedal_l * 0.7
+    for i, offset in enumerate([-15, 0, 15]):
+        notch_y = pivot_y + offset
+        notch_wire = (cq.Workplane("XY")
+                      .moveTo(notch_x, notch_y - 2)
+                      .lineTo(notch_x + 3, notch_y)
+                      .lineTo(notch_x, notch_y + 2)
+                      .close())
+        wires.append((notch_wire, '#2F4F4F', 0.3))
+
+    # Pillar - touches sp start, extends up to c1s (sharp disc of lowest string)
+    c1_vib_length = config['strings'][0]['vib_length']
+    semitone_ratio = config['physics']['semitone_ratio']
+    c1s_y = c1b_y + c1_vib_length / (semitone_ratio ** 2)
+
+    pillar_d = base_cfg['pillar']['diameter_mm']
+    pillar_x_right = sp_start_x  # Touch soundboard
+    pillar_x_left = pillar_x_right - pillar_d
+    pillar_y_bottom = y_top
+    pillar_y_top = c1s_y + 20  # Extend slightly above c1s for neck
+
+    pillar_wire = (cq.Workplane("XY")
+                   .moveTo(pillar_x_left, pillar_y_bottom)
+                   .lineTo(pillar_x_right, pillar_y_bottom)
+                   .lineTo(pillar_x_right, pillar_y_top)
+                   .lineTo(pillar_x_left, pillar_y_top)
+                   .close())
+    wires.append((pillar_wire, '#8B4513', 0.8))
+
+    return wires
+
+
 def make_wire_segment(x1, y1, z1, x2, y2, z2, diameter):
     """Create a cylindrical wire segment (for strings)."""
     dx, dy, dz = x2 - x1, y2 - y1, z2 - z1
@@ -532,7 +628,7 @@ def color_for_note(note):
     return '#666666'
 
 
-def build_groups(computed):
+def build_groups(computed, config=None):
     """Build geometry groups for cq_plate() from computed positions."""
     groups = []
     sp = computed['sp']
@@ -543,6 +639,11 @@ def build_groups(computed):
                .moveTo(sp['start'][0], sp['start'][1])
                .lineTo(sp['end'][0], sp['end'][1]))
     groups.append((sp_wire, '#8B4513', 1.0))
+
+    # Base assembly (2D outlines)
+    if config and 'hardware' in config and 'base' in config['hardware']:
+        base_wires = make_base_2d(config, sp)
+        groups.extend(base_wires)
 
     # Collect 3D solid models
     peg_solids = []
@@ -702,7 +803,7 @@ def main():
 
     config = load_config()
     computed = compute_all_strings(config)
-    groups = build_groups(computed)
+    groups = build_groups(computed, config)
 
     # Check for --neck flag to zoom into neck area
     if '--neck' in sys.argv:
