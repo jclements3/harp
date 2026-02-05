@@ -45,10 +45,60 @@
     #start-btn:hover { background: #1d4ed8; }
     #start-btn:active { transform: scale(0.97); }
     #start-btn:disabled { background: #a0a0a0; cursor: default; }
+
+    #key-bar {
+      position: fixed;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: none;
+      align-items: center;
+      gap: 4px;
+      background: rgba(248,246,241,0.92);
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 6px 12px;
+      z-index: 5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+    }
+    #key-bar span { color: #888; margin-right: 4px; }
+    .key-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 4px 7px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background: white;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.1s;
+    }
+    .key-btn:hover { border-color: #999; }
+    .key-btn.active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: white;
+    }
   </style>
 </head>
 <body>
   <canvas id="canvas"></canvas>
+  <div id="key-bar">
+    <span>Key:</span>
+    <button class="key-btn active" onclick="setKey(0)">C</button>
+    <button class="key-btn" onclick="setKey(1)">D&#x266d;</button>
+    <button class="key-btn" onclick="setKey(2)">D</button>
+    <button class="key-btn" onclick="setKey(3)">E&#x266d;</button>
+    <button class="key-btn" onclick="setKey(4)">E</button>
+    <button class="key-btn" onclick="setKey(5)">F</button>
+    <button class="key-btn" onclick="setKey(6)">G&#x266d;</button>
+    <button class="key-btn" onclick="setKey(7)">G</button>
+    <button class="key-btn" onclick="setKey(8)">A&#x266d;</button>
+    <button class="key-btn" onclick="setKey(9)">A</button>
+    <button class="key-btn" onclick="setKey(10)">B&#x266d;</button>
+    <button class="key-btn" onclick="setKey(11)">B</button>
+  </div>
   <div id="start-overlay">
     <h1>HARP LIVE STAFF</h1>
     <p>Real-time pitch detection on a scrolling grand staff</p>
@@ -75,7 +125,7 @@
     const IS_SHARP =
       [false, true, false, true, false, false, true, false, true, false, true, false];
     const NOTE_NAMES =
-      ['C','\u266f','D','D\u266f','E','F','F\u266f','G','G\u266f','A','A\u266f','B'];
+      ['C','C\u266f','D','D\u266f','E','F','F\u266f','G','G\u266f','A','A\u266f','B'];
 
     // Staff line positions (diatonic):
     //   Treble: E4=30  G4=32  B4=34  D5=36  F5=38
@@ -84,11 +134,66 @@
     const TREBLE_LINES = [30, 32, 34, 36, 38];
     const BASS_LINES   = [18, 20, 22, 24, 26];
 
+    // ─── SHAPE NOTE (Aiken 7-shape) ───
+    const MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11];
+    const SOLFEGE = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Ti'];
+
+    function getScaleDegree(midi, root) {
+      const interval = ((midi % 12) - root + 12) % 12;
+      const idx = MAJOR_SCALE.indexOf(interval);
+      return idx >= 0 ? idx + 1 : 0; // 1-7 for scale tones, 0 for chromatic
+    }
+
+    // Draw a shape-note path centered at (x, y) with radii rx, ry
+    function shapePath(ctx, x, y, rx, ry, degree) {
+      switch (degree) {
+        case 1: // Do — triangle up
+          ctx.moveTo(x, y - ry);
+          ctx.lineTo(x + rx, y + ry);
+          ctx.lineTo(x - rx, y + ry);
+          ctx.closePath();
+          break;
+        case 2: // Re — half-moon (flat left, curved right)
+          ctx.ellipse(x, y, rx, ry, 0, -Math.PI / 2, Math.PI / 2);
+          ctx.closePath();
+          break;
+        case 3: // Mi — diamond
+          ctx.moveTo(x, y - ry);
+          ctx.lineTo(x + rx, y);
+          ctx.lineTo(x, y + ry);
+          ctx.lineTo(x - rx, y);
+          ctx.closePath();
+          break;
+        case 4: // Fa — right triangle (right angle bottom-left)
+          ctx.moveTo(x - rx, y - ry);
+          ctx.lineTo(x + rx, y + ry);
+          ctx.lineTo(x - rx, y + ry);
+          ctx.closePath();
+          break;
+        case 5: // Sol — circle/oval
+          ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+          break;
+        case 6: // La — square
+          ctx.rect(x - rx, y - ry, rx * 2, ry * 2);
+          break;
+        case 7: // Ti — inverted triangle
+          ctx.moveTo(x, y + ry);
+          ctx.lineTo(x + rx, y - ry);
+          ctx.lineTo(x - rx, y - ry);
+          ctx.closePath();
+          break;
+        default: // chromatic — small circle
+          ctx.ellipse(x, y, rx * 0.5, ry * 0.5, 0, 0, Math.PI * 2);
+          break;
+      }
+    }
+
     // ─── STATE ───
     let audioCtx, analyser, dataArray;
     let running = false;
     let noteBuffer = [];
     let currentNote = null;
+    let keyRoot = 0; // 0=C, 1=Db, ... 11=B
 
     // ─── LAYOUT (set on resize) ───
     let canvas, ctx, W, H, centerY, nowX;
@@ -234,11 +339,15 @@
         const cx1 = Math.min(x1, nowX + 10);
         const pos = midiToStaffPos(seg.midi);
         const y = posToY(pos);
+        const degree = getScaleDegree(seg.midi, keyRoot);
 
         // Fade near left edge
         const fade = cx0 < MARGIN_LEFT + 40
           ? Math.max(0.1, (cx0 - MARGIN_LEFT + 10) / 50) : 1;
         const isRecent = seg.t1 > now - 120;
+        const color = degree === 0
+          ? (isRecent ? '#9ca3af' : '#aaa')
+          : (isRecent ? '#2563eb' : '#3a3a3a');
 
         // Ledger lines
         const ledgers = getLedgerLines(pos);
@@ -254,18 +363,23 @@
           ctx.stroke();
         }
 
-        // Note bar
         ctx.globalAlpha = fade;
-        ctx.fillStyle = isRecent ? '#2563eb' : '#3a3a3a';
         const w = cx1 - cx0;
-        const h = NOTE_RY * 2;
-        if (w < NOTE_RX * 2) {
+
+        if (w > NOTE_RX * 2.5) {
+          // Long segment: draw a thin bar + shape notehead at leading edge
+          ctx.fillStyle = isRecent ? 'rgba(37,99,235,0.25)' : 'rgba(58,58,58,0.2)';
+          ctx.fillRect(cx0, y - NOTE_RY * 0.35, w - NOTE_RX, NOTE_RY * 0.7);
+
+          ctx.fillStyle = color;
           ctx.beginPath();
-          ctx.ellipse((cx0 + cx1) / 2, y, NOTE_RX, NOTE_RY, 0, 0, Math.PI * 2);
+          shapePath(ctx, cx1, y, NOTE_RX, NOTE_RY, degree);
           ctx.fill();
         } else {
+          // Short segment: just the shape notehead
+          ctx.fillStyle = color;
           ctx.beginPath();
-          ctx.roundRect(cx0, y - NOTE_RY, w, h, NOTE_RY);
+          shapePath(ctx, (cx0 + cx1) / 2, y, NOTE_RX, NOTE_RY, degree);
           ctx.fill();
         }
         ctx.globalAlpha = 1;
@@ -393,6 +507,7 @@
       drawNowLine();
       drawSegments(now, buildSegments(now));
       drawCurrentInfo();
+      drawLegend();
 
       requestAnimationFrame(frame);
     }
@@ -425,6 +540,7 @@
         dataArray = new Float32Array(analyser.fftSize);
 
         document.getElementById('start-overlay').style.display = 'none';
+        document.getElementById('key-bar').style.display = 'flex';
         running = true;
         resize();
         frame();
@@ -434,8 +550,34 @@
       }
     }
 
+    function setKey(root) {
+      keyRoot = root;
+      document.querySelectorAll('.key-btn').forEach((btn, i) => {
+        btn.classList.toggle('active', i === root);
+      });
+    }
+
+    function drawLegend() {
+      const lx = MARGIN_LEFT + 8;
+      const ly = posToY(44) - 10;
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+
+      for (let d = 1; d <= 7; d++) {
+        const ox = lx + (d - 1) * 52;
+        ctx.fillStyle = '#3a3a3a';
+        ctx.beginPath();
+        shapePath(ctx, ox + 7, ly, 6, 5, d);
+        ctx.fill();
+        ctx.fillStyle = '#999';
+        ctx.fillText(SOLFEGE[d - 1], ox + 16, ly);
+      }
+    }
+
     function startDemo() {
       document.getElementById('start-overlay').style.display = 'none';
+      document.getElementById('key-bar').style.display = 'flex';
       demoMode = true;
       demoStartTime = performance.now();
       running = true;
