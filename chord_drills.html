@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Chord Drills">
+  <title>Harp Chord Drills</title>
+  <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.3/build/cjs/vexflow.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=JetBrains+Mono:wght@400&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html {
+      font-size: 16px;
+    }
+
+    body {
+      font-family: 'Crimson Pro', Georgia, serif;
+      background: #f8f6f1;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem;
+      padding-top: env(safe-area-inset-top, 1.5rem);
+      padding-bottom: env(safe-area-inset-bottom, 1.5rem);
+      color: #2a2a2a;
+    }
+
+    h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+      color: #4a4a4a;
+      text-align: center;
+    }
+
+    .score-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #888;
+      margin-bottom: 0.5rem;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .toggle-divider {
+      width: 1px;
+      height: 24px;
+      background: #ccc;
+      margin: 0 0.15rem;
+    }
+
+    .mode-btn {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.9rem;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      color: #333;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
+      transition: all 0.15s ease;
+    }
+
+    .mode-btn:active {
+      transform: scale(0.97);
+    }
+
+    .mode-btn.active {
+      background: #2563eb;
+      border-color: #2563eb;
+      color: white;
+    }
+
+    .staff-container {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      margin-bottom: 1rem;
+      width: 100%;
+      max-width: 500px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    #notation {
+      display: block;
+      min-width: 200px;
+    }
+
+    #notation svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .answer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      width: 100%;
+      max-width: 500px;
+      padding: 0 0.5rem;
+    }
+
+    .answer-btn {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1rem;
+      padding: 1rem 0.5rem;
+      min-height: 54px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      color: #333;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .answer-btn:active {
+      transform: scale(0.97);
+      background: #f0f0f0;
+    }
+
+    .answer-btn.selected {
+      background: #dbeafe;
+      border-color: #2563eb;
+      color: #1e40af;
+    }
+
+    .answer-btn.correct {
+      background: #d4edda;
+      border-color: #28a745;
+      color: #155724;
+    }
+
+    .answer-btn.incorrect {
+      background: #f8d7da;
+      border-color: #dc3545;
+      color: #721c24;
+    }
+
+    .answer-btn.missed {
+      background: #d4edda;
+      border-color: #28a745;
+      border-style: dashed;
+      color: #155724;
+    }
+
+    .answer-btn:disabled {
+      cursor: default;
+    }
+
+    .answer-btn:disabled:active {
+      transform: none;
+    }
+
+    .submit-btn {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1rem;
+      padding: 0.7rem 2rem;
+      min-height: 44px;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      width: 100%;
+      max-width: 500px;
+      margin-top: 0.5rem;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .submit-btn:active {
+      transform: scale(0.97);
+      background: #1d4ed8;
+    }
+
+    .submit-btn:disabled {
+      background: #a0a0a0;
+      cursor: default;
+    }
+
+    .submit-btn:disabled:active {
+      transform: none;
+    }
+
+    .controls {
+      margin-top: 0.5rem;
+      display: flex;
+      gap: 1rem;
+      width: 100%;
+      max-width: 500px;
+      padding: 0 0.5rem;
+    }
+
+    .next-btn {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1rem;
+      padding: 0.7rem 2rem;
+      min-height: 44px;
+      border: none;
+      border-radius: 10px;
+      background: #4a4a4a;
+      color: white;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      flex: 1;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .next-btn:active {
+      transform: scale(0.97);
+      background: #333;
+    }
+
+    .feedback {
+      font-size: 1rem;
+      margin-top: 0.4rem;
+      color: #666;
+      text-align: center;
+      max-width: 500px;
+      padding: 0 0.5rem;
+    }
+
+    .feedback:empty {
+      display: none;
+    }
+
+    .feedback-details {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #666;
+      margin-top: 0.25rem;
+      text-align: center;
+      max-width: 500px;
+      padding: 0 0.5rem;
+      line-height: 1.6;
+    }
+
+    .feedback-details:empty {
+      display: none;
+    }
+
+    .feedback-details .valid-chord {
+      display: inline;
+    }
+
+    .feedback-details .valid-chord + .valid-chord::before {
+      content: ' \00b7 ';
+      color: #bbb;
+    }
+
+    .feedback-details .chord-root {
+      color: #2563eb;
+      font-weight: 600;
+    }
+
+    .note-names {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85rem;
+      color: #888;
+      margin-top: 0.25rem;
+      text-align: center;
+    }
+
+    .note-names:empty {
+      display: none;
+    }
+
+    /* Larger phones / landscape */
+    @media (min-width: 400px) {
+      .answer-btn {
+        font-size: 1.05rem;
+        padding: 1.1rem 0.75rem;
+      }
+    }
+
+    /* Small phones */
+    @media (max-width: 350px) {
+      .answer-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .answer-btn {
+        font-size: 0.9rem;
+        padding: 0.9rem 0.4rem;
+      }
+    }
+
+    /* Pedal diagram */
+    .pedal-diagram {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #eee;
+    }
+
+    .pedal-group {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .pedal-divider {
+      width: 2px;
+      height: 60px;
+      background: #ccc;
+      margin: 0 0.25rem;
+    }
+
+    .pedal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 36px;
+      cursor: pointer;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .pedal:active {
+      transform: scale(0.95);
+    }
+
+    .pedal.locked {
+      cursor: default;
+      opacity: 0.5;
+    }
+
+    .pedal.locked:active {
+      transform: none;
+    }
+
+    .pedal-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 4px;
+    }
+
+    .pedal-track {
+      width: 24px;
+      height: 48px;
+      background: #e8e8e8;
+      border-radius: 12px;
+      position: relative;
+      border: 1px solid #ccc;
+    }
+
+    .pedal-dot {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #666;
+      transition: top 0.15s ease, background 0.15s ease;
+    }
+
+    .pedal.flat .pedal-dot {
+      top: 2px;
+      background: #2563eb;
+    }
+
+    .pedal.flat .pedal-name {
+      color: #2563eb;
+    }
+
+    .pedal.natural .pedal-dot {
+      top: 16px;
+      background: #666;
+    }
+
+    .pedal.sharp .pedal-dot {
+      top: 30px;
+      background: #dc2626;
+    }
+
+    .pedal.sharp .pedal-name {
+      color: #dc2626;
+    }
+
+    .pedal-labels {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 0.5rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      color: #999;
+    }
+
+    /* Key signature incrementor */
+    .key-sig-control {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-top: 1rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid #eee;
+    }
+
+    .key-sig-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 600;
+      width: 48px;
+      height: 48px;
+      border: 2px solid #ccc;
+      border-radius: 50%;
+      background: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #444;
+      -webkit-user-select: none;
+      user-select: none;
+      touch-action: manipulation;
+      transition: all 0.15s ease;
+    }
+
+    .key-sig-btn:active {
+      transform: scale(0.93);
+      background: #f0f0f0;
+    }
+
+    .key-sig-btn.flat-btn {
+      color: #2563eb;
+      border-color: #93b4f0;
+    }
+
+    .key-sig-btn.sharp-btn {
+      color: #dc2626;
+      border-color: #f0a0a0;
+    }
+
+    .key-sig-btn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+
+    .key-sig-btn:disabled:active {
+      transform: none;
+      background: white;
+    }
+
+    .key-sig-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      color: #444;
+      min-width: 120px;
+      text-align: center;
+      line-height: 1.3;
+    }
+
+    .key-sig-label .key-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .key-sig-label .sig-detail {
+      font-size: 0.7rem;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="score-display">Score: <span id="score">0</span> / <span id="total">0</span></div>
+
+  <div class="toggle-row">
+    <button class="mode-btn active" id="drill-chordId" onclick="setDrill('chordId')">Chord ID</button>
+    <button class="mode-btn" id="drill-interval" onclick="setDrill('interval')">Interval&#x2192;Chord</button>
+    <div class="toggle-divider" id="note-count-divider" style="display:none"></div>
+    <button class="mode-btn active" id="mode-2" onclick="setNoteMode(2)" style="display:none">2 Notes</button>
+    <button class="mode-btn" id="mode-3" onclick="setNoteMode(3)" style="display:none">3 Notes</button>
+  </div>
+
+  <div class="staff-container">
+    <div id="notation"></div>
+    <div class="pedal-diagram">
+      <div class="pedal-group left">
+        <div class="pedal natural" id="pedal-D" onclick="cyclePedal('D')"><span class="pedal-name">D</span><div class="pedal-track"><div class="pedal-dot"></div></div></div>
+        <div class="pedal natural" id="pedal-C" onclick="cyclePedal('C')"><span class="pedal-name">C</span><div class="pedal-track"><div class="pedal-dot"></div></div></div>
+        <div class="pedal natural" id="pedal-B" onclick="cyclePedal('B')"><span class="pedal-name">B</span><div class="pedal-track"><div class="pedal-dot"></div></div></div>
+      </div>
+      <div class="pedal-divider"></div>
+      <div class="pedal-group right">
+        <div class="pedal natural" id="pedal-E" onclick="cyclePedal('E')"><span class="pedal-name">E</span><div class="pedal-track"><div class="pedal-dot"></div></div></div>
+        <div class="pedal natural" id="pedal-F" onclick="cyclePedal('F')"><span class="pedal-name">F</span><div class="pedal-track"><div class="pedal-dot"></div></div></div>
+        <div class="pedal natural" id="pedal-G" onclick="cyclePedal('G')"><span class="pedal-name">G</span><div class="pedal-track"><div class="pedal-dot"></div></div></div>
+        <div class="pedal natural" id="pedal-A" onclick="cyclePedal('A')"><span class="pedal-name">A</span><div class="pedal-track"><div class="pedal-dot"></div></div></div>
+      </div>
+    </div>
+    <div class="pedal-labels">
+      <span>&#x2191; flat</span>
+      <span>&#x2014; natural</span>
+      <span>&#x2193; sharp</span>
+    </div>
+    <div class="key-sig-control">
+      <button class="key-sig-btn flat-btn" id="flat-btn" onclick="addFlat()">&#x266d;+</button>
+      <div class="key-sig-label">
+        <div class="key-name" id="key-name">C major</div>
+        <div class="sig-detail" id="sig-detail">no sharps/flats</div>
+      </div>
+      <button class="key-sig-btn sharp-btn" id="sharp-btn" onclick="addSharp()">&#x266f;+</button>
+    </div>
+  </div>
+
+  <div class="answer-grid" id="answers"></div>
+  <button class="submit-btn" id="submit-btn" onclick="submitAnswer()" style="display:none" disabled>SUBMIT</button>
+  <div class="feedback" id="feedback"></div>
+  <div class="feedback-details" id="feedback-details"></div>
+  <div class="note-names" id="note-names"></div>
+
+  <div class="controls" id="controls">
+    <button class="next-btn" id="next-btn" onclick="handleNext()">Next Chord</button>
+  </div>
+
+  <script>
+    const { Renderer, Stave, StaveNote, Voice, Formatter, Beam, Accidental } = Vex.Flow;
+
+    // ── Drill state ──
+    let currentDrill = 'chordId'; // 'chordId' or 'interval'
+
+    // ── Shared state ──
+    let pedalState = {
+      D: 'natural', C: 'natural', B: 'natural',
+      E: 'natural', F: 'natural', G: 'natural', A: 'natural'
+    };
+    let score = 0;
+    let total = 0;
+
+    // ── Chord ID state ──
+    let currentChord = null;
+    let chordIdAnswered = false;
+
+    // ── Interval state ──
+    const IDLE = 'IDLE';
+    const SELECTING = 'SELECTING';
+    const ANSWERED = 'ANSWERED';
+    let gameState = IDLE;
+    let noteMode = 2;
+    let currentPuzzle = null;
+    let selectedTypes = new Set();
+
+    // ── Shared data ──
+    const noteLetters = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
+
+    const chordTypes = [
+      { name: 'Major Triad', short: 'Maj', intervals: [0, 4, 7], minNotes: 3, required: [0, 4, 7] },
+      { name: 'Minor Triad', short: 'm', intervals: [0, 3, 7], minNotes: 3, required: [0, 3, 7] },
+      { name: 'Diminished Triad', short: 'dim', intervals: [0, 3, 6], minNotes: 3, required: [0, 3, 6] },
+      { name: 'Major 7th', short: 'maj7', intervals: [0, 4, 7, 11], minNotes: 4, required: [0, 4, 7, 11] },
+      { name: 'Minor 7th', short: 'm7', intervals: [0, 3, 7, 10], minNotes: 4, required: [0, 3, 7, 10] },
+      { name: 'Dominant 7th', short: '7', intervals: [0, 4, 7, 10], minNotes: 4, required: [0, 4, 7, 10] },
+      { name: 'Half-dim 7th', short: '\u00f87', intervals: [0, 3, 6, 10], minNotes: 4, required: [0, 3, 6, 10] },
+      { name: 'Sus2', short: 'sus2', intervals: [0, 2, 7], minNotes: 3, required: [0, 2, 7] },
+      { name: 'Sus4', short: 'sus4', intervals: [0, 5, 7], minNotes: 3, required: [0, 5, 7] },
+    ];
+
+    // Filter out chord types whose note patterns are always ambiguous in isolation
+    // (e.g. sus2 [0,2,7] is always reinterpretable as sus4 [0,5,7] from another root)
+    const unambiguousChordTypes = chordTypes.filter(type => {
+      const semitones = type.intervals;
+      for (const ct of chordTypes) {
+        if (ct === type || ct.intervals.length !== semitones.length) continue;
+        for (const rootST of semitones) {
+          const ivs = semitones.map(s => (s - rootST + 12) % 12).sort((a, b) => a - b);
+          const ctIvs = [...ct.intervals].sort((a, b) => a - b);
+          if (ivs.every((v, i) => v === ctIvs[i])) return false;
+        }
+      }
+      return true;
+    });
+
+    const chordIdAnswerOptions = unambiguousChordTypes.map(c => c.name);
+
+    const intervalAnswerOptions = chordTypes.map(c => c.short);
+
+    // Key signature data
+    const sharpOrder = ['F', 'C', 'G', 'D', 'A', 'E', 'B'];
+    const flatOrder  = ['B', 'E', 'A', 'D', 'G', 'C', 'F'];
+    const sharpKeys = ['C major', 'G major', 'D major', 'A major', 'E major', 'B major', 'F\u266f major', 'C\u266f major'];
+    const flatKeys  = ['C major', 'F major', 'B\u266d major', 'E\u266d major', 'A\u266d major', 'D\u266d major', 'G\u266d major', 'C\u266d major'];
+
+    // ── Shared pedal/key functions ──
+    function cyclePedal(note) {
+      if (currentDrill === 'interval' && gameState === SELECTING) return;
+      const positions = ['flat', 'natural', 'sharp'];
+      const currentIdx = positions.indexOf(pedalState[note]);
+      pedalState[note] = positions[(currentIdx + 1) % 3];
+      updatePedalDisplay();
+      updateKeyLabel();
+      if (currentDrill === 'chordId' && currentChord) renderChord(currentChord);
+    }
+
+    function updatePedalDisplay() {
+      const locked = currentDrill === 'interval' && gameState === SELECTING;
+      for (const [note, position] of Object.entries(pedalState)) {
+        const pedalEl = document.getElementById(`pedal-${note}`);
+        pedalEl.className = `pedal ${position}${locked ? ' locked' : ''}`;
+      }
+    }
+
+    function getKeySigPosition() {
+      let sharps = 0;
+      let flats = 0;
+      for (const note of sharpOrder) {
+        if (pedalState[note] === 'sharp') sharps++;
+        if (pedalState[note] === 'flat') flats++;
+      }
+      let isStandard = true;
+      if (sharps > 0 && flats > 0) isStandard = false;
+      if (sharps > 0) {
+        for (let i = 0; i < sharps; i++) {
+          if (pedalState[sharpOrder[i]] !== 'sharp') isStandard = false;
+        }
+        for (let i = sharps; i < 7; i++) {
+          if (pedalState[sharpOrder[i]] !== 'natural') isStandard = false;
+        }
+      }
+      if (flats > 0) {
+        for (let i = 0; i < flats; i++) {
+          if (pedalState[flatOrder[i]] !== 'flat') isStandard = false;
+        }
+        for (let i = flats; i < 7; i++) {
+          if (pedalState[flatOrder[i]] !== 'natural') isStandard = false;
+        }
+      }
+      return { sharps, flats, isStandard };
+    }
+
+    function updateKeyLabel() {
+      const { sharps, flats, isStandard } = getKeySigPosition();
+      const nameEl = document.getElementById('key-name');
+      const detailEl = document.getElementById('sig-detail');
+
+      if (!isStandard) {
+        nameEl.textContent = 'Custom';
+        const parts = [];
+        for (const note of Object.keys(pedalState)) {
+          if (pedalState[note] === 'sharp') parts.push(note + '\u266f');
+          if (pedalState[note] === 'flat') parts.push(note + '\u266d');
+        }
+        detailEl.textContent = parts.length ? parts.join(' ') : 'no sharps/flats';
+        return;
+      }
+
+      if (sharps > 0) {
+        nameEl.textContent = sharpKeys[sharps];
+        const names = sharpOrder.slice(0, sharps).join(' ');
+        detailEl.textContent = `${sharps}\u266f: ${names}`;
+      } else if (flats > 0) {
+        nameEl.textContent = flatKeys[flats];
+        const names = flatOrder.slice(0, flats).join(' ');
+        detailEl.textContent = `${flats}\u266d: ${names}`;
+      } else {
+        nameEl.textContent = 'C major';
+        detailEl.textContent = 'no sharps/flats';
+      }
+    }
+
+    function updateKeySigButtons() {
+      const locked = currentDrill === 'interval' && gameState === SELECTING;
+      document.getElementById('flat-btn').disabled = locked;
+      document.getElementById('sharp-btn').disabled = locked;
+    }
+
+    function addSharp() {
+      if (currentDrill === 'interval' && gameState === SELECTING) return;
+      const { sharps, flats } = getKeySigPosition();
+      if (flats > 0) {
+        pedalState[flatOrder[flats - 1]] = 'natural';
+      } else if (sharps < 7) {
+        pedalState[sharpOrder[sharps]] = 'sharp';
+      }
+      updatePedalDisplay();
+      updateKeyLabel();
+      if (currentDrill === 'chordId' && currentChord) renderChord(currentChord);
+    }
+
+    function addFlat() {
+      if (currentDrill === 'interval' && gameState === SELECTING) return;
+      const { sharps, flats } = getKeySigPosition();
+      if (sharps > 0) {
+        pedalState[sharpOrder[sharps - 1]] = 'natural';
+      } else if (flats < 7) {
+        pedalState[flatOrder[flats]] = 'flat';
+      }
+      updatePedalDisplay();
+      updateKeyLabel();
+      if (currentDrill === 'chordId' && currentChord) renderChord(currentChord);
+    }
+
+    // ── Shared music helpers ──
+    function getNoteSemitone(letter) {
+      const baseSemitones = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+      let semitone = baseSemitones[letter];
+      const pedal = pedalState[letter];
+      if (pedal === 'flat') semitone -= 1;
+      if (pedal === 'sharp') semitone += 1;
+      return (semitone + 12) % 12;
+    }
+
+    function getAccidentalForNote(noteLetter) {
+      const letter = noteLetter.toUpperCase();
+      const position = pedalState[letter];
+      if (position === 'flat') return 'b';
+      if (position === 'sharp') return '#';
+      return '';
+    }
+
+    function getAvailableScale() {
+      return noteLetters.map(letter => ({
+        letter,
+        semitone: getNoteSemitone(letter),
+        accidental: getAccidentalForNote(letter)
+      }));
+    }
+
+    function midiToVexFlow(midi, letter) {
+      const octave = Math.floor(midi / 12) - 1;
+      const acc = getAccidentalForNote(letter);
+      return `${letter.toLowerCase()}${acc}/${octave}`;
+    }
+
+    function midiToNoteName(midi, letter) {
+      const octave = Math.floor(midi / 12) - 1;
+      const acc = getAccidentalForNote(letter);
+      const accSymbol = acc === '#' ? '\u266f' : acc === 'b' ? '\u266d' : '';
+      return `${letter}${accSymbol}${octave}`;
+    }
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function getVexKeySig() {
+      const { sharps, flats, isStandard } = getKeySigPosition();
+      let keySig = 'C';
+      if (isStandard) {
+        if (sharps > 0) keySig = sharpKeys[sharps].replace(' major', '').replace('\u266f', '#');
+        if (flats > 0) keySig = flatKeys[flats].replace(' major', '').replace('\u266d', 'b');
+      }
+      return { keySig, isStandard };
+    }
+
+    // ── Drill switching ──
+    function setDrill(drill) {
+      currentDrill = drill;
+      score = 0;
+      total = 0;
+      document.getElementById('score').textContent = '0';
+      document.getElementById('total').textContent = '0';
+
+      // Update drill toggle
+      document.getElementById('drill-chordId').className = `mode-btn${drill === 'chordId' ? ' active' : ''}`;
+      document.getElementById('drill-interval').className = `mode-btn${drill === 'interval' ? ' active' : ''}`;
+
+      // Show/hide interval-specific UI
+      const showInterval = drill === 'interval';
+      document.getElementById('note-count-divider').style.display = showInterval ? '' : 'none';
+      document.getElementById('mode-2').style.display = showInterval ? '' : 'none';
+      document.getElementById('mode-3').style.display = showInterval ? '' : 'none';
+      document.getElementById('submit-btn').style.display = showInterval ? '' : 'none';
+      document.getElementById('feedback-details').innerHTML = '';
+
+      // Reset states
+      gameState = IDLE;
+      chordIdAnswered = false;
+      currentChord = null;
+      currentPuzzle = null;
+      selectedTypes.clear();
+
+      // Unlock pedals/key sig
+      updatePedalDisplay();
+      updateKeySigButtons();
+
+      if (drill === 'chordId') {
+        document.getElementById('next-btn').textContent = 'Next Chord';
+        newChord();
+      } else {
+        document.getElementById('next-btn').textContent = 'Next';
+        newPuzzle();
+      }
+    }
+
+    function handleNext() {
+      if (currentDrill === 'chordId') {
+        newChord();
+      } else {
+        newPuzzle();
+      }
+    }
+
+    // ── Note mode toggle (interval drill) ──
+    function setNoteMode(mode) {
+      if (gameState === SELECTING) return;
+      noteMode = mode;
+      document.getElementById('mode-2').className = `mode-btn${mode === 2 ? ' active' : ''}`;
+      document.getElementById('mode-3').className = `mode-btn${mode === 3 ? ' active' : ''}`;
+      newPuzzle();
+    }
+
+    // ══════════════════════════════════════════
+    //  CHORD ID DRILL
+    // ══════════════════════════════════════════
+
+    function generateChord() {
+      const scale = getAvailableScale();
+      const chordType = unambiguousChordTypes[Math.floor(Math.random() * unambiguousChordTypes.length)];
+
+      const rootIdx = Math.floor(Math.random() * 7);
+      const rootLetter = noteLetters[rootIdx];
+      const rootSemitone = scale[rootIdx].semitone;
+
+      const chordNotes = [];
+      for (const interval of chordType.intervals) {
+        const targetSemitone = (rootSemitone + interval) % 12;
+        const match = scale.find(n => n.semitone === targetSemitone);
+        if (match) {
+          chordNotes.push({ letter: match.letter, interval: interval });
+        }
+      }
+
+      const hasRequired = chordType.required.every(req =>
+        chordNotes.some(n => n.interval === req)
+      );
+
+      if (chordNotes.length < chordType.minNotes || !hasRequired) {
+        return generateChord();
+      }
+
+      // Safety: verify these specific notes aren't ambiguous with current pedal tuning
+      const noteSemitones = chordNotes.map(n => scale.find(s => s.letter === n.letter).semitone);
+      let chordInterpretations = 0;
+      for (const ct of chordTypes) {
+        if (ct.intervals.length !== noteSemitones.length) continue;
+        for (const rootST of noteSemitones) {
+          const ivs = noteSemitones.map(s => (s - rootST + 12) % 12).sort((a, b) => a - b);
+          const ctIvs = [...ct.intervals].sort((a, b) => a - b);
+          if (ivs.every((v, i) => v === ctIvs[i])) chordInterpretations++;
+        }
+      }
+      if (chordInterpretations > 1) return generateChord();
+
+      // Just the required chord tones, one per voice
+      const rootOctave = 3;
+      let arpeggioNotes = [];
+
+      for (const note of chordNotes) {
+        arpeggioNotes.push({
+          letter: note.letter,
+          midi: (rootOctave + 1) * 12 + scale.find(s => s.letter === note.letter).semitone,
+          interval: note.interval
+        });
+      }
+
+      arpeggioNotes.sort((a, b) => a.midi - b.midi);
+
+      // Randomly ascending or descending
+      if (Math.random() < 0.5) arpeggioNotes.reverse();
+
+      const vexKeys = arpeggioNotes.map(n => midiToVexFlow(n.midi, n.letter));
+      const noteNamesList = arpeggioNotes.map(n => midiToNoteName(n.midi, n.letter));
+
+      return {
+        type: chordType.name,
+        root: rootLetter + (getAccidentalForNote(rootLetter) === '#' ? '\u266f' : getAccidentalForNote(rootLetter) === 'b' ? '\u266d' : ''),
+        keys: vexKeys,
+        midis: arpeggioNotes.map(n => n.midi),
+        letters: arpeggioNotes.map(n => n.letter),
+        noteNames: noteNamesList
+      };
+    }
+
+    function renderChord(chord) {
+      const container = document.getElementById('notation');
+      container.innerHTML = '';
+
+      const numNotes = chord.keys.length;
+      const width = Math.max(400, numNotes * 45 + 100);
+
+      const renderer = new Renderer(container, Renderer.Backends.SVG);
+      renderer.resize(width, 220);
+      const context = renderer.getContext();
+
+      const { keySig, isStandard } = getVexKeySig();
+
+      const trebleStave = new Stave(10, 10, width - 20);
+      trebleStave.addClef('treble');
+      if (isStandard && keySig !== 'C') trebleStave.addKeySignature(keySig);
+      trebleStave.setContext(context).draw();
+
+      const bassStave = new Stave(10, 110, width - 20);
+      bassStave.addClef('bass');
+      if (isStandard && keySig !== 'C') bassStave.addKeySignature(keySig);
+      bassStave.setContext(context).draw();
+
+      const trebleNotes = [];
+      const bassNotes = [];
+
+      chord.midis.forEach((midi, idx) => {
+        const key = chord.keys[idx];
+        const letter = chord.letters[idx];
+        const octave = parseInt(key.split('/')[1]);
+        const acc = getAccidentalForNote(letter);
+
+        if (octave >= 4) {
+          const note = new StaveNote({ clef: 'treble', keys: [key], duration: '8' });
+          if (acc) note.addModifier(new Accidental(acc), 0);
+          trebleNotes.push(note);
+          bassNotes.push(new StaveNote({ clef: 'bass', keys: ['d/3'], duration: '8r' }));
+        } else {
+          const note = new StaveNote({ clef: 'bass', keys: [key], duration: '8' });
+          if (acc) note.addModifier(new Accidental(acc), 0);
+          bassNotes.push(note);
+          trebleNotes.push(new StaveNote({ clef: 'treble', keys: ['b/4'], duration: '8r' }));
+        }
+      });
+
+      const totalNotes = trebleNotes.length;
+      const totalBeats = totalNotes / 2;
+
+      const trebleBeamNotes = trebleNotes.filter(n => n.getNoteType() !== 'r');
+      const bassBeamNotes = bassNotes.filter(n => n.getNoteType() !== 'r');
+
+      const beams = [];
+      if (trebleBeamNotes.length >= 2) {
+        let group = [trebleBeamNotes[0]];
+        for (let i = 1; i < trebleBeamNotes.length; i++) {
+          const prevIdx = trebleNotes.indexOf(group[group.length - 1]);
+          const currIdx = trebleNotes.indexOf(trebleBeamNotes[i]);
+          if (currIdx - prevIdx === 1) {
+            group.push(trebleBeamNotes[i]);
+          } else {
+            if (group.length >= 2) beams.push(new Beam(group));
+            group = [trebleBeamNotes[i]];
+          }
+        }
+        if (group.length >= 2) beams.push(new Beam(group));
+      }
+
+      if (bassBeamNotes.length >= 2) {
+        let group = [bassBeamNotes[0]];
+        for (let i = 1; i < bassBeamNotes.length; i++) {
+          const prevIdx = bassNotes.indexOf(group[group.length - 1]);
+          const currIdx = bassNotes.indexOf(bassBeamNotes[i]);
+          if (currIdx - prevIdx === 1) {
+            group.push(bassBeamNotes[i]);
+          } else {
+            if (group.length >= 2) beams.push(new Beam(group));
+            group = [bassBeamNotes[i]];
+          }
+        }
+        if (group.length >= 2) beams.push(new Beam(group));
+      }
+
+      const trebleVoice = new Voice({ num_beats: totalBeats, beat_value: 4 }).setMode(Voice.Mode.SOFT);
+      trebleVoice.addTickables(trebleNotes);
+
+      const bassVoice = new Voice({ num_beats: totalBeats, beat_value: 4 }).setMode(Voice.Mode.SOFT);
+      bassVoice.addTickables(bassNotes);
+
+      new Formatter().joinVoices([trebleVoice]).joinVoices([bassVoice]).format([trebleVoice, bassVoice], width - 100);
+
+      trebleVoice.draw(context, trebleStave);
+      bassVoice.draw(context, bassStave);
+      beams.forEach(beam => beam.setContext(context).draw());
+    }
+
+    function renderChordIdAnswers() {
+      const container = document.getElementById('answers');
+      container.innerHTML = '';
+
+      chordIdAnswerOptions.forEach(option => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = option;
+        btn.onclick = () => checkChordIdAnswer(option, btn);
+        container.appendChild(btn);
+      });
+    }
+
+    function checkChordIdAnswer(answer, btn) {
+      if (chordIdAnswered) return;
+      chordIdAnswered = true;
+      total++;
+
+      const buttons = document.querySelectorAll('.answer-btn');
+      buttons.forEach(b => b.disabled = true);
+
+      if (answer === currentChord.type) {
+        score++;
+        btn.classList.add('correct');
+        document.getElementById('feedback').textContent = `\u2713 ${currentChord.root} ${currentChord.type}`;
+      } else {
+        btn.classList.add('incorrect');
+        buttons.forEach(b => {
+          if (b.textContent === currentChord.type) b.classList.add('correct');
+        });
+        document.getElementById('feedback').textContent = `\u2717 ${currentChord.root} ${currentChord.type}`;
+      }
+
+      document.getElementById('score').textContent = score;
+      document.getElementById('total').textContent = total;
+      document.getElementById('note-names').textContent = currentChord.noteNames.join(' - ');
+    }
+
+    function newChord() {
+      chordIdAnswered = false;
+      currentChord = generateChord();
+      renderChord(currentChord);
+      renderChordIdAnswers();
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('feedback').style.color = '#666';
+      document.getElementById('feedback-details').innerHTML = '';
+      document.getElementById('note-names').textContent = '';
+      document.getElementById('controls').style.display = 'flex';
+    }
+
+    // ══════════════════════════════════════════
+    //  INTERVAL TO CHORD DRILL
+    // ══════════════════════════════════════════
+
+    function findValidChords(chosenNotes) {
+      const semitones = chosenNotes.map(n => n.semitone);
+      const results = [];
+
+      for (const chord of chordTypes) {
+        for (const potentialRoot of chosenNotes) {
+          const intervals = semitones.map(s => (s - potentialRoot.semitone + 12) % 12);
+          const allMatch = intervals.every(iv => chord.intervals.includes(iv));
+          if (allMatch) {
+            const accSymbol = getAccidentalForNote(potentialRoot.letter) === '#' ? '\u266f' : getAccidentalForNote(potentialRoot.letter) === 'b' ? '\u266d' : '';
+            results.push({
+              typeName: chord.short,
+              rootLetter: potentialRoot.letter,
+              rootDisplay: potentialRoot.letter + accSymbol,
+              rootSemitone: potentialRoot.semitone
+            });
+          }
+        }
+      }
+
+      return results;
+    }
+
+    function getValidTypeNames(validChords) {
+      return [...new Set(validChords.map(c => c.typeName))];
+    }
+
+    function getKeySigAccidentals() {
+      const { sharps, flats, isStandard } = getKeySigPosition();
+      const result = {};
+      if (!isStandard) return result;
+      if (sharps > 0) {
+        for (let i = 0; i < sharps; i++) result[sharpOrder[i]] = '#';
+      }
+      if (flats > 0) {
+        for (let i = 0; i < flats; i++) result[flatOrder[i]] = 'b';
+      }
+      return result;
+    }
+
+    function generatePuzzle() {
+      const scale = getAvailableScale();
+
+      const semitoneSet = new Set(scale.map(n => n.semitone));
+      if (semitoneSet.size < noteMode) return null;
+
+      for (let attempt = 0; attempt < 50; attempt++) {
+        const shuffled = shuffle(scale);
+        const chosen = [];
+        const usedSemitones = new Set();
+
+        for (const note of shuffled) {
+          if (chosen.length >= noteMode) break;
+          if (!usedSemitones.has(note.semitone)) {
+            chosen.push(note);
+            usedSemitones.add(note.semitone);
+          }
+        }
+
+        if (chosen.length < noteMode) continue;
+
+        const validChords = findValidChords(chosen);
+        const validTypeNames = getValidTypeNames(validChords);
+
+        if (validTypeNames.length === 0) continue;
+        if (validTypeNames.length > 6) continue;
+
+        // Place notes randomly across octaves 3-5
+        const baseSemitones = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+        const displayNotes = chosen.map(n => {
+          const octave = 3 + Math.floor(Math.random() * 3); // 3, 4, or 5
+          const midi = (octave + 1) * 12 + baseSemitones[n.letter] + (pedalState[n.letter] === 'sharp' ? 1 : pedalState[n.letter] === 'flat' ? -1 : 0);
+          return {
+            letter: n.letter,
+            semitone: n.semitone,
+            midi: midi,
+            vexKey: midiToVexFlow(midi, n.letter),
+            noteName: midiToNoteName(midi, n.letter)
+          };
+        });
+
+        displayNotes.sort((a, b) => a.midi - b.midi);
+
+        return {
+          notes: displayNotes,
+          validChords: validChords,
+          validTypeNames: validTypeNames
+        };
+      }
+
+      return null;
+    }
+
+    function renderNotes(puzzle) {
+      const container = document.getElementById('notation');
+      container.innerHTML = '';
+
+      const width = 280;
+      const renderer = new Renderer(container, Renderer.Backends.SVG);
+      renderer.resize(width, 220);
+      const context = renderer.getContext();
+
+      const { keySig, isStandard } = getVexKeySig();
+
+      const trebleStave = new Stave(10, 10, width - 20);
+      trebleStave.addClef('treble');
+      if (isStandard && keySig !== 'C') trebleStave.addKeySignature(keySig);
+      trebleStave.setContext(context).draw();
+
+      const bassStave = new Stave(10, 110, width - 20);
+      bassStave.addClef('bass');
+      if (isStandard && keySig !== 'C') bassStave.addKeySignature(keySig);
+      bassStave.setContext(context).draw();
+
+      // Split notes into treble (octave >= 4) and bass
+      const trebleKeys = [];
+      const bassKeys = [];
+      const trebleAccs = [];
+      const bassAccs = [];
+
+      puzzle.notes.forEach(n => {
+        const octave = Math.floor(n.midi / 12) - 1;
+        const noteAcc = getAccidentalForNote(n.letter);
+        if (octave >= 4) {
+          trebleKeys.push(n.vexKey);
+          trebleAccs.push(!isStandard && noteAcc ? noteAcc : null);
+        } else {
+          bassKeys.push(n.vexKey);
+          bassAccs.push(!isStandard && noteAcc ? noteAcc : null);
+        }
+      });
+
+      // Build treble chord or rest
+      let trebleNote;
+      if (trebleKeys.length > 0) {
+        trebleNote = new StaveNote({ clef: 'treble', keys: trebleKeys, duration: 'w' });
+        trebleAccs.forEach((acc, idx) => {
+          if (acc) trebleNote.addModifier(new Accidental(acc), idx);
+        });
+      } else {
+        trebleNote = new StaveNote({ clef: 'treble', keys: ['b/4'], duration: 'wr' });
+      }
+
+      // Build bass chord or rest
+      let bassNote;
+      if (bassKeys.length > 0) {
+        bassNote = new StaveNote({ clef: 'bass', keys: bassKeys, duration: 'w' });
+        bassAccs.forEach((acc, idx) => {
+          if (acc) bassNote.addModifier(new Accidental(acc), idx);
+        });
+      } else {
+        bassNote = new StaveNote({ clef: 'bass', keys: ['d/3'], duration: 'wr' });
+      }
+
+      const trebleVoice = new Voice({ num_beats: 4, beat_value: 4 }).setMode(Voice.Mode.SOFT);
+      trebleVoice.addTickables([trebleNote]);
+
+      const bassVoice = new Voice({ num_beats: 4, beat_value: 4 }).setMode(Voice.Mode.SOFT);
+      bassVoice.addTickables([bassNote]);
+
+      new Formatter().joinVoices([trebleVoice]).joinVoices([bassVoice]).format([trebleVoice, bassVoice], width - 120);
+      trebleVoice.draw(context, trebleStave);
+      bassVoice.draw(context, bassStave);
+    }
+
+    function renderIntervalAnswerButtons() {
+      const container = document.getElementById('answers');
+      container.innerHTML = '';
+
+      intervalAnswerOptions.forEach(option => {
+        const btn = document.createElement('button');
+        btn.className = 'answer-btn';
+        btn.textContent = option;
+        btn.dataset.type = option;
+        btn.onclick = () => toggleSelection(option, btn);
+        container.appendChild(btn);
+      });
+    }
+
+    function toggleSelection(typeName, btn) {
+      if (gameState !== SELECTING) return;
+
+      if (selectedTypes.has(typeName)) {
+        selectedTypes.delete(typeName);
+        btn.classList.remove('selected');
+      } else {
+        selectedTypes.add(typeName);
+        btn.classList.add('selected');
+      }
+
+      document.getElementById('submit-btn').disabled = selectedTypes.size === 0;
+    }
+
+    function submitAnswer() {
+      if (gameState !== SELECTING || selectedTypes.size === 0) return;
+      gameState = ANSWERED;
+      total++;
+
+      const validTypeNames = currentPuzzle.validTypeNames;
+      const selected = [...selectedTypes];
+
+      const allCorrectSelected = validTypeNames.every(t => selected.includes(t));
+      const noWrongSelected = selected.every(t => validTypeNames.includes(t));
+      const perfect = allCorrectSelected && noWrongSelected;
+
+      if (perfect) score++;
+
+      const buttons = document.querySelectorAll('.answer-btn');
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        const type = btn.dataset.type;
+        const isValid = validTypeNames.includes(type);
+        const wasSelected = selectedTypes.has(type);
+
+        if (isValid && wasSelected) {
+          btn.classList.remove('selected');
+          btn.classList.add('correct');
+        } else if (!isValid && wasSelected) {
+          btn.classList.remove('selected');
+          btn.classList.add('incorrect');
+        } else if (isValid && !wasSelected) {
+          btn.classList.add('missed');
+        }
+      });
+
+      document.getElementById('score').textContent = score;
+      document.getElementById('total').textContent = total;
+
+      const feedbackEl = document.getElementById('feedback');
+      const detailsEl = document.getElementById('feedback-details');
+      const lines = currentPuzzle.validChords.map(vc => {
+        return `<span class="valid-chord"><span class="chord-root">${vc.rootDisplay}</span> ${vc.typeName}</span>`;
+      });
+      feedbackEl.textContent = '';
+      if (perfect) {
+        detailsEl.innerHTML = `<span style="color:#155724">\u2713</span> ${lines.join('')}`;
+      } else {
+        detailsEl.innerHTML = `<span style="color:#dc3545">\u2717</span> ${lines.join('')}`;
+      }
+
+      document.getElementById('note-names').textContent = currentPuzzle.notes.map(n => n.noteName).join(' \u2013 ');
+
+      document.getElementById('submit-btn').disabled = true;
+      document.getElementById('controls').style.display = 'flex';
+
+      // Unlock pedals after answering
+      updatePedalDisplay();
+      updateKeySigButtons();
+    }
+
+    function newPuzzle() {
+      gameState = IDLE;
+      selectedTypes.clear();
+
+      document.getElementById('feedback').textContent = '';
+      document.getElementById('feedback').style.color = '#666';
+      document.getElementById('feedback-details').innerHTML = '';
+      document.getElementById('note-names').textContent = '';
+      document.getElementById('controls').style.display = 'none';
+      document.getElementById('submit-btn').disabled = true;
+      document.getElementById('submit-btn').style.display = '';
+
+      currentPuzzle = generatePuzzle();
+
+      if (!currentPuzzle) {
+        document.getElementById('notation').innerHTML = '<div style="padding: 2rem; text-align: center; color: #888; font-size: 0.95rem;">Could not generate a puzzle with current pedal settings. Try adjusting the key signature.</div>';
+        renderIntervalAnswerButtons();
+        document.querySelectorAll('.answer-btn').forEach(b => b.disabled = true);
+        return;
+      }
+
+      renderNotes(currentPuzzle);
+      renderIntervalAnswerButtons();
+
+      gameState = SELECTING;
+      updatePedalDisplay();
+      updateKeySigButtons();
+    }
+
+    // ── Initialize ──
+    updateKeyLabel();
+    newChord();
+  </script>
+</body>
+</html>
