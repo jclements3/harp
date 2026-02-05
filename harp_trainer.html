@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Chord Drills">
-  <title>Harp Chord Drills</title>
+  <meta name="apple-mobile-web-app-title" content="Harp Trainer">
+  <title>Harp Trainer</title>
   <script src="https://cdn.jsdelivr.net/npm/vexflow@4.2.3/build/cjs/vexflow.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=JetBrains+Mono:wght@400&display=swap');
@@ -103,6 +103,12 @@
       max-width: 500px;
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
+      position: relative;
+    }
+
+    .staff-container.live-mode {
+      padding: 0;
+      overflow: hidden;
     }
 
     #notation {
@@ -114,6 +120,70 @@
       max-width: 100%;
       height: auto;
     }
+
+    #live-canvas {
+      display: none;
+      width: 100%;
+      height: 400px;
+    }
+
+    #start-overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      background: rgba(248,246,241,0.97);
+      z-index: 10;
+      border-radius: 12px;
+    }
+
+    #start-overlay h1 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: #4a4a4a;
+    }
+
+    #start-overlay p {
+      font-size: 0.9rem;
+      color: #888;
+      text-align: center;
+      padding: 0 1rem;
+    }
+
+    #start-btn {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.1rem;
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    #start-btn:hover { background: #1d4ed8; }
+    #start-btn:active { transform: scale(0.97); }
+    #start-btn:disabled { background: #a0a0a0; cursor: default; }
+
+    #demo-btn {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1rem;
+      padding: 0.6rem 1.5rem;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      background: white;
+      color: #555;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    #demo-btn:hover { border-color: #999; }
+    #demo-btn:active { transform: scale(0.97); }
 
     .answer-grid {
       display: grid;
@@ -501,19 +571,29 @@
   </style>
 </head>
 <body>
-  <div class="score-display">Score: <span id="score">0</span> / <span id="total">0</span></div>
+  <div class="score-display" id="score-display">Score: <span id="score">0</span> / <span id="total">0</span></div>
 
   <div class="toggle-row">
-    <button class="mode-btn active" id="drill-chordId" onclick="setDrill('chordId')">Chord ID</button>
-    <button class="mode-btn" id="drill-interval" onclick="setDrill('interval')">Interval&#x2192;Chord</button>
+    <button class="mode-btn active" id="app-chordId" onclick="setAppMode('chordId')">Chord ID</button>
+    <button class="mode-btn" id="app-interval" onclick="setAppMode('interval')">Interval&#x2192;Chord</button>
+    <button class="mode-btn" id="app-live" onclick="setAppMode('live')">Live Staff</button>
     <div class="toggle-divider" id="note-count-divider" style="display:none"></div>
     <button class="mode-btn active" id="mode-2" onclick="setNoteMode(2)" style="display:none">2 Notes</button>
     <button class="mode-btn" id="mode-3" onclick="setNoteMode(3)" style="display:none">3 Notes</button>
   </div>
 
-  <div class="staff-container">
+  <div class="staff-container" id="staff-container">
     <div id="notation"></div>
-    <div class="pedal-diagram">
+    <canvas id="live-canvas"></canvas>
+
+    <div id="start-overlay">
+      <h1>LIVE STAFF</h1>
+      <p>Real-time pitch detection on a scrolling grand staff</p>
+      <button id="start-btn" onclick="startLiveListening()">Start Listening</button>
+      <button id="demo-btn" onclick="startDemo()">Demo (no mic)</button>
+    </div>
+
+    <div class="pedal-diagram" id="pedal-diagram">
       <div class="pedal-group left">
         <div class="pedal natural" id="pedal-D" onclick="cyclePedal('D')"><span class="pedal-name">D</span><div class="pedal-track"><div class="pedal-dot"></div></div></div>
         <div class="pedal natural" id="pedal-C" onclick="cyclePedal('C')"><span class="pedal-name">C</span><div class="pedal-track"><div class="pedal-dot"></div></div></div>
@@ -527,12 +607,12 @@
         <div class="pedal natural" id="pedal-A" onclick="cyclePedal('A')"><span class="pedal-name">A</span><div class="pedal-track"><div class="pedal-dot"></div></div></div>
       </div>
     </div>
-    <div class="pedal-labels">
+    <div class="pedal-labels" id="pedal-labels">
       <span>&#x2191; flat</span>
       <span>&#x2014; natural</span>
       <span>&#x2193; sharp</span>
     </div>
-    <div class="key-sig-control">
+    <div class="key-sig-control" id="key-sig-control">
       <button class="key-sig-btn flat-btn" id="flat-btn" onclick="addFlat()">&#x266d;+</button>
       <div class="key-sig-label">
         <div class="key-name" id="key-name">C major</div>
@@ -553,33 +633,30 @@
   </div>
 
   <script>
+    // ══════════════════════════════════════════
+    //  1. VEXFLOW IMPORTS
+    // ══════════════════════════════════════════
     const { Renderer, Stave, StaveNote, Voice, Formatter, Beam, Accidental } = Vex.Flow;
 
-    // ── Drill state ──
-    let currentDrill = 'chordId'; // 'chordId' or 'interval'
+    // ══════════════════════════════════════════
+    //  2. CONFIG CONSTANTS
+    // ══════════════════════════════════════════
+    const FFT_SIZE = 4096;
+    const SCROLL_PX_SEC = 90;
+    const NOISE_GATE = 0.008;
+    const CLARITY_THRESH = 0.93;
+    const STEP = 9;
+    const LINE_SPACING = STEP * 2;
+    const NOTE_RX = STEP * 1.1;
+    const NOTE_RY = STEP * 0.85;
+    const LIVE_MARGIN_LEFT = 50;
+    const LIVE_MARGIN_RIGHT = 110;
+    const GAP_MS = 150;
+    const LIVE_CANVAS_HEIGHT = 400;
 
-    // ── Shared state ──
-    let pedalState = {
-      D: 'natural', C: 'natural', B: 'natural',
-      E: 'natural', F: 'natural', G: 'natural', A: 'natural'
-    };
-    let score = 0;
-    let total = 0;
-
-    // ── Chord ID state ──
-    let currentChord = null;
-    let chordIdAnswered = false;
-
-    // ── Interval state ──
-    const IDLE = 'IDLE';
-    const SELECTING = 'SELECTING';
-    const ANSWERED = 'ANSWERED';
-    let gameState = IDLE;
-    let noteMode = 2;
-    let currentPuzzle = null;
-    let selectedTypes = new Set();
-
-    // ── Shared data ──
+    // ══════════════════════════════════════════
+    //  3. MUSIC CONSTANTS
+    // ══════════════════════════════════════════
     const noteLetters = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
 
     const chordTypes = [
@@ -594,8 +671,6 @@
       { name: 'Sus4', short: 'sus4', intervals: [0, 5, 7], minNotes: 3, required: [0, 5, 7] },
     ];
 
-    // Filter out chord types whose note patterns are always ambiguous in isolation
-    // (e.g. sus2 [0,2,7] is always reinterpretable as sus4 [0,5,7] from another root)
     const unambiguousChordTypes = chordTypes.filter(type => {
       const semitones = type.intervals;
       for (const ct of chordTypes) {
@@ -610,8 +685,16 @@
     });
 
     const chordIdAnswerOptions = unambiguousChordTypes.map(c => c.name);
-
     const intervalAnswerOptions = chordTypes.map(c => c.short);
+
+    const DIATONIC = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6];
+    const IS_SHARP = [false, true, false, true, false, false, true, false, true, false, true, false];
+    const NOTE_NAMES = ['C','C\u266f','D','D\u266f','E','F','F\u266f','G','G\u266f','A','A\u266f','B'];
+    const MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11];
+    const SOLFEGE = ['Do', 'Re', 'Mi', 'Fa', 'Sol', 'La', 'Ti'];
+
+    const TREBLE_LINES = [30, 32, 34, 36, 38];
+    const BASS_LINES = [18, 20, 22, 24, 26];
 
     // Key signature data
     const sharpOrder = ['F', 'C', 'G', 'D', 'A', 'E', 'B'];
@@ -619,19 +702,206 @@
     const sharpKeys = ['C major', 'G major', 'D major', 'A major', 'E major', 'B major', 'F\u266f major', 'C\u266f major'];
     const flatKeys  = ['C major', 'F major', 'B\u266d major', 'E\u266d major', 'A\u266d major', 'D\u266d major', 'G\u266d major', 'C\u266d major'];
 
-    // ── Shared pedal/key functions ──
+    // ══════════════════════════════════════════
+    //  4. SHAPE NOTE SYSTEM
+    // ══════════════════════════════════════════
+    function getScaleDegree(midi, root) {
+      const interval = ((midi % 12) - root + 12) % 12;
+      const idx = MAJOR_SCALE.indexOf(interval);
+      return idx >= 0 ? idx + 1 : 0;
+    }
+
+    function shapePath(c, x, y, rx, ry, degree) {
+      switch (degree) {
+        case 1:
+          c.moveTo(x, y - ry);
+          c.lineTo(x + rx, y + ry);
+          c.lineTo(x - rx, y + ry);
+          c.closePath();
+          break;
+        case 2:
+          c.ellipse(x, y, rx, ry, 0, -Math.PI / 2, Math.PI / 2);
+          c.closePath();
+          break;
+        case 3:
+          c.moveTo(x, y - ry);
+          c.lineTo(x + rx, y);
+          c.lineTo(x, y + ry);
+          c.lineTo(x - rx, y);
+          c.closePath();
+          break;
+        case 4:
+          c.moveTo(x - rx, y - ry);
+          c.lineTo(x + rx, y + ry);
+          c.lineTo(x - rx, y + ry);
+          c.closePath();
+          break;
+        case 5:
+          c.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2);
+          break;
+        case 6:
+          c.rect(x - rx, y - ry, rx * 2, ry * 2);
+          break;
+        case 7:
+          c.moveTo(x, y + ry);
+          c.lineTo(x + rx, y - ry);
+          c.lineTo(x - rx, y - ry);
+          c.closePath();
+          break;
+        default:
+          c.ellipse(x, y, rx * 0.5, ry * 0.5, 0, 0, Math.PI * 2);
+          break;
+      }
+    }
+
+    // ══════════════════════════════════════════
+    //  5. SHARED STATE
+    // ══════════════════════════════════════════
+    let appMode = 'chordId'; // 'chordId', 'interval', 'live'
+    let pedalState = {
+      D: 'natural', C: 'natural', B: 'natural',
+      E: 'natural', F: 'natural', G: 'natural', A: 'natural'
+    };
+    let score = 0;
+    let total = 0;
+
+    // ══════════════════════════════════════════
+    //  6. DRILL STATE
+    // ══════════════════════════════════════════
+    let currentChord = null;
+    let chordIdAnswered = false;
+
+    const IDLE = 'IDLE';
+    const SELECTING = 'SELECTING';
+    const ANSWERED = 'ANSWERED';
+    let gameState = IDLE;
+    let noteMode = 2;
+    let currentPuzzle = null;
+    let selectedTypes = new Set();
+
+    // ══════════════════════════════════════════
+    //  7. LIVE STAFF STATE
+    // ══════════════════════════════════════════
+    let audioCtx = null;
+    let analyser = null;
+    let dataArray = null;
+    let liveRunning = false;
+    let liveAnimFrameId = null;
+    let noteBuffer = [];
+    let currentNote = null;
+    let demoMode = false;
+    let demoStartTime = 0;
+    let liveCanvas, liveCtx, liveW, liveH, liveCenterY, liveNowX;
+
+    // ══════════════════════════════════════════
+    //  8. SHARED HELPERS
+    // ══════════════════════════════════════════
+    function getNoteSemitone(letter) {
+      const baseSemitones = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+      let semitone = baseSemitones[letter];
+      const pedal = pedalState[letter];
+      if (pedal === 'flat') semitone -= 1;
+      if (pedal === 'sharp') semitone += 1;
+      return (semitone + 12) % 12;
+    }
+
+    function getAccidentalForNote(noteLetter) {
+      const letter = noteLetter.toUpperCase();
+      const position = pedalState[letter];
+      if (position === 'flat') return 'b';
+      if (position === 'sharp') return '#';
+      return '';
+    }
+
+    function getAvailableScale() {
+      return noteLetters.map(letter => ({
+        letter,
+        semitone: getNoteSemitone(letter),
+        accidental: getAccidentalForNote(letter)
+      }));
+    }
+
+    function midiToVexFlow(midi, letter) {
+      const octave = Math.floor(midi / 12) - 1;
+      const acc = getAccidentalForNote(letter);
+      return `${letter.toLowerCase()}${acc}/${octave}`;
+    }
+
+    function midiToNoteName(midi, letter) {
+      const octave = Math.floor(midi / 12) - 1;
+      const acc = getAccidentalForNote(letter);
+      const accSymbol = acc === '#' ? '\u266f' : acc === 'b' ? '\u266d' : '';
+      return `${letter}${accSymbol}${octave}`;
+    }
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function getVexKeySig() {
+      const { sharps, flats, isStandard } = getKeySigPosition();
+      let keySig = 'C';
+      if (isStandard) {
+        if (sharps > 0) keySig = sharpKeys[sharps].replace(' major', '').replace('\u266f', '#');
+        if (flats > 0) keySig = flatKeys[flats].replace(' major', '').replace('\u266d', 'b');
+      }
+      return { keySig, isStandard };
+    }
+
+    function getKeyRootFromPedals() {
+      const { sharps, flats, isStandard } = getKeySigPosition();
+      if (!isStandard) return 0;
+      const sharpRoots = [0, 7, 2, 9, 4, 11, 6, 1];
+      const flatRoots  = [0, 5, 10, 3, 8, 1, 6, 11];
+      if (sharps > 0) return sharpRoots[sharps];
+      if (flats > 0) return flatRoots[flats];
+      return 0;
+    }
+
+    // Live staff helpers
+    function midiToStaffPos(midi) {
+      return (Math.floor(midi / 12) - 1) * 7 + DIATONIC[midi % 12];
+    }
+
+    function posToY(pos) {
+      return liveCenterY - (pos - 28) * STEP;
+    }
+
+    function freqToMidi(freq) {
+      return Math.round(69 + 12 * Math.log2(freq / 440));
+    }
+
+    function freqToCents(freq, midi) {
+      const exact = 440 * Math.pow(2, (midi - 69) / 12);
+      return 1200 * Math.log2(freq / exact);
+    }
+
+    function liveNoteName(midi) {
+      const idx = midi % 12;
+      const oct = Math.floor(midi / 12) - 1;
+      return NOTE_NAMES[idx] + oct;
+    }
+
+    // ══════════════════════════════════════════
+    //  9. PEDAL / KEY FUNCTIONS
+    // ══════════════════════════════════════════
     function cyclePedal(note) {
-      if (currentDrill === 'interval' && gameState === SELECTING) return;
+      if (appMode === 'interval' && gameState === SELECTING) return;
       const positions = ['flat', 'natural', 'sharp'];
       const currentIdx = positions.indexOf(pedalState[note]);
       pedalState[note] = positions[(currentIdx + 1) % 3];
       updatePedalDisplay();
       updateKeyLabel();
-      if (currentDrill === 'chordId' && currentChord) renderChord(currentChord);
+      if (appMode === 'chordId' && currentChord) renderChord(currentChord);
     }
 
     function updatePedalDisplay() {
-      const locked = currentDrill === 'interval' && gameState === SELECTING;
+      const locked = appMode === 'interval' && gameState === SELECTING;
       for (const [note, position] of Object.entries(pedalState)) {
         const pedalEl = document.getElementById(`pedal-${note}`);
         pedalEl.className = `pedal ${position}${locked ? ' locked' : ''}`;
@@ -697,13 +967,13 @@
     }
 
     function updateKeySigButtons() {
-      const locked = currentDrill === 'interval' && gameState === SELECTING;
+      const locked = appMode === 'interval' && gameState === SELECTING;
       document.getElementById('flat-btn').disabled = locked;
       document.getElementById('sharp-btn').disabled = locked;
     }
 
     function addSharp() {
-      if (currentDrill === 'interval' && gameState === SELECTING) return;
+      if (appMode === 'interval' && gameState === SELECTING) return;
       const { sharps, flats } = getKeySigPosition();
       if (flats > 0) {
         pedalState[flatOrder[flats - 1]] = 'natural';
@@ -712,11 +982,11 @@
       }
       updatePedalDisplay();
       updateKeyLabel();
-      if (currentDrill === 'chordId' && currentChord) renderChord(currentChord);
+      if (appMode === 'chordId' && currentChord) renderChord(currentChord);
     }
 
     function addFlat() {
-      if (currentDrill === 'interval' && gameState === SELECTING) return;
+      if (appMode === 'interval' && gameState === SELECTING) return;
       const { sharps, flats } = getKeySigPosition();
       if (sharps > 0) {
         pedalState[sharpOrder[sharps - 1]] = 'natural';
@@ -725,128 +995,130 @@
       }
       updatePedalDisplay();
       updateKeyLabel();
-      if (currentDrill === 'chordId' && currentChord) renderChord(currentChord);
+      if (appMode === 'chordId' && currentChord) renderChord(currentChord);
     }
 
-    // ── Shared music helpers ──
-    function getNoteSemitone(letter) {
-      const baseSemitones = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
-      let semitone = baseSemitones[letter];
-      const pedal = pedalState[letter];
-      if (pedal === 'flat') semitone -= 1;
-      if (pedal === 'sharp') semitone += 1;
-      return (semitone + 12) % 12;
-    }
-
-    function getAccidentalForNote(noteLetter) {
-      const letter = noteLetter.toUpperCase();
-      const position = pedalState[letter];
-      if (position === 'flat') return 'b';
-      if (position === 'sharp') return '#';
-      return '';
-    }
-
-    function getAvailableScale() {
-      return noteLetters.map(letter => ({
-        letter,
-        semitone: getNoteSemitone(letter),
-        accidental: getAccidentalForNote(letter)
-      }));
-    }
-
-    function midiToVexFlow(midi, letter) {
-      const octave = Math.floor(midi / 12) - 1;
-      const acc = getAccidentalForNote(letter);
-      return `${letter.toLowerCase()}${acc}/${octave}`;
-    }
-
-    function midiToNoteName(midi, letter) {
-      const octave = Math.floor(midi / 12) - 1;
-      const acc = getAccidentalForNote(letter);
-      const accSymbol = acc === '#' ? '\u266f' : acc === 'b' ? '\u266d' : '';
-      return `${letter}${accSymbol}${octave}`;
-    }
-
-    function shuffle(array) {
-      const arr = [...array];
-      for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+    // ══════════════════════════════════════════
+    //  10. MODE SWITCHING
+    // ══════════════════════════════════════════
+    function setAppMode(mode) {
+      // Stop live staff if leaving live mode
+      if (appMode === 'live' && mode !== 'live') {
+        stopLiveStaff();
       }
-      return arr;
-    }
 
-    function getVexKeySig() {
-      const { sharps, flats, isStandard } = getKeySigPosition();
-      let keySig = 'C';
-      if (isStandard) {
-        if (sharps > 0) keySig = sharpKeys[sharps].replace(' major', '').replace('\u266f', '#');
-        if (flats > 0) keySig = flatKeys[flats].replace(' major', '').replace('\u266d', 'b');
+      appMode = mode;
+
+      // Reset score when switching between drill modes
+      if (mode === 'chordId' || mode === 'interval') {
+        score = 0;
+        total = 0;
+        document.getElementById('score').textContent = '0';
+        document.getElementById('total').textContent = '0';
       }
-      return { keySig, isStandard };
-    }
 
-    // ── Drill switching ──
-    function setDrill(drill) {
-      currentDrill = drill;
-      score = 0;
-      total = 0;
-      document.getElementById('score').textContent = '0';
-      document.getElementById('total').textContent = '0';
+      // Update toggle buttons
+      document.getElementById('app-chordId').className = `mode-btn${mode === 'chordId' ? ' active' : ''}`;
+      document.getElementById('app-interval').className = `mode-btn${mode === 'interval' ? ' active' : ''}`;
+      document.getElementById('app-live').className = `mode-btn${mode === 'live' ? ' active' : ''}`;
 
-      // Update drill toggle
-      document.getElementById('drill-chordId').className = `mode-btn${drill === 'chordId' ? ' active' : ''}`;
-      document.getElementById('drill-interval').className = `mode-btn${drill === 'interval' ? ' active' : ''}`;
+      const isDrill = mode === 'chordId' || mode === 'interval';
+      const isInterval = mode === 'interval';
+      const isLive = mode === 'live';
 
-      // Show/hide interval-specific UI
-      const showInterval = drill === 'interval';
-      document.getElementById('note-count-divider').style.display = showInterval ? '' : 'none';
-      document.getElementById('mode-2').style.display = showInterval ? '' : 'none';
-      document.getElementById('mode-3').style.display = showInterval ? '' : 'none';
-      document.getElementById('submit-btn').style.display = showInterval ? '' : 'none';
+      // Score display
+      document.getElementById('score-display').style.display = isDrill ? '' : 'none';
+
+      // Note count toggle (interval only)
+      document.getElementById('note-count-divider').style.display = isInterval ? '' : 'none';
+      document.getElementById('mode-2').style.display = isInterval ? '' : 'none';
+      document.getElementById('mode-3').style.display = isInterval ? '' : 'none';
+
+      // Notation / canvas
+      document.getElementById('notation').style.display = isLive ? 'none' : 'block';
+      document.getElementById('live-canvas').style.display = isLive ? 'block' : 'none';
+
+      // Staff container live-mode class
+      const staffContainer = document.getElementById('staff-container');
+      if (isLive) {
+        staffContainer.classList.add('live-mode');
+      } else {
+        staffContainer.classList.remove('live-mode');
+      }
+
+      // Start overlay
+      document.getElementById('start-overlay').style.display = isLive && !liveRunning ? 'flex' : 'none';
+
+      // Pedal diagram + key sig are always visible (inside staff-container)
+      // But in live mode, move them outside live-mode padding
+      const pedalDiagram = document.getElementById('pedal-diagram');
+      const pedalLabels = document.getElementById('pedal-labels');
+      const keySigControl = document.getElementById('key-sig-control');
+      if (isLive) {
+        pedalDiagram.style.margin = '1rem 1rem 0';
+        pedalDiagram.style.paddingTop = '1rem';
+        pedalLabels.style.margin = '0.5rem 1rem 0';
+        keySigControl.style.margin = '0 1rem 1rem';
+        keySigControl.style.paddingTop = '0.75rem';
+      } else {
+        pedalDiagram.style.margin = '';
+        pedalDiagram.style.paddingTop = '';
+        pedalLabels.style.margin = '';
+        keySigControl.style.margin = '';
+        keySigControl.style.paddingTop = '';
+      }
+
+      // Answer grid, submit, feedback, controls
+      document.getElementById('answers').style.display = isDrill ? '' : 'none';
+      document.getElementById('submit-btn').style.display = isInterval ? '' : 'none';
+      document.getElementById('feedback').style.display = isDrill ? '' : 'none';
+      document.getElementById('feedback-details').style.display = isDrill ? '' : 'none';
+      document.getElementById('note-names').style.display = isDrill ? '' : 'none';
+      document.getElementById('controls').style.display = isDrill ? 'flex' : 'none';
+
+      // Clear feedback
+      document.getElementById('feedback').textContent = '';
       document.getElementById('feedback-details').innerHTML = '';
+      document.getElementById('note-names').textContent = '';
 
-      // Reset states
+      // Reset drill states
       gameState = IDLE;
       chordIdAnswered = false;
       currentChord = null;
       currentPuzzle = null;
       selectedTypes.clear();
 
-      // Unlock pedals/key sig
+      // Unlock pedals
       updatePedalDisplay();
       updateKeySigButtons();
 
-      if (drill === 'chordId') {
+      // Initialize mode
+      if (mode === 'chordId') {
         document.getElementById('next-btn').textContent = 'Next Chord';
         newChord();
-      } else {
+      } else if (mode === 'interval') {
         document.getElementById('next-btn').textContent = 'Next';
         newPuzzle();
+      } else if (mode === 'live') {
+        initLiveStaffCanvas();
+        if (liveRunning) {
+          // Already running, just show it
+          document.getElementById('start-overlay').style.display = 'none';
+        }
       }
     }
 
     function handleNext() {
-      if (currentDrill === 'chordId') {
+      if (appMode === 'chordId') {
         newChord();
-      } else {
+      } else if (appMode === 'interval') {
         newPuzzle();
       }
     }
 
-    // ── Note mode toggle (interval drill) ──
-    function setNoteMode(mode) {
-      if (gameState === SELECTING) return;
-      noteMode = mode;
-      document.getElementById('mode-2').className = `mode-btn${mode === 2 ? ' active' : ''}`;
-      document.getElementById('mode-3').className = `mode-btn${mode === 3 ? ' active' : ''}`;
-      newPuzzle();
-    }
-
     // ══════════════════════════════════════════
-    //  CHORD ID DRILL
+    //  11. CHORD ID DRILL
     // ══════════════════════════════════════════
-
     function generateChord() {
       const scale = getAvailableScale();
       const chordType = unambiguousChordTypes[Math.floor(Math.random() * unambiguousChordTypes.length)];
@@ -872,7 +1144,6 @@
         return generateChord();
       }
 
-      // Safety: verify these specific notes aren't ambiguous with current pedal tuning
       const noteSemitones = chordNotes.map(n => scale.find(s => s.letter === n.letter).semitone);
       let chordInterpretations = 0;
       for (const ct of chordTypes) {
@@ -885,7 +1156,6 @@
       }
       if (chordInterpretations > 1) return generateChord();
 
-      // Just the required chord tones, one per voice
       const rootOctave = 3;
       let arpeggioNotes = [];
 
@@ -898,8 +1168,6 @@
       }
 
       arpeggioNotes.sort((a, b) => a.midi - b.midi);
-
-      // Randomly ascending or descending
       if (Math.random() < 0.5) arpeggioNotes.reverse();
 
       const vexKeys = arpeggioNotes.map(n => midiToVexFlow(n.midi, n.letter));
@@ -1061,9 +1329,8 @@
     }
 
     // ══════════════════════════════════════════
-    //  INTERVAL TO CHORD DRILL
+    //  12. INTERVAL DRILL
     // ══════════════════════════════════════════
-
     function findValidChords(chosenNotes) {
       const semitones = chosenNotes.map(n => n.semitone);
       const results = [];
@@ -1131,10 +1398,9 @@
         if (validTypeNames.length === 0) continue;
         if (validTypeNames.length > 6) continue;
 
-        // Place notes randomly across octaves 3-5
         const baseSemitones = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
         const displayNotes = chosen.map(n => {
-          const octave = 3 + Math.floor(Math.random() * 3); // 3, 4, or 5
+          const octave = 3 + Math.floor(Math.random() * 3);
           const midi = (octave + 1) * 12 + baseSemitones[n.letter] + (pedalState[n.letter] === 'sharp' ? 1 : pedalState[n.letter] === 'flat' ? -1 : 0);
           return {
             letter: n.letter,
@@ -1178,7 +1444,6 @@
       if (isStandard && keySig !== 'C') bassStave.addKeySignature(keySig);
       bassStave.setContext(context).draw();
 
-      // Split notes into treble (octave >= 4) and bass
       const trebleKeys = [];
       const bassKeys = [];
       const trebleAccs = [];
@@ -1196,7 +1461,6 @@
         }
       });
 
-      // Build treble chord or rest
       let trebleNote;
       if (trebleKeys.length > 0) {
         trebleNote = new StaveNote({ clef: 'treble', keys: trebleKeys, duration: 'w' });
@@ -1207,7 +1471,6 @@
         trebleNote = new StaveNote({ clef: 'treble', keys: ['b/4'], duration: 'wr' });
       }
 
-      // Build bass chord or rest
       let bassNote;
       if (bassKeys.length > 0) {
         bassNote = new StaveNote({ clef: 'bass', keys: bassKeys, duration: 'w' });
@@ -1309,7 +1572,6 @@
       document.getElementById('submit-btn').disabled = true;
       document.getElementById('controls').style.display = 'flex';
 
-      // Unlock pedals after answering
       updatePedalDisplay();
       updateKeySigButtons();
     }
@@ -1343,9 +1605,389 @@
       updateKeySigButtons();
     }
 
-    // ── Initialize ──
+    function setNoteMode(mode) {
+      if (gameState === SELECTING) return;
+      noteMode = mode;
+      document.getElementById('mode-2').className = `mode-btn${mode === 2 ? ' active' : ''}`;
+      document.getElementById('mode-3').className = `mode-btn${mode === 3 ? ' active' : ''}`;
+      newPuzzle();
+    }
+
+    // ══════════════════════════════════════════
+    //  13. LIVE STAFF RENDERING
+    // ══════════════════════════════════════════
+    function drawStaff() {
+      liveCtx.strokeStyle = '#b0aba0';
+      liveCtx.lineWidth = 1;
+      liveCtx.beginPath();
+      for (const p of TREBLE_LINES) {
+        const y = posToY(p);
+        liveCtx.moveTo(LIVE_MARGIN_LEFT, y); liveCtx.lineTo(liveNowX + 15, y);
+      }
+      for (const p of BASS_LINES) {
+        const y = posToY(p);
+        liveCtx.moveTo(LIVE_MARGIN_LEFT, y); liveCtx.lineTo(liveNowX + 15, y);
+      }
+      liveCtx.stroke();
+
+      liveCtx.fillStyle = '#999';
+      liveCtx.font = '600 13px "Crimson Pro", serif';
+      liveCtx.textAlign = 'center';
+      liveCtx.textBaseline = 'middle';
+      liveCtx.fillText('Treble', LIVE_MARGIN_LEFT / 2, posToY(34));
+      liveCtx.fillText('Bass', LIVE_MARGIN_LEFT / 2, posToY(22));
+    }
+
+    function drawTimeGrid(now) {
+      liveCtx.strokeStyle = 'rgba(0,0,0,0.05)';
+      liveCtx.lineWidth = 1;
+      const px = SCROLL_PX_SEC;
+      const off = (now / 1000) % 1 * px;
+      const top = posToY(42), bot = posToY(14);
+      liveCtx.beginPath();
+      for (let x = liveNowX - off; x > LIVE_MARGIN_LEFT; x -= px) {
+        liveCtx.moveTo(x, top); liveCtx.lineTo(x, bot);
+      }
+      liveCtx.stroke();
+    }
+
+    function drawNowLine() {
+      liveCtx.strokeStyle = 'rgba(37,99,235,0.25)';
+      liveCtx.lineWidth = 2;
+      liveCtx.beginPath();
+      liveCtx.moveTo(liveNowX, posToY(44));
+      liveCtx.lineTo(liveNowX, posToY(12));
+      liveCtx.stroke();
+    }
+
+    function getLedgerLines(pos) {
+      const lines = [];
+      for (let p = 40; p <= pos; p += 2) lines.push(p);
+      for (let p = 16; p >= pos; p -= 2) lines.push(p);
+      if (pos === 28) lines.push(28);
+      return lines;
+    }
+
+    function buildSegments(now) {
+      const windowMs = (liveNowX - LIVE_MARGIN_LEFT) / SCROLL_PX_SEC * 1000 + 500;
+      const cutoff = now - windowMs;
+      while (noteBuffer.length > 0 && noteBuffer[0].time < cutoff) noteBuffer.shift();
+
+      const segs = [];
+      if (noteBuffer.length === 0) return segs;
+
+      let sStart = 0;
+      for (let i = 1; i <= noteBuffer.length; i++) {
+        const split = i === noteBuffer.length
+          || noteBuffer[i].midi !== noteBuffer[i - 1].midi
+          || noteBuffer[i].time - noteBuffer[i - 1].time > GAP_MS;
+        if (split) {
+          segs.push({
+            midi: noteBuffer[sStart].midi,
+            t0: noteBuffer[sStart].time,
+            t1: noteBuffer[i - 1].time,
+          });
+          sStart = i;
+        }
+      }
+      return segs;
+    }
+
+    function drawSegments(now, segs) {
+      const keyRoot = getKeyRootFromPedals();
+      for (const seg of segs) {
+        const x1 = liveNowX - ((now - seg.t1) / 1000) * SCROLL_PX_SEC;
+        const x0 = liveNowX - ((now - seg.t0) / 1000) * SCROLL_PX_SEC;
+        if (x0 < LIVE_MARGIN_LEFT - 20 || x1 > liveNowX + 20) continue;
+
+        const cx0 = Math.max(x0, LIVE_MARGIN_LEFT - 10);
+        const cx1 = Math.min(x1, liveNowX + 10);
+        const pos = midiToStaffPos(seg.midi);
+        const y = posToY(pos);
+        const degree = getScaleDegree(seg.midi, keyRoot);
+
+        const fade = cx0 < LIVE_MARGIN_LEFT + 40
+          ? Math.max(0.1, (cx0 - LIVE_MARGIN_LEFT + 10) / 50) : 1;
+        const isRecent = seg.t1 > now - 120;
+        const color = degree === 0
+          ? (isRecent ? '#9ca3af' : '#aaa')
+          : (isRecent ? '#2563eb' : '#3a3a3a');
+
+        const ledgers = getLedgerLines(pos);
+        if (ledgers.length > 0) {
+          liveCtx.globalAlpha = fade * 0.7;
+          liveCtx.strokeStyle = '#b0aba0';
+          liveCtx.lineWidth = 1;
+          liveCtx.beginPath();
+          for (const lp of ledgers) {
+            const ly = posToY(lp);
+            liveCtx.moveTo(cx0 - 4, ly); liveCtx.lineTo(cx1 + 4, ly);
+          }
+          liveCtx.stroke();
+        }
+
+        liveCtx.globalAlpha = fade;
+        const w = cx1 - cx0;
+
+        if (w > NOTE_RX * 2.5) {
+          liveCtx.fillStyle = isRecent ? 'rgba(37,99,235,0.25)' : 'rgba(58,58,58,0.2)';
+          liveCtx.fillRect(cx0, y - NOTE_RY * 0.35, w - NOTE_RX, NOTE_RY * 0.7);
+
+          liveCtx.fillStyle = color;
+          liveCtx.beginPath();
+          shapePath(liveCtx, cx1, y, NOTE_RX, NOTE_RY, degree);
+          liveCtx.fill();
+        } else {
+          liveCtx.fillStyle = color;
+          liveCtx.beginPath();
+          shapePath(liveCtx, (cx0 + cx1) / 2, y, NOTE_RX, NOTE_RY, degree);
+          liveCtx.fill();
+        }
+        liveCtx.globalAlpha = 1;
+      }
+    }
+
+    function drawCurrentInfo() {
+      if (!currentNote) {
+        liveCtx.fillStyle = '#ccc';
+        liveCtx.font = '18px "Crimson Pro", serif';
+        liveCtx.textAlign = 'center';
+        liveCtx.textBaseline = 'middle';
+        liveCtx.fillText('Play a note\u2026', liveNowX + LIVE_MARGIN_RIGHT / 2, liveCenterY);
+        return;
+      }
+
+      const x = liveNowX + LIVE_MARGIN_RIGHT / 2;
+
+      liveCtx.fillStyle = '#2563eb';
+      liveCtx.font = 'bold 32px "JetBrains Mono", monospace';
+      liveCtx.textAlign = 'center';
+      liveCtx.textBaseline = 'bottom';
+      liveCtx.fillText(currentNote.name, x, liveCenterY - 8);
+
+      liveCtx.fillStyle = '#999';
+      liveCtx.font = '12px "JetBrains Mono", monospace';
+      liveCtx.textBaseline = 'top';
+      liveCtx.fillText(currentNote.freq.toFixed(1) + ' Hz', x, liveCenterY + 4);
+
+      const cents = freqToCents(currentNote.freq, currentNote.midi);
+      const ct = cents >= 0 ? '+' + cents.toFixed(0) + '\u00a2' : cents.toFixed(0) + '\u00a2';
+      liveCtx.fillStyle = Math.abs(cents) < 10 ? '#28a745'
+        : Math.abs(cents) < 25 ? '#e6a800' : '#dc3545';
+      liveCtx.fillText(ct, x, liveCenterY + 22);
+    }
+
+    function drawLegend() {
+      const keyRoot = getKeyRootFromPedals();
+      const lx = LIVE_MARGIN_LEFT + 8;
+      const ly = posToY(44) - 10;
+      liveCtx.font = '10px "JetBrains Mono", monospace';
+      liveCtx.textAlign = 'left';
+      liveCtx.textBaseline = 'middle';
+
+      for (let d = 1; d <= 7; d++) {
+        const ox = lx + (d - 1) * 52;
+        liveCtx.fillStyle = '#3a3a3a';
+        liveCtx.beginPath();
+        shapePath(liveCtx, ox + 7, ly, 6, 5, d);
+        liveCtx.fill();
+        liveCtx.fillStyle = '#999';
+        liveCtx.fillText(SOLFEGE[d - 1], ox + 16, ly);
+      }
+    }
+
+    // ══════════════════════════════════════════
+    //  14. PITCH DETECTION (AMDF)
+    // ══════════════════════════════════════════
+    function detectPitch(buf, sr) {
+      let rms = 0;
+      for (let i = 0; i < buf.length; i++) rms += buf[i] * buf[i];
+      rms = Math.sqrt(rms / buf.length);
+      if (rms < NOISE_GATE) return null;
+
+      const N = buf.length, HALF = N >> 1;
+      let best = -1, bestC = 0, found = false;
+      const c = new Float32Array(HALF);
+
+      for (let off = 0; off < HALF; off++) {
+        let sum = 0;
+        for (let i = 0; i < HALF; i++) sum += Math.abs(buf[i] - buf[i + off]);
+        c[off] = 1 - sum / HALF;
+        if (c[off] > CLARITY_THRESH && !found) found = true;
+        if (found) {
+          if (c[off] > bestC) { bestC = c[off]; best = off; }
+          else if (c[off] < bestC - 0.1) break;
+        }
+      }
+      if (bestC < 0.8 || best < 1) return null;
+
+      const a = c[best - 1], b = c[best], d = c[best + 1];
+      const shift = (d - a) / (2 * (2 * b - d - a));
+      return sr / (best + shift);
+    }
+
+    // ══════════════════════════════════════════
+    //  15. LIVE STAFF LIFECYCLE
+    // ══════════════════════════════════════════
+    function initLiveStaffCanvas() {
+      liveCanvas = document.getElementById('live-canvas');
+      liveCtx = liveCanvas.getContext('2d');
+      resizeLiveCanvas();
+    }
+
+    function resizeLiveCanvas() {
+      if (!liveCanvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      const container = document.getElementById('staff-container');
+      liveW = container.clientWidth;
+      liveH = LIVE_CANVAS_HEIGHT;
+      liveCanvas.width = liveW * dpr;
+      liveCanvas.height = liveH * dpr;
+      liveCanvas.style.width = liveW + 'px';
+      liveCanvas.style.height = liveH + 'px';
+      liveCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      liveCenterY = liveH / 2;
+      liveNowX = liveW - LIVE_MARGIN_RIGHT;
+    }
+
+    async function startLiveListening() {
+      const btn = document.getElementById('start-btn');
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioCtx = new AudioContext();
+        const source = audioCtx.createMediaStreamSource(stream);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = FFT_SIZE;
+        source.connect(analyser);
+        dataArray = new Float32Array(analyser.fftSize);
+
+        document.getElementById('start-overlay').style.display = 'none';
+        demoMode = false;
+        liveRunning = true;
+        noteBuffer = [];
+        currentNote = null;
+        resizeLiveCanvas();
+        liveFrame();
+      } catch (e) {
+        btn.textContent = 'Mic access denied';
+        btn.disabled = true;
+      }
+    }
+
+    function startDemo() {
+      document.getElementById('start-overlay').style.display = 'none';
+      demoMode = true;
+      demoStartTime = performance.now();
+      liveRunning = true;
+      noteBuffer = [];
+      currentNote = null;
+      resizeLiveCanvas();
+      liveFrame();
+    }
+
+    function stopLiveStaff() {
+      liveRunning = false;
+      if (liveAnimFrameId) {
+        cancelAnimationFrame(liveAnimFrameId);
+        liveAnimFrameId = null;
+      }
+      if (audioCtx) {
+        audioCtx.close().catch(() => {});
+        audioCtx = null;
+        analyser = null;
+        dataArray = null;
+      }
+      demoMode = false;
+      noteBuffer = [];
+      currentNote = null;
+    }
+
+    function liveFrame() {
+      if (!liveRunning) return;
+      const now = performance.now();
+
+      if (demoMode) {
+        const elapsed = (now - demoStartTime) % DEMO_LOOP_MS;
+        for (const dn of DEMO_NOTES) {
+          if (elapsed >= dn.start && elapsed < dn.start + dn.dur) {
+            const freq = 440 * Math.pow(2, (dn.midi - 69) / 12);
+            const jitter = (Math.random() - 0.5) * 2;
+            const f = freq * Math.pow(2, jitter / 1200);
+            currentNote = { midi: dn.midi, freq: f, name: liveNoteName(dn.midi) };
+            noteBuffer.push({ time: now, midi: dn.midi, freq: f });
+          }
+        }
+        if (!DEMO_NOTES.some(dn => {
+          const e = (now - demoStartTime) % DEMO_LOOP_MS;
+          return e >= dn.start && e < dn.start + dn.dur;
+        })) {
+          currentNote = null;
+        }
+      } else {
+        analyser.getFloatTimeDomainData(dataArray);
+        const freq = detectPitch(dataArray, audioCtx.sampleRate);
+        if (freq) {
+          const midi = freqToMidi(freq);
+          if (midi >= 12 && midi <= 108) {
+            currentNote = { midi, freq, name: liveNoteName(midi) };
+            noteBuffer.push({ time: now, midi, freq });
+          }
+        } else {
+          currentNote = null;
+        }
+      }
+
+      // Clear
+      liveCtx.fillStyle = '#f8f6f1';
+      liveCtx.fillRect(0, 0, liveW, liveH);
+
+      // Draw
+      drawTimeGrid(now);
+      drawStaff();
+      drawNowLine();
+      drawSegments(now, buildSegments(now));
+      drawCurrentInfo();
+      drawLegend();
+
+      liveAnimFrameId = requestAnimationFrame(liveFrame);
+    }
+
+    // ══════════════════════════════════════════
+    //  16. DEMO DATA
+    // ══════════════════════════════════════════
+    const DEMO_NOTES = [
+      { midi: 48, start: 0,    dur: 400 },
+      { midi: 52, start: 500,  dur: 400 },
+      { midi: 55, start: 1000, dur: 400 },
+      { midi: 60, start: 1500, dur: 400 },
+      { midi: 64, start: 2000, dur: 400 },
+      { midi: 67, start: 2500, dur: 400 },
+      { midi: 72, start: 3000, dur: 400 },
+      { midi: 76, start: 3500, dur: 400 },
+      { midi: 79, start: 4000, dur: 600 },
+      { midi: 55, start: 5000, dur: 300 },
+      { midi: 59, start: 5400, dur: 300 },
+      { midi: 62, start: 5800, dur: 300 },
+      { midi: 65, start: 6200, dur: 300 },
+      { midi: 48, start: 7000, dur: 800 },
+      { midi: 60, start: 7000, dur: 800 },
+      { midi: 64, start: 7000, dur: 800 },
+      { midi: 67, start: 7000, dur: 800 },
+      { midi: 72, start: 7000, dur: 800 },
+    ];
+    const DEMO_LOOP_MS = 9000;
+
+    // ══════════════════════════════════════════
+    //  17. INIT
+    // ══════════════════════════════════════════
+    window.addEventListener('resize', () => {
+      if (appMode === 'live' && liveCanvas) {
+        resizeLiveCanvas();
+      }
+    });
+
     updateKeyLabel();
-    newChord();
+    setAppMode('chordId');
   </script>
 </body>
 </html>
