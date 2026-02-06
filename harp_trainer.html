@@ -769,7 +769,7 @@
     // ══════════════════════════════════════════
     //  2. CONFIG CONSTANTS
     // ══════════════════════════════════════════
-    const FFT_SIZE = 4096;
+    const FFT_SIZE = 8192;
     const SCROLL_PX_SEC = 90;
     const NOISE_GATE = 0.008;
     const CLARITY_THRESH = 0.93;
@@ -781,6 +781,17 @@
     const LIVE_MARGIN_RIGHT = 110;
     const GAP_MS = 150;
     const LIVE_CANVAS_HEIGHT = 400;
+
+    // ══════════════════════════════════════════
+    //  2b. WASM POLYPHONIC PITCH DETECTOR
+    // ══════════════════════════════════════════
+    let wasmDetector = null;
+    async function initWasmDetector() {
+      const wasm = await import('./harp-pitch-wasm/pkg/harp_pitch_wasm.js');
+      await wasm.default();
+      wasmDetector = new wasm.HarpPitchDetector(FFT_SIZE, 44100);
+    }
+    initWasmDetector().catch(e => console.warn('WASM polyphonic detector unavailable, using JS fallback:', e));
 
     // ══════════════════════════════════════════
     //  3. MUSIC CONSTANTS
@@ -2069,15 +2080,31 @@
         }
       } else {
         analyser.getFloatTimeDomainData(dataArray);
-        const freq = detectPitch(dataArray, audioCtx.sampleRate);
-        if (freq) {
-          const midi = freqToMidi(freq);
-          if (midi >= 12 && midi <= 108) {
-            currentNote = { midi, freq, name: liveNoteName(midi) };
-            noteBuffer.push({ time: now, midi, freq });
+        if (wasmDetector) {
+          const pcs = new Uint8Array(noteLetters.map(l => getNoteSemitone(l)));
+          const midis = wasmDetector.detect_notes(dataArray, pcs, 48, 79);
+          if (midis.length > 0) {
+            const topMidi = midis[midis.length - 1];
+            const topFreq = 440 * Math.pow(2, (topMidi - 69) / 12);
+            currentNote = { midi: topMidi, freq: topFreq, name: liveNoteName(topMidi) };
+            for (const m of midis) {
+              const f = 440 * Math.pow(2, (m - 69) / 12);
+              noteBuffer.push({ time: now, midi: m, freq: f });
+            }
+          } else {
+            currentNote = null;
           }
         } else {
-          currentNote = null;
+          const freq = detectPitch(dataArray, audioCtx.sampleRate);
+          if (freq) {
+            const midi = freqToMidi(freq);
+            if (midi >= 12 && midi <= 108) {
+              currentNote = { midi, freq, name: liveNoteName(midi) };
+              noteBuffer.push({ time: now, midi, freq });
+            }
+          } else {
+            currentNote = null;
+          }
         }
       }
 
@@ -2629,11 +2656,19 @@
       // Mic input
       if (s.inputMode === 'mic' && analyser && dataArray) {
         analyser.getFloatTimeDomainData(dataArray);
-        const freq = detectPitch(dataArray, audioCtx.sampleRate);
-        if (freq) {
-          const midi = freqToMidi(freq);
-          if (midi >= 12 && midi <= 108) {
+        if (wasmDetector) {
+          const pcs = new Uint8Array(noteLetters.map(l => getNoteSemitone(l)));
+          const midis = wasmDetector.detect_notes(dataArray, pcs, 48, 79);
+          for (const midi of midis) {
             srCheckNote(s, midi);
+          }
+        } else {
+          const freq = detectPitch(dataArray, audioCtx.sampleRate);
+          if (freq) {
+            const midi = freqToMidi(freq);
+            if (midi >= 12 && midi <= 108) {
+              srCheckNote(s, midi);
+            }
           }
         }
       }
