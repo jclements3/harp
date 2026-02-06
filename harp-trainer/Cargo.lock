@@ -1513,6 +1513,7 @@ dependencies = [
  "cpal",
  "eframe",
  "pitch-detection",
+ "rand",
  "ringbuf",
 ]
 

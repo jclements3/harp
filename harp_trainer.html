@@ -366,6 +366,89 @@
       display: none;
     }
 
+    /* Sight reading */
+    #sr-canvas {
+      display: none;
+      width: 100%;
+      height: 400px;
+    }
+
+    #sr-setup-overlay, #sr-results-overlay {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      background: rgba(248,246,241,0.97);
+      z-index: 10;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+
+    #sr-setup-overlay h1, #sr-results-overlay h1 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: #4a4a4a;
+    }
+
+    .sr-option-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #4a4a4a;
+      letter-spacing: 0.05em;
+      margin-top: 0.3rem;
+    }
+
+    .sr-option-row {
+      display: flex;
+      gap: 0.4rem;
+    }
+
+    .sr-result-big {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 3rem;
+      font-weight: 700;
+      color: #2a2a2a;
+    }
+
+    .sr-result-label {
+      font-size: 0.9rem;
+      color: #888;
+      margin-top: -0.3rem;
+    }
+
+    .sr-result-detail {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #888;
+    }
+
+    .sr-result-level {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      color: #2563eb;
+    }
+
+    #sr-start-btn {
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 1.1rem;
+      padding: 0.8rem 2rem;
+      border: none;
+      border-radius: 10px;
+      background: #2563eb;
+      color: white;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background 0.15s;
+    }
+
+    #sr-start-btn:hover { background: #1d4ed8; }
+    #sr-start-btn:active { transform: scale(0.97); }
+
     /* Larger phones / landscape */
     @media (min-width: 400px) {
       .answer-btn {
@@ -577,6 +660,7 @@
     <button class="mode-btn active" id="app-chordId" onclick="setAppMode('chordId')">Chord ID</button>
     <button class="mode-btn" id="app-interval" onclick="setAppMode('interval')">Interval&#x2192;Chord</button>
     <button class="mode-btn" id="app-live" onclick="setAppMode('live')">Live Staff</button>
+    <button class="mode-btn" id="app-sightread" onclick="setAppMode('sightread')">Sight Read</button>
     <div class="toggle-divider" id="note-count-divider" style="display:none"></div>
     <button class="mode-btn active" id="mode-2" onclick="setNoteMode(2)" style="display:none">2 Notes</button>
     <button class="mode-btn" id="mode-3" onclick="setNoteMode(3)" style="display:none">3 Notes</button>
@@ -591,6 +675,50 @@
       <p>Real-time pitch detection on a scrolling grand staff</p>
       <button id="start-btn" onclick="startLiveListening()">Start Listening</button>
       <button id="demo-btn" onclick="startDemo()">Demo (no mic)</button>
+    </div>
+
+    <canvas id="sr-canvas"></canvas>
+
+    <div id="sr-setup-overlay">
+      <h1>SIGHT READING</h1>
+      <div class="sr-option-label">SESSION LENGTH</div>
+      <div class="sr-option-row" id="sr-duration-row">
+        <button class="mode-btn active" onclick="srSetDuration(60)">1 min</button>
+        <button class="mode-btn" onclick="srSetDuration(120)">2 min</button>
+        <button class="mode-btn" onclick="srSetDuration(300)">5 min</button>
+      </div>
+      <div class="sr-option-label">FINGERS PER POSITION</div>
+      <div class="sr-option-row" id="sr-fingers-row">
+        <button class="mode-btn" onclick="srSetFingers(3)">3</button>
+        <button class="mode-btn active" onclick="srSetFingers(4)">4</button>
+      </div>
+      <div class="sr-option-label">STARTING SPEED</div>
+      <div class="sr-option-row" id="sr-speed-row">
+        <button class="mode-btn active" onclick="srSetSpeed('relaxed')">Relaxed</button>
+        <button class="mode-btn" onclick="srSetSpeed('moderate')">Moderate</button>
+        <button class="mode-btn" onclick="srSetSpeed('brisk')">Brisk</button>
+      </div>
+      <div class="sr-option-label">INPUT</div>
+      <div class="sr-option-row" id="sr-input-row">
+        <button class="mode-btn active" onclick="srSetInput('manual')">Manual (Space)</button>
+        <button class="mode-btn" onclick="srSetInput('mic')">Microphone</button>
+      </div>
+      <button id="sr-start-btn" onclick="startSightRead()">Start</button>
+    </div>
+
+    <div id="sr-results-overlay">
+      <h1>SESSION COMPLETE</h1>
+      <div class="sr-result-big" id="sr-result-npm">0</div>
+      <div class="sr-result-label">notes per minute</div>
+      <div class="sr-result-detail" id="sr-result-positions"></div>
+      <div class="sr-result-detail" id="sr-result-accuracy"></div>
+      <div class="sr-result-detail" id="sr-result-pace"></div>
+      <div class="sr-result-detail" id="sr-result-range"></div>
+      <div class="sr-result-level" id="sr-result-level"></div>
+      <div class="sr-option-row" style="margin-top:0.5rem">
+        <button class="mode-btn" onclick="startSightRead()">Try Again</button>
+        <button class="mode-btn" onclick="showSrSetup()">New Drill</button>
+      </div>
     </div>
 
     <div class="pedal-diagram" id="pedal-diagram">
@@ -1006,6 +1134,10 @@
       if (appMode === 'live' && mode !== 'live') {
         stopLiveStaff();
       }
+      // Stop sight reading if leaving sightread mode
+      if (appMode === 'sightread' && mode !== 'sightread') {
+        stopSightRead();
+      }
 
       appMode = mode;
 
@@ -1021,10 +1153,12 @@
       document.getElementById('app-chordId').className = `mode-btn${mode === 'chordId' ? ' active' : ''}`;
       document.getElementById('app-interval').className = `mode-btn${mode === 'interval' ? ' active' : ''}`;
       document.getElementById('app-live').className = `mode-btn${mode === 'live' ? ' active' : ''}`;
+      document.getElementById('app-sightread').className = `mode-btn${mode === 'sightread' ? ' active' : ''}`;
 
       const isDrill = mode === 'chordId' || mode === 'interval';
       const isInterval = mode === 'interval';
       const isLive = mode === 'live';
+      const isSR = mode === 'sightread';
 
       // Score display
       document.getElementById('score-display').style.display = isDrill ? '' : 'none';
@@ -1035,12 +1169,13 @@
       document.getElementById('mode-3').style.display = isInterval ? '' : 'none';
 
       // Notation / canvas
-      document.getElementById('notation').style.display = isLive ? 'none' : 'block';
+      document.getElementById('notation').style.display = (isLive || isSR) ? 'none' : 'block';
       document.getElementById('live-canvas').style.display = isLive ? 'block' : 'none';
+      document.getElementById('sr-canvas').style.display = isSR ? 'block' : 'none';
 
       // Staff container live-mode class
       const staffContainer = document.getElementById('staff-container');
-      if (isLive) {
+      if (isLive || isSR) {
         staffContainer.classList.add('live-mode');
       } else {
         staffContainer.classList.remove('live-mode');
@@ -1049,12 +1184,16 @@
       // Start overlay
       document.getElementById('start-overlay').style.display = isLive && !liveRunning ? 'flex' : 'none';
 
+      // Sight reading overlays
+      document.getElementById('sr-setup-overlay').style.display = isSR && !srRunning ? 'flex' : 'none';
+      document.getElementById('sr-results-overlay').style.display = 'none';
+
       // Pedal diagram + key sig are always visible (inside staff-container)
-      // But in live mode, move them outside live-mode padding
+      // But in live/sr mode, move them outside live-mode padding
       const pedalDiagram = document.getElementById('pedal-diagram');
       const pedalLabels = document.getElementById('pedal-labels');
       const keySigControl = document.getElementById('key-sig-control');
-      if (isLive) {
+      if (isLive || isSR) {
         pedalDiagram.style.margin = '1rem 1rem 0';
         pedalDiagram.style.paddingTop = '1rem';
         pedalLabels.style.margin = '0.5rem 1rem 0';
@@ -1104,6 +1243,11 @@
         if (liveRunning) {
           // Already running, just show it
           document.getElementById('start-overlay').style.display = 'none';
+        }
+      } else if (mode === 'sightread') {
+        initSrCanvas();
+        if (srRunning) {
+          document.getElementById('sr-setup-overlay').style.display = 'none';
         }
       }
     }
@@ -1978,11 +2122,671 @@
     const DEMO_LOOP_MS = 9000;
 
     // ══════════════════════════════════════════
-    //  17. INIT
+    //  17. SIGHT READING DRILL
+    // ══════════════════════════════════════════
+
+    // -- SR state --
+    let srCanvas, srCtx, srW, srH, srCenterY;
+    let srRunning = false;
+    let srAnimFrameId = null;
+    let srSession = null;
+
+    // -- SR config --
+    let srConfig = {
+      durationSecs: 60,
+      fingers: 4,
+      speed: 'relaxed',   // 'relaxed' | 'moderate' | 'brisk'
+      inputMode: 'manual', // 'manual' | 'mic'
+    };
+
+    // -- SR adaptive pacing constants --
+    const SR_SPEEDS = { relaxed: 4.0, moderate: 2.5, brisk: 1.5 };
+    const SR_STREAK_TO_SPEED_UP = 4;
+    const SR_SPEED_UP_FACTOR = 0.90;
+    const SR_SLOW_DOWN_FACTOR = 1.15;
+    const SR_MIN_SECS = 0.4;
+    const SR_MAX_SECS = 8.0;
+    const SR_ACCURACY_GATE = 90;
+    const SR_RANGE_EXPAND_INTERVAL = 8;
+    const SR_CANVAS_HEIGHT = 400;
+
+    // -- SR helpers --
+    function srAvailableNotes(lowMidi, highMidi) {
+      const pcs = new Set();
+      for (const letter of noteLetters) {
+        pcs.add(getNoteSemitone(letter));
+      }
+      const notes = [];
+      for (let m = lowMidi; m <= highMidi; m++) {
+        if (pcs.has(m % 12)) notes.push(m);
+      }
+      return notes;
+    }
+
+    function srGeneratePosition(available, fingers, weakNotes, lastPosition) {
+      if (available.length < 2) return { notes: available.slice(0, fingers) };
+
+      // Find valid starting indices for consecutive runs
+      const starts = [];
+      for (let i = 0; i <= available.length - fingers; i++) {
+        // Check hand span (max 10 semitones)
+        if (available[i + fingers - 1] - available[i] <= 10) {
+          starts.push(i);
+        }
+      }
+      if (starts.length === 0) {
+        // Fallback: just pick any consecutive notes
+        for (let i = 0; i <= available.length - fingers; i++) {
+          starts.push(i);
+        }
+      }
+      if (starts.length === 0) {
+        return { notes: available.slice(0, fingers) };
+      }
+
+      // Weight toward positions containing weak notes
+      const weakSet = new Set(weakNotes || []);
+      const weights = starts.map(si => {
+        let w = 1;
+        for (let f = 0; f < fingers; f++) {
+          if (weakSet.has(available[si + f])) w += 3;
+        }
+        // Penalize same as last position
+        if (lastPosition) {
+          const same = lastPosition.notes.every((n, idx) => available[si + idx] === n);
+          if (same) w *= 0.1;
+        }
+        return w;
+      });
+
+      const totalW = weights.reduce((a, b) => a + b, 0);
+      let r = Math.random() * totalW;
+      let chosen = starts[0];
+      for (let i = 0; i < starts.length; i++) {
+        r -= weights[i];
+        if (r <= 0) { chosen = starts[i]; break; }
+      }
+
+      const notes = [];
+      for (let f = 0; f < fingers; f++) {
+        notes.push(available[chosen + f]);
+      }
+      return { notes };
+    }
+
+    function srCreateSession() {
+      const targetSecs = SR_SPEEDS[srConfig.speed];
+      const lowMidi = 48;  // C3
+      const highMidi = 79; // G5
+
+      // Start with narrow range (~1 octave) centered
+      const mid = Math.floor((lowMidi + highMidi) / 2);
+      const halfSpan = 7;
+      const effectiveLow = Math.max(mid - halfSpan, lowMidi);
+      const effectiveHigh = Math.min(mid + halfSpan, highMidi);
+
+      const available = srAvailableNotes(effectiveLow, effectiveHigh);
+      const fingers = Math.min(srConfig.fingers, available.length || 1);
+
+      const position = srGeneratePosition(available, fingers, [], null);
+
+      return {
+        durationSecs: srConfig.durationSecs,
+        fingers: srConfig.fingers,
+        inputMode: srConfig.inputMode,
+        lowMidi, highMidi,
+        effectiveLow, effectiveHigh,
+        available,
+        position,
+        fingerIndex: 0,
+        positionsCompleted: 0,
+        hits: 0,
+        misses: 0,
+        startTime: performance.now(),
+        noteStartTime: performance.now(),
+        finished: false,
+        targetSecs,
+        streak: 0,
+        level: 0,
+        lastWasLate: false,
+        noteTimes: {},  // midi -> [responseSecs]
+      };
+    }
+
+    function srWeakestNotes(session, n) {
+      const avgs = [];
+      for (const [midi, times] of Object.entries(session.noteTimes)) {
+        if (times.length > 0) {
+          const avg = times.reduce((a, b) => a + b, 0) / times.length;
+          avgs.push({ midi: parseInt(midi), avg });
+        }
+      }
+      avgs.sort((a, b) => b.avg - a.avg);
+      return avgs.slice(0, n).map(x => x.midi);
+    }
+
+    function srMaybeExpandRange(s) {
+      if (s.positionsCompleted % SR_RANGE_EXPAND_INTERVAL !== 0 || s.positionsCompleted === 0) return;
+
+      const pcs = new Set();
+      for (const letter of noteLetters) pcs.add(getNoteSemitone(letter));
+
+      // Expand one note lower
+      if (s.effectiveLow > s.lowMidi) {
+        for (let m = s.effectiveLow - 1; m >= s.lowMidi; m--) {
+          if (pcs.has(m % 12)) { s.effectiveLow = m; break; }
+        }
+      }
+      // Expand one note higher
+      if (s.effectiveHigh < s.highMidi) {
+        for (let m = s.effectiveHigh + 1; m <= s.highMidi; m++) {
+          if (pcs.has(m % 12)) { s.effectiveHigh = m; break; }
+        }
+      }
+      s.available = srAvailableNotes(s.effectiveLow, s.effectiveHigh);
+    }
+
+    function srNextPosition(s) {
+      const weak = srWeakestNotes(s, 3);
+      const fingers = Math.min(s.fingers, s.available.length || 1);
+      s.position = srGeneratePosition(s.available, fingers, weak, s.position);
+      s.fingerIndex = 0;
+    }
+
+    function srAccuracy(s) {
+      const total = s.hits + s.misses;
+      return total === 0 ? 100 : (s.hits / total * 100);
+    }
+
+    function srAdvanceNote(s) {
+      const now = performance.now();
+      const elapsed = (now - s.noteStartTime) / 1000;
+      const onPace = elapsed <= s.targetSecs * 1.1;
+
+      // Record response time
+      const midi = s.position.notes[s.fingerIndex];
+      if (midi !== undefined) {
+        if (!s.noteTimes[midi]) s.noteTimes[midi] = [];
+        s.noteTimes[midi].push(elapsed);
+      }
+
+      s.hits++;
+      s.fingerIndex++;
+      s.lastWasLate = !onPace;
+
+      // Adaptive pacing
+      if (onPace && srAccuracy(s) >= SR_ACCURACY_GATE) {
+        s.streak++;
+        if (s.streak >= SR_STREAK_TO_SPEED_UP) {
+          s.targetSecs = Math.max(s.targetSecs * SR_SPEED_UP_FACTOR, SR_MIN_SECS);
+          s.streak = 0;
+          s.level++;
+        }
+      } else if (!onPace) {
+        s.targetSecs = Math.min(s.targetSecs * SR_SLOW_DOWN_FACTOR, SR_MAX_SECS);
+        s.streak = 0;
+      }
+
+      s.noteStartTime = performance.now();
+
+      // Next position?
+      if (s.fingerIndex >= s.position.notes.length) {
+        s.positionsCompleted++;
+        srMaybeExpandRange(s);
+        srNextPosition(s);
+      }
+
+      srCheckTime(s);
+    }
+
+    function srAutoAdvance(s) {
+      if (s.finished) return false;
+      const elapsed = (performance.now() - s.noteStartTime) / 1000;
+      if (elapsed >= s.targetSecs) {
+        if (s.inputMode === 'mic') s.misses++;
+        s.lastWasLate = true;
+        s.streak = 0;
+        s.targetSecs = Math.min(s.targetSecs * SR_SLOW_DOWN_FACTOR, SR_MAX_SECS);
+        s.fingerIndex++;
+        s.noteStartTime = performance.now();
+
+        if (s.fingerIndex >= s.position.notes.length) {
+          s.positionsCompleted++;
+          srMaybeExpandRange(s);
+          srNextPosition(s);
+        }
+        srCheckTime(s);
+        return true;
+      }
+      return false;
+    }
+
+    function srCheckNote(s, detectedMidi) {
+      if (s.finished) return 'waiting';
+      const target = s.position.notes[s.fingerIndex];
+      if (target === undefined) return 'waiting';
+
+      if (detectedMidi === target) {
+        srAdvanceNote(s);
+        return 'hit';
+      } else {
+        s.misses++;
+        s.targetSecs = Math.min(s.targetSecs * SR_SLOW_DOWN_FACTOR, SR_MAX_SECS);
+        s.streak = 0;
+        return 'miss';
+      }
+    }
+
+    function srCheckTime(s) {
+      const elapsed = (performance.now() - s.startTime) / 1000;
+      if (elapsed >= s.durationSecs) s.finished = true;
+    }
+
+    function srTimeRemaining(s) {
+      return Math.max(0, s.durationSecs - (performance.now() - s.startTime) / 1000);
+    }
+
+    function srNotesPerMinute(s) {
+      const elapsed = (performance.now() - s.startTime) / 1000;
+      if (elapsed < 0.1) return 0;
+      return s.hits / (elapsed / 60);
+    }
+
+    // -- SR canvas --
+    function initSrCanvas() {
+      srCanvas = document.getElementById('sr-canvas');
+      srCtx = srCanvas.getContext('2d');
+      resizeSrCanvas();
+    }
+
+    function resizeSrCanvas() {
+      if (!srCanvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      const container = document.getElementById('staff-container');
+      srW = container.clientWidth;
+      srH = SR_CANVAS_HEIGHT;
+      srCanvas.width = srW * dpr;
+      srCanvas.height = srH * dpr;
+      srCanvas.style.width = srW + 'px';
+      srCanvas.style.height = srH + 'px';
+      srCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      srCenterY = srH / 2;
+    }
+
+    function srPosToY(pos) {
+      return srCenterY - (pos - 28) * STEP;
+    }
+
+    function srDrawStaffLines() {
+      srCtx.strokeStyle = '#b0aba0';
+      srCtx.lineWidth = 1;
+      const left = 10;
+      const right = srW - 10;
+      srCtx.beginPath();
+      for (const p of TREBLE_LINES) {
+        const y = srPosToY(p);
+        srCtx.moveTo(left, y); srCtx.lineTo(right, y);
+      }
+      for (const p of BASS_LINES) {
+        const y = srPosToY(p);
+        srCtx.moveTo(left, y); srCtx.lineTo(right, y);
+      }
+      srCtx.stroke();
+
+      // Clef labels
+      srCtx.fillStyle = '#999';
+      srCtx.font = '600 13px "Crimson Pro", serif';
+      srCtx.textAlign = 'right';
+      srCtx.textBaseline = 'middle';
+      srCtx.fillText('\uD834\uDD1E', left - 2, srPosToY(34));
+      srCtx.fillText('\uD834\uDD22', left - 2, srPosToY(22));
+    }
+
+    function srDrawLedgerLines(x, pos) {
+      srCtx.strokeStyle = '#b0aba0';
+      srCtx.lineWidth = 1;
+      const hw = NOTE_RX + 4;
+      const lines = [];
+      for (let p = 40; p <= pos; p += 2) lines.push(p);
+      for (let p = 16; p >= pos; p -= 2) lines.push(p);
+      if (pos === 28) lines.push(28);
+      if (pos > 26 && pos < 30 && pos % 2 === 0) lines.push(pos);
+
+      if (lines.length > 0) {
+        srCtx.beginPath();
+        for (const lp of lines) {
+          const ly = srPosToY(lp);
+          srCtx.moveTo(x - hw, ly); srCtx.lineTo(x + hw, ly);
+        }
+        srCtx.stroke();
+      }
+    }
+
+    function srDrawHandPosition(s) {
+      if (!s || !s.position || s.position.notes.length === 0) return;
+
+      const notes = s.position.notes;
+      const keyRoot = getKeyRootFromPedals();
+      const spacing = NOTE_RX * 3.5;
+      const totalWidth = (notes.length - 1) * spacing;
+      const centerX = srW / 2;
+      const startX = centerX - totalWidth / 2;
+
+      for (let i = 0; i < notes.length; i++) {
+        const midi = notes[i];
+        const x = startX + i * spacing;
+        const pos = midiToStaffPos(midi);
+        const y = srPosToY(pos);
+        const degree = getScaleDegree(midi, keyRoot);
+
+        let color, alpha;
+        if (i === s.fingerIndex) {
+          color = '#2563eb'; alpha = 1.0;
+        } else if (i < s.fingerIndex) {
+          color = '#28a745'; alpha = 0.35;
+        } else {
+          color = '#5a5a5a'; alpha = 0.4;
+        }
+
+        srCtx.globalAlpha = alpha;
+
+        // Ledger lines
+        srDrawLedgerLines(x, pos);
+
+        // Sharp indicator
+        if (IS_SHARP[midi % 12]) {
+          srCtx.fillStyle = color;
+          srCtx.font = '14px "Crimson Pro", serif';
+          srCtx.textAlign = 'right';
+          srCtx.textBaseline = 'middle';
+          srCtx.fillText('\u266f', x - NOTE_RX - 4, y);
+        }
+
+        // Shaped notehead
+        srCtx.fillStyle = color;
+        srCtx.beginPath();
+        shapePath(srCtx, x, y, NOTE_RX, NOTE_RY, degree);
+        srCtx.fill();
+
+        // Finger number
+        const fingerNum = i + 1;
+        const labelY = pos < 28 ? y + NOTE_RY + 12 : y - NOTE_RY - 12;
+        const labelAlpha = i === s.fingerIndex ? 0.9 : 0.3;
+        srCtx.globalAlpha = labelAlpha;
+        srCtx.fillStyle = '#5a5a5a';
+        srCtx.font = '10px "JetBrains Mono", monospace';
+        srCtx.textAlign = 'center';
+        srCtx.textBaseline = 'middle';
+        srCtx.fillText(String(fingerNum), x, labelY);
+      }
+
+      srCtx.globalAlpha = 1;
+    }
+
+    function srDrawHUD(s) {
+      if (!s) return;
+
+      const remaining = srTimeRemaining(s);
+      const mins = Math.floor(remaining / 60);
+      const secs = Math.floor(remaining % 60);
+      const timeStr = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+      // Time remaining - top left
+      srCtx.fillStyle = '#888';
+      srCtx.font = '600 14px "JetBrains Mono", monospace';
+      srCtx.textAlign = 'left';
+      srCtx.textBaseline = 'top';
+      srCtx.fillText(timeStr, 12, 12);
+
+      // Positions completed
+      srCtx.fillStyle = '#aaa';
+      srCtx.font = '11px "JetBrains Mono", monospace';
+      srCtx.fillText(`Pos: ${s.positionsCompleted}`, 12, 30);
+
+      // NPM - top right
+      const npm = srNotesPerMinute(s);
+      srCtx.fillStyle = '#2563eb';
+      srCtx.font = '600 14px "JetBrains Mono", monospace';
+      srCtx.textAlign = 'right';
+      srCtx.fillText(`${npm.toFixed(0)} NPM`, srW - 12, 12);
+
+      // Accuracy
+      if (s.inputMode === 'mic') {
+        srCtx.fillStyle = '#aaa';
+        srCtx.font = '11px "JetBrains Mono", monospace';
+        srCtx.fillText(`${srAccuracy(s).toFixed(0)}%`, srW - 12, 30);
+      }
+
+      // Timing bar at bottom
+      const fraction = Math.min((performance.now() - s.noteStartTime) / 1000 / s.targetSecs, 1.5);
+      const barY = srH - 8;
+      const barW = srW - 24;
+      const barH = 4;
+
+      srCtx.fillStyle = '#eee';
+      srCtx.fillRect(12, barY, barW, barH);
+
+      const fillW = Math.min(fraction, 1.0) * barW;
+      const barColor = fraction > 1.0 ? '#dc3545' : fraction > 0.8 ? '#e6a800' : '#28a745';
+      srCtx.fillStyle = barColor;
+      srCtx.fillRect(12, barY, fillW, barH);
+
+      // Streak dots
+      const dotY = barY - 10;
+      for (let i = 0; i < SR_STREAK_TO_SPEED_UP; i++) {
+        const dx = 12 + i * 10;
+        srCtx.beginPath();
+        srCtx.arc(dx + 3, dotY, 3, 0, Math.PI * 2);
+        srCtx.fillStyle = i < s.streak ? '#2563eb' : '#ddd';
+        srCtx.fill();
+      }
+
+      // Level
+      if (s.level > 0) {
+        srCtx.fillStyle = '#2563eb';
+        srCtx.font = '10px "JetBrains Mono", monospace';
+        srCtx.textAlign = 'left';
+        srCtx.fillText(`Lv ${s.level}`, 12 + SR_STREAK_TO_SPEED_UP * 10 + 8, dotY);
+      }
+
+      // Input hint
+      if (s.inputMode === 'manual') {
+        srCtx.fillStyle = '#ccc';
+        srCtx.font = '11px "Crimson Pro", serif';
+        srCtx.textAlign = 'center';
+        srCtx.textBaseline = 'bottom';
+        srCtx.fillText('Press Space to advance', srW / 2, srH - 18);
+      }
+    }
+
+    function srDrawLegend() {
+      const keyRoot = getKeyRootFromPedals();
+      const y = srPosToY(44) - 10;
+      const startX = 20;
+      srCtx.font = '10px "JetBrains Mono", monospace';
+      srCtx.textAlign = 'left';
+      srCtx.textBaseline = 'middle';
+
+      for (let d = 1; d <= 7; d++) {
+        const ox = startX + (d - 1) * 52;
+        srCtx.fillStyle = '#3a3a3a';
+        srCtx.beginPath();
+        shapePath(srCtx, ox + 7, y, 6, 5, d);
+        srCtx.fill();
+        srCtx.fillStyle = '#999';
+        srCtx.fillText(SOLFEGE[d - 1], ox + 16, y);
+      }
+    }
+
+    function srFrame() {
+      if (!srRunning || !srSession) return;
+
+      const s = srSession;
+
+      // Auto-advance at the beat
+      srAutoAdvance(s);
+
+      // Mic input
+      if (s.inputMode === 'mic' && analyser && dataArray) {
+        analyser.getFloatTimeDomainData(dataArray);
+        const freq = detectPitch(dataArray, audioCtx.sampleRate);
+        if (freq) {
+          const midi = freqToMidi(freq);
+          if (midi >= 12 && midi <= 108) {
+            srCheckNote(s, midi);
+          }
+        }
+      }
+
+      // Check finished
+      srCheckTime(s);
+      if (s.finished) {
+        srRunning = false;
+        showSrResults();
+        return;
+      }
+
+      // Clear
+      srCtx.fillStyle = '#f8f6f1';
+      srCtx.fillRect(0, 0, srW, srH);
+
+      // Draw
+      srDrawStaffLines();
+      srDrawLegend();
+      srDrawHandPosition(s);
+      srDrawHUD(s);
+
+      srAnimFrameId = requestAnimationFrame(srFrame);
+    }
+
+    // -- SR setup button helpers --
+    function srSetDuration(secs) {
+      srConfig.durationSecs = secs;
+      const labels = {60:'1 min',120:'2 min',300:'5 min'};
+      const btns = document.querySelectorAll('#sr-duration-row .mode-btn');
+      btns.forEach(b => b.className = 'mode-btn' + (b.textContent.trim() === labels[secs] ? ' active' : ''));
+    }
+
+    function srSetFingers(n) {
+      srConfig.fingers = n;
+      const btns = document.querySelectorAll('#sr-fingers-row .mode-btn');
+      btns.forEach(b => b.className = 'mode-btn' + (b.textContent.trim() === String(n) ? ' active' : ''));
+    }
+
+    function srSetSpeed(speed) {
+      srConfig.speed = speed;
+      const labels = { relaxed: 'Relaxed', moderate: 'Moderate', brisk: 'Brisk' };
+      const btns = document.querySelectorAll('#sr-speed-row .mode-btn');
+      btns.forEach(b => b.className = 'mode-btn' + (b.textContent.trim() === labels[speed] ? ' active' : ''));
+    }
+
+    function srSetInput(mode) {
+      srConfig.inputMode = mode;
+      const btns = document.querySelectorAll('#sr-input-row .mode-btn');
+      btns.forEach((b, i) => b.className = 'mode-btn' + ((i === 0 && mode === 'manual') || (i === 1 && mode === 'mic') ? ' active' : ''));
+    }
+
+    // -- SR lifecycle --
+    async function startSightRead() {
+      document.getElementById('sr-setup-overlay').style.display = 'none';
+      document.getElementById('sr-results-overlay').style.display = 'none';
+
+      resizeSrCanvas();
+      srSession = srCreateSession();
+
+      // Start mic if mic mode
+      if (srConfig.inputMode === 'mic' && !audioCtx) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          audioCtx = new AudioContext();
+          const source = audioCtx.createMediaStreamSource(stream);
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = FFT_SIZE;
+          source.connect(analyser);
+          dataArray = new Float32Array(analyser.fftSize);
+        } catch (e) {
+          // Fall back to manual mode
+          srConfig.inputMode = 'manual';
+          srSession.inputMode = 'manual';
+        }
+      }
+
+      srRunning = true;
+      srFrame();
+    }
+
+    function stopSightRead() {
+      srRunning = false;
+      if (srAnimFrameId) {
+        cancelAnimationFrame(srAnimFrameId);
+        srAnimFrameId = null;
+      }
+      srSession = null;
+    }
+
+    function showSrResults() {
+      if (!srSession) return;
+      const s = srSession;
+      const npm = srNotesPerMinute(s);
+
+      document.getElementById('sr-result-npm').textContent = npm.toFixed(0);
+      document.getElementById('sr-result-positions').textContent = `${s.positionsCompleted} positions completed \u00b7 ${s.hits} notes hit`;
+
+      if (s.inputMode === 'mic') {
+        document.getElementById('sr-result-accuracy').textContent = `Accuracy: ${srAccuracy(s).toFixed(0)}%`;
+      } else {
+        document.getElementById('sr-result-accuracy').textContent = '';
+      }
+
+      const finalBPM = (60 / s.targetSecs).toFixed(0);
+      const startBPM = (60 / SR_SPEEDS[srConfig.speed]).toFixed(0);
+      document.getElementById('sr-result-pace').textContent = `Pace: ${startBPM} \u2192 ${finalBPM} BPM`;
+
+      const lowName = ['C','C\u266f','D','D\u266f','E','F','F\u266f','G','G\u266f','A','A\u266f','B'][s.effectiveLow % 12];
+      const lowOct = Math.floor(s.effectiveLow / 12) - 1;
+      const highName = ['C','C\u266f','D','D\u266f','E','F','F\u266f','G','G\u266f','A','A\u266f','B'][s.effectiveHigh % 12];
+      const highOct = Math.floor(s.effectiveHigh / 12) - 1;
+      document.getElementById('sr-result-range').textContent = `Range: ${lowName}${lowOct}\u2013${highName}${highOct}`;
+
+      if (s.level > 0) {
+        document.getElementById('sr-result-level').textContent = `\u2B06 ${s.level} level-up${s.level > 1 ? 's' : ''}!`;
+      } else {
+        document.getElementById('sr-result-level').textContent = '';
+      }
+
+      document.getElementById('sr-results-overlay').style.display = 'flex';
+    }
+
+    function showSrSetup() {
+      stopSightRead();
+      document.getElementById('sr-results-overlay').style.display = 'none';
+      document.getElementById('sr-setup-overlay').style.display = 'flex';
+    }
+
+    // -- SR keyboard handler --
+    document.addEventListener('keydown', (e) => {
+      if (appMode !== 'sightread' || !srRunning || !srSession) return;
+      if (e.code === 'Space' && srSession.inputMode === 'manual') {
+        e.preventDefault();
+        if (!srSession.finished) {
+          srAdvanceNote(srSession);
+          if (srSession.finished) {
+            srRunning = false;
+            showSrResults();
+          }
+        }
+      }
+    });
+
+    // ══════════════════════════════════════════
+    //  18. INIT
     // ══════════════════════════════════════════
     window.addEventListener('resize', () => {
       if (appMode === 'live' && liveCanvas) {
         resizeLiveCanvas();
+      }
+      if (appMode === 'sightread' && srCanvas) {
+        resizeSrCanvas();
       }
     });
 
