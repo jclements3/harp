@@ -1,0 +1,93 @@
+% shapenotes.fmt - Aiken 7-shape noteheads for abcm2ps
+% Usage: embed %%beginps/%%endps block directly in ABC file
+% (format files don't process %%beginps directives)
+%
+% Shapes (Aiken 7-shape system, key of C):
+%   1 do  = triangle up
+%   2 re  = crescent (half-moon)
+%   3 mi  = diamond
+%   4 fa  = right-pointing triangle
+%   5 sol = oval (standard notehead)
+%   6 la  = square
+%   7 ti  = triangle down
+%
+% Clef offsets:
+%   Treble clef G line = position 2 (6pt above bottom line E4)
+%   Bass clef F line = position 6 (18pt above bottom line G2)
+%   Staff step = 3 points
+
+%%beginps
+% Aiken 7-shape noteheads for key of C
+/shp_bottom 0 def
+/shp_off 2 def
+/orig_tclef /tclef load def
+/orig_bclef /bclef load def
+/tclef{
+  dup 6 sub /shp_bottom exch def
+  /shp_off 2 def
+  orig_tclef
+}!
+/bclef{
+  dup 18 sub /shp_bottom exch def
+  /shp_off 4 def
+  orig_bclef
+}!
+/shp_deg{
+  shp_bottom sub 3 div round cvi
+  shp_off add 7 mod
+  dup 0 lt {7 add} if
+  1 add
+} bind def
+/shp_do_f{newpath -3.5 -2 moveto 0 3 lineto 3.5 -2 lineto closepath fill}!
+/shp_re_f{newpath 0 2.5 moveto -2.5 2.5 -3.5 1 -3.5 0 curveto
+  -3.5 -1 -2.5 -2.5 0 -2.5 curveto
+  3.5 -2.5 3.5 2.5 0 2.5 curveto closepath fill}!
+/shp_mi_f{newpath 0 -3 moveto 4 0 lineto 0 3 lineto -4 0 lineto closepath fill}!
+/shp_fa_f{newpath -3.5 -2.5 moveto 3.5 0 lineto -3.5 2.5 lineto closepath fill}!
+/shp_sol_f{gsave 1 0.65 scale newpath 0 0 3.8 0 360 arc fill grestore}!
+/shp_la_f{newpath -3.2 -2.2 moveto 3.2 -2.2 lineto 3.2 2.2 lineto -3.2 2.2 lineto closepath fill}!
+/shp_ti_f{newpath -3.5 2 moveto 0 -3 lineto 3.5 2 lineto closepath fill}!
+/shp_do_h{newpath -3.5 -2 moveto 0 3 lineto 3.5 -2 lineto closepath 0.8 SLW stroke}!
+/shp_re_h{newpath 0 2.5 moveto -2.5 2.5 -3.5 1 -3.5 0 curveto
+  -3.5 -1 -2.5 -2.5 0 -2.5 curveto
+  3.5 -2.5 3.5 2.5 0 2.5 curveto closepath 0.8 SLW stroke}!
+/shp_mi_h{newpath 0 -3 moveto 4 0 lineto 0 3 lineto -4 0 lineto closepath 0.8 SLW stroke}!
+/shp_fa_h{newpath -3.5 -2.5 moveto 3.5 0 lineto -3.5 2.5 lineto closepath 0.8 SLW stroke}!
+/shp_sol_h{gsave 1 0.65 scale newpath 0 0 3.8 0 360 arc 0.8 SLW stroke grestore}!
+/shp_la_h{newpath -3.2 -2.2 moveto 3.2 -2.2 lineto 3.2 2.2 lineto -3.2 2.2 lineto closepath 0.8 SLW stroke}!
+/shp_ti_h{newpath -3.5 2 moveto 0 -3 lineto 3.5 2 lineto closepath 0.8 SLW stroke}!
+/shp_do_w{newpath -4 -2.3 moveto 0 3.5 lineto 4 -2.3 lineto closepath 0.8 SLW stroke}!
+/shp_re_w{newpath 0 3 moveto -3 3 -4 1.2 -4 0 curveto
+  -4 -1.2 -3 -3 0 -3 curveto
+  4 -3 4 3 0 3 curveto closepath 0.8 SLW stroke}!
+/shp_mi_w{newpath 0 -3.5 moveto 4.5 0 lineto 0 3.5 lineto -4.5 0 lineto closepath 0.8 SLW stroke}!
+/shp_fa_w{newpath -4 -3 moveto 4 0 lineto -4 3 lineto closepath 0.8 SLW stroke}!
+/shp_sol_w{gsave 1 0.65 scale newpath 0 0 4.3 0 360 arc 0.8 SLW stroke grestore}!
+/shp_la_w{newpath -3.7 -2.5 moveto 3.7 -2.5 lineto 3.7 2.5 lineto -3.7 2.5 lineto closepath 0.8 SLW stroke}!
+/shp_ti_w{newpath -4 2.3 moveto 0 -3.5 lineto 4 2.3 lineto closepath 0.8 SLW stroke}!
+/shp_dispatch{exch 1 sub get cvx exec} bind def
+/shp_filled [/shp_do_f /shp_re_f /shp_mi_f /shp_fa_f /shp_sol_f /shp_la_f /shp_ti_f] def
+/shp_half [/shp_do_h /shp_re_h /shp_mi_h /shp_fa_h /shp_sol_h /shp_la_h /shp_ti_h] def
+/shp_whole [/shp_do_w /shp_re_w /shp_mi_w /shp_fa_w /shp_sol_w /shp_la_w /shp_ti_w] def
+/hd{
+  /x 2 index def /y 1 index def
+  gsave T
+  y shp_deg
+  shp_filled shp_dispatch
+  grestore
+}!
+/Hd{
+  /x 2 index def /y 1 index def
+  gsave T
+  y shp_deg
+  shp_half shp_dispatch
+  grestore
+}!
+/HD{
+  /x 2 index def /y 1 index def
+  gsave T
+  y shp_deg
+  shp_whole shp_dispatch
+  grestore
+}!
+%%endps
