@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harp Hymnal</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=JetBrains+Mono:wght@400&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Crimson Pro', Georgia, serif;
+      background: #f8f6f1; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 1.5rem 1rem; color: #2a2a2a;
+    }
+    h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: 0.05em; color: #4a4a4a; margin-bottom: 0.5rem; }
+    .controls {
+      display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;
+      flex-wrap: wrap; justify-content: center;
+    }
+    select, button {
+      font-family: 'Crimson Pro', Georgia, serif; font-size: 0.9rem;
+      padding: 0.4rem 0.8rem; border: 2px solid #ccc; border-radius: 8px;
+      background: white; cursor: pointer; color: #333;
+    }
+    button:active { transform: scale(0.97); background: #f0f0f0; }
+    .mode-btn.active { background: #2563eb; border-color: #2563eb; color: white; }
+    .key-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; font-weight: 600;
+      background: #2a2a2a; color: white; padding: 0.3rem 0.6rem;
+      border-radius: 6px; min-width: 2rem; text-align: center;
+    }
+    .key-detail {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: #999;
+    }
+    .leadsheet-container {
+      background: white; border-radius: 12px; padding: 0.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 0.5rem;
+      width: fit-content; min-width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    #leadsheet-wrapper { width: 100%; }
+    .leadsheet-table { border-collapse: collapse; width: auto; }
+    .leadsheet-table td {
+      padding: 0.1rem 0.2rem; text-align: right; vertical-align: middle;
+      font-size: 0.75rem; white-space: nowrap;
+    }
+    .leadsheet-table .row-chord td {
+      color: #2563eb; font-weight: 600; font-size: 0.7rem;
+      border-bottom: 1px solid #ddd;
+    }
+    .leadsheet-table .row-rh td { color: #333; }
+    .leadsheet-table .row-lh td { color: #666; }
+    .leadsheet-table .row-lh-thumb td { color: #2563eb; font-weight: 600; }
+    .leadsheet-table .row-label {
+      font-size: 0.65rem; color: #999; font-weight: 600;
+      text-align: right; padding-right: 0.5rem; width: 2rem;
+    }
+    .leadsheet-table .barline-cell { width: 1px; padding: 0; background: #bbb; }
+    @media print {
+      body { padding: 0; background: white; }
+      .controls, .status { display: none; }
+      .leadsheet-container {
+        box-shadow: none; max-width: 100%; padding: 0.25rem;
+        page-break-inside: avoid; margin-bottom: 0.5rem;
+      }
+      .leadsheet-table td { font-size: 7pt; padding: 0.1rem 0.15rem; }
+      .leadsheet-table .row-chord td { font-size: 6pt; }
+      .leadsheet-table .row-label { font-size: 6pt; }
+      h1 { display: none; }
+      .hymn-block { page-break-inside: avoid; }
+      .hymn-title { font-size: 10pt; margin-bottom: 2pt; }
+    }
+    .status { font-size: 0.8rem; color: #999; margin-top: 1rem; text-align: center; }
+    .ref-table-container { width: 100%; max-width: 900px; margin-top: 1.5rem; }
+    .ref-table-container h2 { font-size: 0.9rem; color: #666; margin-bottom: 0.5rem; }
+    .ref-table {
+      width: 100%; border-collapse: collapse; font-size: 1rem;
+      background: white; border-radius: 10px; overflow: hidden;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+    }
+    .ref-table th {
+      background: #2a2a2a; color: white; padding: 0.3rem 0.6rem;
+      text-align: left; font-weight: 600;
+    }
+    .ref-table td { padding: 0.2rem 0.6rem; }
+    .ref-table tr:nth-child(even) td { background: #f5f5f2; }
+    .ref-table .ascii { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #2563eb; }
+    .ref-table .trad { font-family: 'JetBrains Mono', monospace; color: #333; }
+    .ref-table .say { color: #666; font-style: italic; }
+  </style>
+</head>
+<body>
+  <input type="file" id="file-input" accept=".abc" style="display:none" onchange="loadFile(this)">
+  <table style="margin-bottom:1rem;border-spacing:0.5rem;width:100%"><tr>
+    <td style="vertical-align:middle;white-space:nowrap">
+      <span class="key-badge" id="key-badge">C</span>
+      <span class="key-detail" id="key-detail">no sharps/flats</span>
+    </td>
+    <td style="vertical-align:middle;width:100%">
+      <select id="hymn-select" style="width:100%"><option>Loading...</option></select>
+    </td>
+    <td style="vertical-align:middle">
+      <button onclick="document.getElementById('file-input').click()">Load</button>
+    </td>
+  </tr><tr>
+    <td style="vertical-align:middle;text-align:right">
+      <select id="key-select"></select>
+    </td>
+    <td style="vertical-align:middle;white-space:nowrap;text-align:center">
+      <button class="mode-btn active" onclick="setMode(0)">Ionian</button>
+      <button class="mode-btn" onclick="setMode(1)">Dorian</button>
+      <button class="mode-btn" onclick="setMode(2)">Phrygian</button>
+      <button class="mode-btn" onclick="setMode(3)">Lydian</button>
+      <button class="mode-btn" onclick="setMode(4)">Mixolydian</button>
+      <button class="mode-btn" onclick="setMode(5)">Aeolian</button>
+      <button class="mode-btn" onclick="setMode(6)">Locrian</button>
+    </td>
+    <td style="vertical-align:middle">
+      <button onclick="printCurrent()">Print</button>
+    </td>
+  </tr></table>
+  <div id="leadsheet-wrapper">
+    <div class="leadsheet-container">
+      <table class="leadsheet-table" id="leadsheet-table"></table>
+    </div>
+  </div>
+  <div class="ref-table-container">
+    <h2 id="chord-table-title">Chords in this hymn</h2>
+    <table class="ref-table" id="chord-table"></table>
+  </div>
+  <div class="status" id="status">Loading...</div>
+
+  <script>
+    // ── Music Theory (ported from Rust music.rs) ──────────────
+    const MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11];
+    const PC_NAMES = ['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+    const HARP_LOW_MIDI = 24;
+    const HARP_HIGH_MIDI = 103;
+    const MAX_HAND_SPAN = 10;
+
+    function pitchClass(midi) { return midi % 12; }
+
+    function degreeToPc(degree, keyRoot) {
+      return (keyRoot + MAJOR_SCALE[degree % 7]) % 12;
+    }
+
+    function midiToHarpString(midi, keyRoot) {
+      const pc = pitchClass(midi);
+      const octave = Math.floor(midi / 12) - 1;
+      const deg = MAJOR_SCALE.findIndex(s => (keyRoot + s) % 12 === pc);
+      if (deg < 0) return null;
+      return octave * 7 + deg;
+    }
+
+    function harpStringToMidi(stringNum, keyRoot) {
+      const octave = Math.floor(stringNum / 7);
+      const degree = stringNum % 7;
+      const pc = (keyRoot + MAJOR_SCALE[degree]) % 12;
+      return (octave + 1) * 12 + pc;
+    }
+
+    function midiToName(midi) {
+      return PC_NAMES[pitchClass(midi)] + (Math.floor(midi / 12) - 1);
+    }
+
+    function allOctaves(pc, low, high) {
+      const notes = [];
+      let midi = pc;
+      if (midi < low) midi += Math.ceil((low - midi) / 12) * 12;
+      while (midi <= high) { notes.push(midi); midi += 12; }
+      return notes;
+    }
+
+    // ── Chord Symbol Parser (ported from Rust chord_symbol.rs) ──
+    function parseRoman(s) {
+      const upper = s.toUpperCase();
+      const candidates = [['VII',6],['VI',5],['IV',3],['V',4],['III',2],['II',1],['I',0]];
+      for (const [numeral, degree] of candidates) {
+        if (upper.startsWith(numeral)) {
+          const chunk = s.substring(0, numeral.length);
+          const isMinor = [...chunk].every(c => c === c.toLowerCase() && c !== c.toUpperCase());
+          return { degree, isMinor, consumed: numeral.length };
+        }
+      }
+      return null;
+    }
+
+    function parseAddDigit(s) {
+      if (!s.length || s[0] === '^') return null;
+      const map = { '2': 2, '4': 5, '6': 9, '8': 12, '9': 14, 'A': 16 };
+      return map[s[0]] !== undefined ? { semitones: map[s[0]], consumed: 1 } : null;
+    }
+
+    function parseChordSymbol(s) {
+      let pos = 0;
+      let rootAccidental = 0;
+      if (s[pos] === 'b') { rootAccidental = -1; pos++; }
+      else if (s[pos] === '#') { rootAccidental = 1; pos++; }
+
+      const roman = parseRoman(s.substring(pos));
+      if (!roman) return { error: `No Roman numeral in '${s}'` };
+      pos += roman.consumed;
+
+      let intervals = roman.isMinor ? [0, 3, 7] : [0, 4, 7];
+      let rest = s.substring(pos);
+
+      if (rest.startsWith('+')) {
+        intervals = roman.isMinor ? [0, 3, 8] : [0, 4, 8];
+        pos++; rest = s.substring(pos);
+      } else if (rest.startsWith('-') && !rest.startsWith('-7')) {
+        intervals = [0, 3, 6];
+        pos++; rest = s.substring(pos);
+      }
+
+      rest = s.substring(pos);
+      if (rest.startsWith('M7')) { intervals.push(11); pos += 2; }
+      else if (rest.startsWith('%7')) { intervals = [0, 3, 6, 10]; pos += 2; }
+      else if (rest.startsWith('-7')) { intervals = [0, 3, 6, 9]; pos += 2; }
+      else if (rest.startsWith('7')) { intervals.push(10); pos += 1; }
+
+      rest = s.substring(pos);
+      if (rest.startsWith('~2')) {
+        intervals = intervals.filter(x => x !== 3 && x !== 4);
+        intervals.push(2); intervals.sort((a,b) => a-b);
+        intervals = [...new Set(intervals)];
+        pos += 2;
+        const add = parseAddDigit(s.substring(pos));
+        if (add) { if (!intervals.includes(add.semitones)) { intervals.push(add.semitones); intervals.sort((a,b)=>a-b); } pos += add.consumed; }
+      } else if (rest.startsWith('~4')) {
+        intervals = intervals.filter(x => x !== 3 && x !== 4);
+        intervals.push(5); intervals.sort((a,b) => a-b);
+        intervals = [...new Set(intervals)];
+        pos += 2;
+        const add = parseAddDigit(s.substring(pos));
+        if (add) { if (!intervals.includes(add.semitones)) { intervals.push(add.semitones); intervals.sort((a,b)=>a-b); } pos += add.consumed; }
+      } else {
+        const add = parseAddDigit(rest);
+        if (add) { if (!intervals.includes(add.semitones)) { intervals.push(add.semitones); intervals.sort((a,b)=>a-b); } pos += add.consumed; }
+      }
+
+      let inversion = 0;
+      rest = s.substring(pos);
+      if (rest.startsWith('^') && rest.length > 1 && rest[1] >= '0' && rest[1] <= '9') {
+        inversion = parseInt(rest[1]);
+      }
+
+      if (inversion >= intervals.length) return { error: `Inversion ^${inversion} exceeds tone count` };
+
+      return { rootDegree: roman.degree, rootAccidental, intervals, inversion, symbol: s };
+    }
+
+    // ── Voicing Engine (ported from Rust voicing.rs) ──────────
+    function enumerateVoicings(melodyMidi, chord, keyRoot, maxResults) {
+      const rootPc = ((keyRoot + MAJOR_SCALE[chord.rootDegree % 7] + chord.rootAccidental) % 12 + 12) % 12;
+      const chordPcs = chord.intervals.map(iv => (rootPc + iv) % 12);
+
+      const bassPc = (chord.inversion > 0 && chord.inversion < chord.intervals.length)
+        ? (rootPc + chord.intervals[chord.inversion]) % 12
+        : rootPc;
+
+      const melodyString = midiToHarpString(melodyMidi, keyRoot);
+      if (melodyString === null) return [];
+
+      // Candidate notes
+      let candidates = new Set();
+      for (const pc of chordPcs) for (const m of allOctaves(pc, HARP_LOW_MIDI, HARP_HIGH_MIDI)) candidates.add(m);
+      for (const m of allOctaves(rootPc, HARP_LOW_MIDI, HARP_HIGH_MIDI)) candidates.add(m);
+      candidates = [...candidates].filter(m => midiToHarpString(m, keyRoot) !== null).sort((a,b) => a-b);
+
+      // RH candidates
+      const rhCandidates = candidates.filter(m => {
+        if (m >= melodyMidi) return false;
+        const s = midiToHarpString(m, keyRoot);
+        return melodyString - s < MAX_HAND_SPAN;
+      });
+
+      const rhConfigs = generateHandConfigs(rhCandidates, melodyMidi, melodyString, keyRoot);
+      const voicings = [];
+
+      for (const rh of rhConfigs) {
+        const rhLowestString = rh.length > 1 ? midiToHarpString(rh[rh.length - 1], keyRoot) : melodyString;
+        if (rhLowestString === null || rhLowestString === 0) continue;
+        const lhUpperString = rhLowestString - 1;
+        const lhUpperMidi = harpStringToMidi(lhUpperString, keyRoot);
+        const lhCands = candidates.filter(m => m <= lhUpperMidi && m >= HARP_LOW_MIDI);
+
+        if (!lhCands.length) {
+          voicings.push(buildVoicing(rh, [], keyRoot, rootPc));
+          continue;
+        }
+
+        const lhConfigs = generateLhConfigs(lhCands, keyRoot, bassPc);
+        if (!lhConfigs.length) voicings.push(buildVoicing(rh, [], keyRoot, rootPc));
+        for (const lh of lhConfigs) voicings.push(buildVoicing(rh, lh, keyRoot, rootPc));
+      }
+
+      // Score and sort
+      for (const v of voicings) v.score = scoreVoicing(v, rootPc, chordPcs, bassPc);
+      voicings.sort((a, b) => b.score - a.score);
+
+      // Dedup by midi set
+      const seen = new Set();
+      const deduped = [];
+      for (const v of voicings) {
+        const key = v.allMidis.join(',');
+        if (!seen.has(key)) { seen.add(key); deduped.push(v); }
+      }
+      return deduped.slice(0, maxResults);
+    }
+
+    function generateHandConfigs(candidates, thumbMidi, thumbString, keyRoot) {
+      const configs = [[thumbMidi]];
+      let eligible = candidates.filter(m => {
+        const s = midiToHarpString(m, keyRoot);
+        return s !== null && s < thumbString && thumbString - s < MAX_HAND_SPAN;
+      }).sort((a, b) => b - a).slice(0, 7);
+
+      for (const a of eligible) configs.push([thumbMidi, a]);
+      for (let i = 0; i < eligible.length; i++)
+        for (let j = i + 1; j < eligible.length; j++)
+          configs.push([thumbMidi, eligible[i], eligible[j]]);
+      for (let i = 0; i < eligible.length; i++)
+        for (let j = i + 1; j < eligible.length; j++)
+          for (let k = j + 1; k < eligible.length; k++) {
+            const loS = midiToHarpString(eligible[k], keyRoot);
+            if (loS !== null && thumbString - loS < MAX_HAND_SPAN)
+              configs.push([thumbMidi, eligible[i], eligible[j], eligible[k]]);
+          }
+      return configs;
+    }
+
+    function generateLhConfigs(candidates, keyRoot, bassPc) {
+      const configs = [];
+      for (let ti = candidates.length - 1; ti >= 0; ti--) {
+        const thumb = candidates[ti];
+        const thumbString = midiToHarpString(thumb, keyRoot);
+        if (thumbString === null) continue;
+
+        const below = candidates.slice(0, ti).filter(m => {
+          const s = midiToHarpString(m, keyRoot);
+          return s !== null && s < thumbString && thumbString - s < MAX_HAND_SPAN;
+        });
+
+        if (bassOk([thumb], bassPc)) configs.push([thumb]);
+        for (const a of below) { const h = [thumb, a]; if (bassOk(h, bassPc)) configs.push(h); }
+        for (let i = 0; i < below.length; i++)
+          for (let j = i + 1; j < below.length; j++) {
+            const h = [thumb, below[i], below[j]];
+            if (bassOk(h, bassPc)) configs.push(h);
+          }
+        for (let i = 0; i < below.length; i++)
+          for (let j = i + 1; j < below.length; j++)
+            for (let k = j + 1; k < below.length; k++) {
+              const h = [thumb, below[i], below[j], below[k]];
+              if (bassOk(h, bassPc)) configs.push(h);
+            }
+      }
+      return configs;
+    }
+
+    function bassOk(hand, requiredPc) {
+      if (requiredPc === null) return true;
+      const lowest = Math.min(...hand);
+      return pitchClass(lowest) === requiredPc;
+    }
+
+    function buildVoicing(rh, lh, keyRoot, rootPc) {
+      const makeNotes = (notes, hand) => {
+        const sorted = [...notes].sort((a, b) => b - a);
+        return sorted.map((midi, i) => ({
+          midi, stringNum: midiToHarpString(midi, keyRoot) || 0,
+          finger: i + 1, hand, noteName: midiToName(midi),
+          isRoot: pitchClass(midi) === rootPc,
+        }));
+      };
+      const rhNotes = makeNotes(rh, 'R');
+      const lhNotes = makeNotes(lh, 'L');
+      const allMidis = [...rh, ...lh].sort((a, b) => a - b);
+      return { rh: rhNotes, lh: lhNotes, score: 0, allMidis };
+    }
+
+    function scoreVoicing(v, rootPc, chordPcs, bassPc) {
+      const midis = v.allMidis;
+      if (!midis.length) return 0;
+      let score = 0;
+      score += (midis[midis.length - 1] - midis[0]) * 2;
+      if (pitchClass(midis[0]) === rootPc) score += 20;
+      score += midis.filter(m => m < 60 && pitchClass(m) === rootPc).length * 10;
+      const covered = new Set(midis.map(pitchClass));
+      score += chordPcs.filter(pc => covered.has(pc)).length * 15;
+      score += (v.rh.length + v.lh.length) * 8;
+      for (let i = 1; i < midis.length; i++) {
+        const gap = midis[i] - midis[i - 1];
+        if (gap > 12) score -= (gap - 12) * 3;
+      }
+      if (v.lh.length && v.rh.length) score += 15;
+      if (v.lh.length >= 3) score += 20;
+      if (v.lh.length === 4) score += 10;
+      if (v.rh.length === 2) score += 10;
+      if (v.rh.length === 3) score += 5;
+      if (v.rh.length === 4 && v.lh.length < 3) score -= 15;
+      return score;
+    }
+
+    // ── Chord Identification (from Rust lib.rs) ────────────
+    const CHORD_TEMPLATES = [
+      { pcs: [0,4,7],    name: '', lower: false, suffix: '' },
+      { pcs: [0,3,7],    name: 'm', lower: true, suffix: '' },
+      { pcs: [0,4,7,10], name: '7', lower: false, suffix: '7' },
+      { pcs: [0,3,7,10], name: 'm7', lower: true, suffix: '7' },
+      { pcs: [0,4,7,11], name: 'maj7', lower: false, suffix: 'M7' },
+      { pcs: [0,3,6],    name: 'dim', lower: true, suffix: '-' },
+      { pcs: [0,4,8],    name: 'aug', lower: false, suffix: '+' },
+      { pcs: [0,5,7],    name: 'sus4', lower: false, suffix: '~4' },
+      { pcs: [0,2,7],    name: 'sus2', lower: false, suffix: '~2' },
+      { pcs: [0,3,6,9],  name: 'dim7', lower: true, suffix: '-7' },
+      { pcs: [0,3,6,10], name: 'm7b5', lower: true, suffix: '%7' },
+    ];
+    const ROMAN_STRS = ['I','II','III','IV','V','VI','VII'];
+
+    function identifyChord(midiNotes, keyRoot) {
+      const pcs = new Set(midiNotes.map(pitchClass));
+      if (pcs.size < 2) return '';
+      const bassPc = pitchClass(Math.min(...midiNotes));
+      let bestRoot = 0, bestIdx = 0, bestScore = -999;
+
+      for (let root = 0; root < 12; root++) {
+        const intervals = new Set([...pcs].map(p => (p - root + 12) % 12));
+        for (let idx = 0; idx < CHORD_TEMPLATES.length; idx++) {
+          const tmplSet = new Set(CHORD_TEMPLATES[idx].pcs);
+          let matched = 0, extra = 0, missing = 0;
+          for (const iv of intervals) if (tmplSet.has(iv)) matched++; else extra++;
+          for (const t of tmplSet) if (!intervals.has(t)) missing++;
+          let score = matched * 3 - extra * 2 - missing;
+          if (bassPc === root) score += 4;
+          if (tmplSet.size === 3) score += 2;
+          score -= Math.floor(idx / 10);
+          if (score > bestScore) { bestScore = score; bestRoot = root; bestIdx = idx; }
+        }
+      }
+
+      let deg = -1;
+      for (let d = 0; d < 7; d++) {
+        if ((keyRoot + MAJOR_SCALE[d]) % 12 === bestRoot) { deg = d; break; }
+      }
+      if (deg < 0) return '';
+
+      const tmpl = CHORD_TEMPLATES[bestIdx];
+      let roman = tmpl.lower ? ROMAN_STRS[deg].toLowerCase() : ROMAN_STRS[deg];
+      let result = roman + tmpl.suffix;
+
+      // Inversion
+      const bassIv = (bassPc - bestRoot + 12) % 12;
+      const invOrder = tmpl.pcs;
+      const inv = invOrder.indexOf(bassIv);
+      if (inv > 0) result += '^' + inv;
+
+      return result;
+    }
+
+    // ── ABC Parser ───────────────────────────────────────────
+    const ABC_BASE = { 'C': 48, 'D': 50, 'E': 52, 'F': 53, 'G': 55, 'A': 57, 'B': 59 };
+    const KEY_TO_PC = {'C':0,'Db':1,'D':2,'Eb':3,'E':4,'F':5,'F#':6,'Gb':6,'G':7,'Ab':8,'A':9,'Bb':10,'B':11,'Cb':11,'C#':1};
+
+    function abcNoteToMidi(token) {
+      let acc = 0, i = 0;
+      while (i < token.length && '^_='.includes(token[i])) {
+        if (token[i] === '^') acc++;
+        else if (token[i] === '_') acc--;
+        i++;
+      }
+      if (i >= token.length) return null;
+      const ch = token[i];
+      const isLower = ch === ch.toLowerCase() && ch !== ch.toUpperCase();
+      if (!ABC_BASE[ch.toUpperCase()]) return null;
+      let midi = ABC_BASE[ch.toUpperCase()] + acc;
+      if (isLower) midi += 12;
+      i++;
+      while (i < token.length) {
+        if (token[i] === ',') midi -= 12;
+        else if (token[i] === "'") midi += 12;
+        else break;
+        i++;
+      }
+      return midi;
+    }
+
+    function parseLeadSheets(text) {
+      const hymns = [];
+      const tunes = text.split(/\n(?=X:)/);
+      for (const tune of tunes) {
+        if (!tune.trim()) continue;
+        const lines = tune.split('\n');
+        let number = '', title = '', meter = '4/4', key = 'C';
+        const musicLines = [];
+        for (const line of lines) {
+          if (line.startsWith('X:')) number = line.slice(2).trim();
+          else if (line.startsWith('T:')) title = line.slice(2).trim();
+          else if (line.startsWith('M:')) meter = line.slice(2).trim();
+          else if (line.startsWith('K:')) key = line.slice(2).trim();
+          else if (line.trim() && !line.startsWith('%') && !line.startsWith('L:')) musicLines.push(line);
+        }
+        const keyRoot = KEY_TO_PC[key] || 0;
+        const beats = [];
+        const musicStr = musicLines.join(' ');
+        const re = /("([^"]*)")?\s*([_^=]*[A-Ga-g][,']*\d*\/?[\d]*|z\d*\/?[\d]*|\[x\d*\]|\|[\|\]\[:]*)/g;
+        let m, lastChord = null;
+        while ((m = re.exec(musicStr)) !== null) {
+          const chordSym = m[2] || null;
+          const token = m[3];
+          if (chordSym) lastChord = chordSym;
+          if (token.startsWith('|')) { beats.push({ type: 'bar' }); continue; }
+          if (token.startsWith('z') || token.startsWith('[x')) continue;
+          const pitchMatch = token.match(/^[_^=]*[A-Ga-g][,']*/);
+          if (!pitchMatch) continue;
+          const midi = abcNoteToMidi(pitchMatch[0]);
+          if (midi === null) continue;
+
+          const beat = { type: 'note', midi, originalMidi: midi, chord: chordSym, activeChord: lastChord };
+
+          // Compute voicing if there's a chord
+          if (chordSym) {
+            const parsed = parseChordSymbol(chordSym);
+            if (!parsed.error) {
+              const voicings = enumerateVoicings(midi, parsed, keyRoot, 1);
+              if (voicings.length) {
+                const v = voicings[0];
+                beat.rhStrings = v.rh.map(n => n.stringNum);
+                beat.lhStrings = v.lh.map(n => n.stringNum);
+                beat.rhMidi = v.rh.map(n => n.midi);
+                beat.lhMidi = v.lh.map(n => n.midi);
+                beat.rhChord = identifyChord(v.rh.map(n => n.midi), keyRoot);
+                beat.lhChord = identifyChord(v.lh.map(n => n.midi), keyRoot);
+              }
+            }
+          }
+          beats.push(beat);
+        }
+        if (beats.length > 0) hymns.push({ number, title, meter, key, originalKey: key, keyRoot, beats });
+      }
+      return hymns;
+    }
+
+    // ── UI State ─────────────────────────────────────────────
+    let hymns = [];
+    let currentHymn = 0;
+    let modeOffset = 0;
+
+    const MODE_NAMES = ['Ionian','Dorian','Phrygian','Lydian','Mixolydian','Aeolian','Locrian'];
+    const KEY_SHARPS = { 'C': 0, 'G': 1, 'D': 2, 'A': 3, 'E': 4, 'B': 5, 'F#': 6, 'C#': 7 };
+    const KEY_FLATS  = { 'F': 1, 'Bb': 2, 'Eb': 3, 'Ab': 4, 'Db': 5, 'Gb': 6, 'Cb': 7 };
+    const SHARP_ORDER = ['F#','C#','G#','D#','A#','E#','B#'];
+    const FLAT_ORDER  = ['Bb','Eb','Ab','Db','Gb','Cb','Fb'];
+
+    function setMode(offset) {
+      modeOffset = offset;
+      document.querySelectorAll('.mode-btn').forEach((btn, i) => btn.classList.toggle('active', i === offset));
+      if (hymns.length > 0) {
+        updateKeyDisplay(hymns[currentHymn].key);
+        renderLeadSheet(hymns[currentHymn]);
+        renderChordTable(hymns[currentHymn]);
+      }
+    }
+
+    const ALL_KEYS = ['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+    let currentKey = 'C';   // the key we're actually displaying in (may differ from hymn's original)
+    let originalKey = 'C';  // the hymn's original key
+
+    function populateKeySelect(hymnKey) {
+      const sel = document.getElementById('key-select');
+      sel.innerHTML = '';
+      for (const k of ALL_KEYS) {
+        const opt = document.createElement('option');
+        opt.value = k;
+        opt.textContent = k;
+        if (k === hymnKey) opt.selected = true;
+        sel.appendChild(opt);
+      }
+      sel.onchange = () => {
+        currentKey = sel.value;
+        updateKeyDisplay(currentKey);
+        if (hymns.length) renderChordTable(hymns[currentHymn]);
+      };
+    }
+
+    function updateKeyDisplay(key) {
+      const basePC = KEY_TO_PC[key] || 0;
+      const modalRoot = (basePC + MAJOR_SCALE[modeOffset]) % 12;
+      document.getElementById('key-badge').textContent = `${PC_NAMES[modalRoot]} ${MODE_NAMES[modeOffset]}`;
+      let detail = '';
+      if (key in KEY_SHARPS) {
+        const n = KEY_SHARPS[key];
+        detail = n === 0 ? 'no sharps/flats' : SHARP_ORDER.slice(0, n).join(' ');
+      } else if (key in KEY_FLATS) {
+        detail = FLAT_ORDER.slice(0, KEY_FLATS[key]).join(' ');
+      }
+      document.getElementById('key-detail').textContent = detail;
+    }
+
+    function recomputeAndRender() {
+      if (!hymns.length) return;
+      const hymn = hymns[currentHymn];
+      const transpose = (KEY_TO_PC[currentKey] || 0) - (KEY_TO_PC[originalKey] || 0);
+      // Recompute voicings with transposed melody and new key
+      const newKeyRoot = KEY_TO_PC[currentKey] || 0;
+      for (const beat of hymn.beats) {
+        if (beat.type === 'bar') continue;
+        beat.midi = beat.originalMidi + transpose;
+        if (beat.chord) {
+          const parsed = parseChordSymbol(beat.chord);
+          if (!parsed.error) {
+            const voicings = enumerateVoicings(beat.midi, parsed, newKeyRoot, 1);
+            if (voicings.length) {
+              const v = voicings[0];
+              beat.rhStrings = v.rh.map(n => n.stringNum);
+              beat.lhStrings = v.lh.map(n => n.stringNum);
+              beat.rhMidi = v.rh.map(n => n.midi);
+              beat.lhMidi = v.lh.map(n => n.midi);
+            } else {
+              beat.rhStrings = []; beat.lhStrings = [];
+              beat.rhMidi = []; beat.lhMidi = [];
+            }
+          }
+        }
+      }
+      hymn.keyRoot = newKeyRoot;
+      hymn.key = currentKey;
+      updateKeyDisplay(currentKey);
+      renderLeadSheet(hymn);
+      renderChordTable(hymn);
+    }
+
+    // ── Lead Sheet Renderer ──────────────────────────────────
+    function renderLeadSheet(hymn) {
+      const wrapper = document.getElementById('leadsheet-wrapper');
+      wrapper.innerHTML = '';
+
+      const cols = [];
+      let lastRh = [], lastLh = [];
+      for (const beat of hymn.beats) {
+        if (beat.type === 'bar') { cols.push({ type: 'bar' }); continue; }
+        const rh = beat.rhStrings || [];
+        const lh = beat.lhStrings || [];
+        if (rh.length) lastRh = rh;
+        if (lh.length) lastLh = lh;
+        cols.push({
+          type: 'beat', chord: beat.chord || '',
+          rh: beat.chord ? rh : [], lh: beat.chord ? lh : [],
+          rhChord: beat.rhChord || '', lhChord: beat.lhChord || '',
+          melodyString: midiToHarpString(beat.midi, hymn.keyRoot),
+          isChordChange: !!beat.chord,
+        });
+      }
+
+      // Split into measures
+      const measures = [];
+      let cur = [];
+      for (const c of cols) {
+        if (c.type === 'bar') { if (cur.length) { measures.push(cur); cur = []; } }
+        else cur.push(c);
+      }
+      if (cur.length) measures.push(cur);
+
+      const containerWidth = wrapper.offsetWidth || 900;
+      const maxBeatsPerLine = Math.max(8, Math.floor(containerWidth / 28));
+      const measureLines = [];
+      let line = [], lineBeats = 0;
+      for (const m of measures) {
+        if (lineBeats + m.length > maxBeatsPerLine && line.length) {
+          measureLines.push(line); line = []; lineBeats = 0;
+        }
+        line.push(m); lineBeats += m.length;
+      }
+      if (line.length) measureLines.push(line);
+
+      const fingerNames = ['thumb', 'index', 'middle', 'ring'];
+
+      for (const ml of measureLines) {
+        const container = document.createElement('div');
+        container.className = 'leadsheet-container';
+        const tbl = document.createElement('table');
+        tbl.className = 'leadsheet-table';
+
+        const flatCols = [{ type: 'bar' }];
+        for (let mi = 0; mi < ml.length; mi++) {
+          if (mi > 0) flatCols.push({ type: 'bar' });
+          for (const c of ml[mi]) flatCols.push(c);
+        }
+        flatCols.push({ type: 'bar' });
+
+        const makeRow = (cls, label) => {
+          const tr = document.createElement('tr');
+          tr.className = cls;
+          tr.innerHTML = `<td class="row-label">${label}</td>`;
+          return tr;
+        };
+
+        const rowRhChord = makeRow('row-chord', 'RH');
+        const rowLhChord = makeRow('row-chord', 'LH');
+        const rhRows = fingerNames.map((n, i) => makeRow('row-rh', i === 0 ? 'thumb' : n));
+        const lhRows = fingerNames.map((n, i) => makeRow(i === 0 ? 'row-lh-thumb' : 'row-lh', i === 0 ? 'thumb' : n));
+
+        for (const c of flatCols) {
+          if (c.type === 'bar') {
+            [rowRhChord, rowLhChord, ...rhRows, ...lhRows].forEach(r => r.innerHTML += '<td class="barline-cell"></td>');
+            continue;
+          }
+
+          rowRhChord.innerHTML += `<td>${c.isChordChange ? c.rhChord : ''}</td>`;
+          rowLhChord.innerHTML += `<td>${c.isChordChange ? c.lhChord : ''}</td>`;
+
+          for (let f = 0; f < 4; f++) {
+            if (c.isChordChange && f < c.rh.length)
+              rhRows[f].innerHTML += `<td>${c.rh[f] + modeOffset}</td>`;
+            else if (f === 0 && c.melodyString !== null)
+              rhRows[f].innerHTML += `<td>${c.melodyString + modeOffset}</td>`;
+            else
+              rhRows[f].innerHTML += '<td></td>';
+          }
+
+          for (let f = 0; f < 4; f++) {
+            if (c.isChordChange && f < c.lh.length)
+              lhRows[f].innerHTML += `<td>${c.lh[f] + modeOffset}</td>`;
+            else
+              lhRows[f].innerHTML += '<td></td>';
+          }
+        }
+
+        tbl.appendChild(rowRhChord);
+        tbl.appendChild(rowLhChord);
+        rhRows.forEach(r => tbl.appendChild(r));
+        lhRows.forEach(r => tbl.appendChild(r));
+        container.appendChild(tbl);
+        wrapper.appendChild(container);
+      }
+    }
+
+    // ── Chord Table ──────────────────────────────────────────
+    const DEGREE_NAMES = ['one','two','three','four','five','six','seven'];
+
+    function chordToTraditional(ascii) {
+      return ascii
+        .replace(/%7/g, '\u00f87').replace(/-7/g, '\u00b07')
+        .replace(/-/g, '\u00b0').replace(/M7/g, 'maj7')
+        .replace(/~2/g, 'sus2').replace(/~4/g, 'sus4')
+        .replace(/\^(\d)/g, ' ($1st inv.)');
+    }
+
+    function chordToSay(ascii) {
+      let s = ascii, inv = '';
+      const invM = s.match(/\^(\d)/);
+      if (invM) { inv = ` ${['','first','second','third'][invM[1]]} inversion`; s = s.replace(/\^\d/, ''); }
+      const upper = s.toUpperCase();
+      let degree = '', rest = s;
+      const romans = [['VII',7],['VI',6],['IV',4],['V',5],['III',3],['II',2],['I',1]];
+      for (const [r, d] of romans) {
+        if (upper.startsWith(r) || upper.startsWith('B'+r) || upper.startsWith('#'+r)) {
+          let prefix = '';
+          if (s.startsWith('b')) { prefix = 'flat '; s = s.slice(1); }
+          else if (s.startsWith('#')) { prefix = 'sharp '; s = s.slice(1); }
+          degree = prefix + DEGREE_NAMES[d-1];
+          rest = s.slice(r.length);
+          break;
+        }
+      }
+      const isMinor = s[0] && s[0] === s[0].toLowerCase() && s[0] !== s[0].toUpperCase();
+      let quality = isMinor ? ' minor' : ' major';
+      if (rest.includes('-7')) quality = ' diminished seven';
+      else if (rest.includes('%7')) quality = ' half-diminished';
+      else if (rest.includes('M7')) quality = ' major seven';
+      else if (rest.includes('7')) quality = isMinor ? ' minor seven' : ' dominant seven';
+      else if (rest.includes('-')) quality = ' diminished';
+      else if (rest.includes('+')) quality = ' augmented';
+      else if (rest.includes('~4')) quality = ' sus four';
+      else if (rest.includes('~2')) quality = ' sus two';
+      return `"${degree}${quality}${inv}"`;
+    }
+
+    function chordToExample(ascii, keyRoot) {
+      const parsed = parseChordSymbol(ascii);
+      if (parsed.error) return '';
+      const rootPc = ((keyRoot + MAJOR_SCALE[parsed.rootDegree % 7] + parsed.rootAccidental) % 12 + 12) % 12;
+      return parsed.intervals.map(iv => PC_NAMES[(rootPc + iv) % 12]).join(' ');
+    }
+
+    function chordToStrings(ascii, keyRoot) {
+      const parsed = parseChordSymbol(ascii);
+      if (parsed.error) return '';
+      const rootPc = ((keyRoot + MAJOR_SCALE[parsed.rootDegree % 7] + parsed.rootAccidental) % 12 + 12) % 12;
+      const refStr = midiToHarpString(keyRoot + 36, keyRoot) || 0;
+      return parsed.intervals.map(iv => {
+        const pc = (rootPc + iv) % 12;
+        const midi = allOctaves(pc, 48, 84)[0];
+        if (midi === undefined) return '?';
+        const s = midiToHarpString(midi, keyRoot);
+        return s !== null ? s - refStr + 1 : '?';
+      }).join(' ');
+    }
+
+    function renderChordTable(hymn) {
+      const table = document.getElementById('chord-table');
+      const exampleKeyRoot = KEY_TO_PC[currentKey] || hymn.keyRoot;
+      const seen = new Set();
+      const chords = [];
+      for (const beat of hymn.beats) {
+        if (beat.chord && !seen.has(beat.chord)) { seen.add(beat.chord); chords.push(beat.chord); }
+      }
+      let html = `<tr><th>ASCII</th><th>Strings</th><th>Traditional</th><th>Say</th><th>Example in ${currentKey || hymn.key}</th></tr>`;
+      for (const c of chords) {
+        html += `<tr><td class="ascii">${c}</td><td>${chordToStrings(c, hymn.keyRoot)}</td><td class="trad">${chordToTraditional(c)}</td><td class="say">${chordToSay(c)}</td><td>${chordToExample(c, exampleKeyRoot)}</td></tr>`;
+      }
+      table.innerHTML = html;
+    }
+
+    function selectHymn(idx) {
+      currentHymn = idx;
+      const hymn = hymns[idx];
+      originalKey = hymn.originalKey || hymn.key;
+      currentKey = originalKey;
+      populateKeySelect(currentKey);
+      updateKeyDisplay(hymn.key);
+      renderLeadSheet(hymn);
+      renderChordTable(hymn);
+    }
+
+    // ── Print Current Hymn ──────────────────────────────────
+    function printCurrent() {
+      setTimeout(() => window.print(), 100);
+    }
+
+    // Resize handler
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => { if (hymns.length) renderLeadSheet(hymns[currentHymn]); }, 200);
+    });
+
+    // ── Load and process ABC text ────────────────────────────
+    function processAbc(text) {
+      const status = document.getElementById('status');
+      status.textContent = 'Computing voicings...';
+      setTimeout(() => {
+        try {
+          hymns = parseLeadSheets(text);
+          const sel = document.getElementById('hymn-select');
+          sel.innerHTML = '';
+          hymns.forEach((h, i) => {
+            const opt = document.createElement('option');
+            opt.value = i;
+            opt.textContent = `${h.number}. ${h.title}`;
+            sel.appendChild(opt);
+          });
+          sel.addEventListener('change', () => selectHymn(parseInt(sel.value)));
+          status.textContent = `${hymns.length} hymns loaded (voicings computed in JS).`;
+          if (hymns.length) selectHymn(0);
+        } catch (e) {
+          status.textContent = 'Error processing ABC: ' + e.message;
+          console.error(e);
+        }
+      }, 10);
+    }
+
+    function loadFile(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => processAbc(reader.result);
+      reader.readAsText(file);
+    }
+
+    // ── Init ─────────────────────────────────────────────────
+    async function init() {
+      const status = document.getElementById('status');
+      try {
+        status.textContent = 'Loading ABC file...';
+        const resp = await fetch('./harp_leadsheets.abc');
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const text = await resp.text();
+        processAbc(text);
+      } catch (e) {
+        status.textContent = 'Could not auto-load ABC file. Use the "Load ABC" button to open harp_leadsheets.abc';
+        console.warn('Auto-load failed:', e.message);
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
