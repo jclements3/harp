@@ -488,7 +488,280 @@
       return midi;
     }
 
+    // ── Parse ABC voice line into note/bar tokens ──────────
+    function parseVoiceTokens(musicStr) {
+      const tokens = [];
+      const re = /([_^=]*[A-Ga-g][,']*[\d]*\/?[\d]*|z[\d]*\/?[\d]*|\|[\|\]\[:]*)/g;
+      let m;
+      while ((m = re.exec(musicStr)) !== null) {
+        const token = m[1];
+        if (token.startsWith('|')) { tokens.push({ type: 'bar' }); continue; }
+        if (token.startsWith('z')) { tokens.push({ type: 'rest' }); continue; }
+        const pitchMatch = token.match(/^[_^=]*[A-Ga-g][,']*/);
+        if (!pitchMatch) continue;
+        const midi = abcNoteToMidi(pitchMatch[0]);
+        if (midi !== null) tokens.push({ type: 'note', midi });
+      }
+      return tokens;
+    }
+
+    // ── SATB-based voicing: expand 4 notes to 6-8, split for harp hands ──
+    function voiceFromSATB(soprano, alto, tenor, bass, keyRoot) {
+      const satb = [soprano, alto, tenor, bass].filter(n => n !== null);
+      if (satb.length < 2) return null;
+
+      const melodyMidi = soprano;
+      const melodyStr = midiToHarpString(melodyMidi, keyRoot);
+      if (melodyStr === null) return null;
+
+      // Collect SATB pitch classes
+      const satbPcs = [...new Set(satb.map(pitchClass))];
+      const bassPc = bass !== null ? pitchClass(bass) : satbPcs[0];
+
+      // Build voicing from scratch around melody (RH thumb) and bass
+      // RH: melody on thumb + 1-3 notes below within span
+      // LH: 3-4 notes below RH within span, bass note required
+
+      // Generate all candidate notes (chord tones in all octaves, diatonic only)
+      const allCands = new Set();
+      for (const pc of satbPcs) {
+        for (const m of allOctaves(pc, HARP_LOW_MIDI, HARP_HIGH_MIDI)) {
+          if (midiToHarpString(m, keyRoot) !== null) allCands.add(m);
+        }
+      }
+      const candidates = [...allCands].sort((a, b) => a - b);
+
+      // RH: melody + up to 3 notes below within 10-string span
+      const rhEligible = candidates.filter(m => {
+        if (m >= melodyMidi) return false;
+        const s = midiToHarpString(m, keyRoot);
+        return s !== null && melodyStr - s < MAX_HAND_SPAN;
+      }).sort((a, b) => b - a).slice(0, 6);
+
+      // Generate RH configs: melody + 1-3 below
+      const rhConfigs = [[melodyMidi]];
+      for (let i = 0; i < rhEligible.length; i++) {
+        rhConfigs.push([melodyMidi, rhEligible[i]]);
+        for (let j = i + 1; j < rhEligible.length; j++) {
+          rhConfigs.push([melodyMidi, rhEligible[i], rhEligible[j]]);
+          for (let k = j + 1; k < rhEligible.length; k++) {
+            const loS = midiToHarpString(rhEligible[k], keyRoot);
+            if (loS !== null && melodyStr - loS < MAX_HAND_SPAN)
+              rhConfigs.push([melodyMidi, rhEligible[i], rhEligible[j], rhEligible[k]]);
+          }
+        }
+      }
+
+      let bestSplit = null, bestScore = -Infinity;
+
+      for (const rh of rhConfigs) {
+        const rhStrs = rh.map(m => midiToHarpString(m, keyRoot));
+        if (rhStrs.includes(null)) continue;
+        const rhLowestStr = Math.min(...rhStrs);
+
+        // LH upper bound: just below RH, gap 0-3
+        for (let gap = 0; gap <= 3; gap++) {
+          const lhUpperStr = rhLowestStr - 1 - gap;
+          if (lhUpperStr < 0) continue;
+          const lhUpperMidi = harpStringToMidi(lhUpperStr, keyRoot);
+
+          const lhEligible = candidates.filter(m => {
+            if (m > lhUpperMidi) return false;
+            const s = midiToHarpString(m, keyRoot);
+            return s !== null && lhUpperStr - s < MAX_HAND_SPAN;
+          }).sort((a, b) => b - a).slice(0, 6);
+
+          // Generate LH configs: 2-4 notes, prefer bass note as lowest
+          const lhConfigs = [];
+          for (let ti = 0; ti < lhEligible.length; ti++) {
+            const thumb = lhEligible[ti];
+            const below = lhEligible.slice(ti + 1);
+
+            // 2 notes
+            for (const a of below) {
+              const h = [thumb, a];
+              if (pitchClass(Math.min(...h)) === bassPc) lhConfigs.push(h);
+            }
+            // 3 notes
+            for (let i = 0; i < below.length; i++)
+              for (let j = i + 1; j < below.length; j++) {
+                const h = [thumb, below[i], below[j]];
+                if (pitchClass(Math.min(...h)) === bassPc) lhConfigs.push(h);
+              }
+            // 4 notes
+            for (let i = 0; i < below.length; i++)
+              for (let j = i + 1; j < below.length; j++)
+                for (let k = j + 1; k < below.length; k++) {
+                  const h = [thumb, below[i], below[j], below[k]];
+                  const lhS = h.map(m => midiToHarpString(m, keyRoot));
+                  if (lhS.includes(null)) continue;
+                  if (Math.max(...lhS) - Math.min(...lhS) >= MAX_HAND_SPAN) continue;
+                  if (pitchClass(Math.min(...h)) === bassPc) lhConfigs.push(h);
+                }
+          }
+
+          // Also try without bass constraint if nothing found
+          if (!lhConfigs.length) {
+            for (let ti = 0; ti < lhEligible.length; ti++) {
+              const thumb = lhEligible[ti];
+              const below = lhEligible.slice(ti + 1);
+              for (const a of below) lhConfigs.push([thumb, a]);
+              for (let i = 0; i < below.length; i++)
+                for (let j = i + 1; j < below.length; j++)
+                  lhConfigs.push([thumb, below[i], below[j]]);
+            }
+          }
+
+          for (const lh of lhConfigs) {
+            const total = rh.length + lh.length;
+            if (total < 5 || total > 8) continue;
+
+            // Check no string collisions
+            const allStrs = [...rh, ...lh].map(m => midiToHarpString(m, keyRoot));
+            if (new Set(allStrs).size !== allStrs.length) continue;
+
+            // Score
+            let score = 0;
+            score += lh.length * 10;
+            score += (rh.length >= 2 ? 10 : 0);
+            if (lh.length >= 3) score += 15;
+            if (lh.length === 4) score += 10;
+            if (total >= 6 && total <= 8) score += 20;
+
+            // Prefer SATB pitch classes covered
+            const covered = new Set([...rh, ...lh].map(pitchClass));
+            score += satbPcs.filter(pc => covered.has(pc)).length * 15;
+
+            // Bass in lowest position
+            if (pitchClass(Math.min(...lh)) === bassPc) score += 20;
+
+            // Spread
+            const allMidis = [...rh, ...lh].sort((a, b) => a - b);
+            score += (allMidis[allMidis.length - 1] - allMidis[0]) * 1;
+
+            // Penalize large gaps between adjacent notes
+            for (let g = 1; g < allMidis.length; g++) {
+              const d = allMidis[g] - allMidis[g - 1];
+              if (d > 12) score -= (d - 12) * 3;
+            }
+
+            // Prefer gap of 1 between hands
+            score -= Math.abs(gap - 1) * 2;
+
+            if (score > bestScore) { bestScore = score; bestSplit = { rh, lh }; }
+          }
+        }
+      }
+
+      if (!bestSplit) return null;
+
+      const lowestRoot = allOctaves(keyRoot, HARP_LOW_MIDI, HARP_HIGH_MIDI)[0];
+      const refStr = lowestRoot !== undefined ? (midiToHarpString(lowestRoot, keyRoot) || 0) : 0;
+      const toStrings = (arr) => arr.sort((a, b) => b - a).map(m => {
+        const s = midiToHarpString(m, keyRoot);
+        return s !== null ? s - refStr + 1 : 0;
+      });
+
+      return {
+        rhMidi: bestSplit.rh.sort((a, b) => b - a),
+        lhMidi: bestSplit.lh.sort((a, b) => b - a),
+        rhStrings: toStrings([...bestSplit.rh]),
+        lhStrings: toStrings([...bestSplit.lh]),
+        rhChord: identifyChord(bestSplit.rh, keyRoot),
+        lhChord: identifyChord(bestSplit.lh, keyRoot),
+      };
+    }
+
+    // ── Parse full SATB OpenHymnal ABC ────────────────────────
+    function parseOpenHymnal(text) {
+      const hymns = [];
+      const tunes = text.split(/\nX:\s*/);
+
+      for (const tune of tunes) {
+        if (!tune.trim()) continue;
+        const lines = tune.split('\n');
+        let number = '', title = '', meter = '4/4', key = 'C';
+        const voiceLines = { S1V1: [], S1V2: [], S2V1: [], S2V2: [] };
+
+        for (const line of lines) {
+          if (/^(\d+)\s*$/.test(line.trim()) && !number) number = line.trim();
+          else if (line.startsWith('T:') && !title) title = line.slice(2).trim();
+          else if (line.startsWith('M:')) meter = line.slice(2).trim().split('%')[0].trim();
+          else if (line.startsWith('K:')) { const k = line.slice(2).trim().split('%')[0].trim().split(/\s/)[0]; if (k && /^[A-G]/.test(k)) key = k; }
+          else if (line.startsWith('[V: S1V1]')) voiceLines.S1V1.push(line.replace(/^\[V: S1V1\]\s*/, ''));
+          else if (line.startsWith('[V: S1V2]')) voiceLines.S1V2.push(line.replace(/^\[V: S1V2\]\s*/, ''));
+          else if (line.startsWith('[V: S2V1]')) voiceLines.S2V1.push(line.replace(/^\[V: S2V1\]\s*/, ''));
+          else if (line.startsWith('[V: S2V2]')) voiceLines.S2V2.push(line.replace(/^\[V: S2V2\]\s*/, ''));
+        }
+
+        // Need at least soprano
+        if (!voiceLines.S1V1.length) continue;
+        if (!number) {
+          const m = tune.match(/^(\d+)/);
+          if (m) number = m[1];
+        }
+
+        const keyRoot = KEY_TO_PC[key] || 0;
+
+        // Parse each voice into tokens
+        const soprano = parseVoiceTokens(voiceLines.S1V1.join(' '));
+        const alto = parseVoiceTokens(voiceLines.S1V2.join(' '));
+        const tenor = parseVoiceTokens(voiceLines.S2V1.join(' '));
+        const bass = parseVoiceTokens(voiceLines.S2V2.join(' '));
+
+        // Align voices beat by beat (only note tokens)
+        const aNotes = alto.filter(t => t.type === 'note');
+        const tNotes = tenor.filter(t => t.type === 'note');
+        const bNotes = bass.filter(t => t.type === 'note');
+
+        const beats = [];
+        let lastVoicing = null;
+        let noteIdx = 0;
+
+        for (let i = 0; i < soprano.length; i++) {
+          const tok = soprano[i];
+          if (tok.type === 'bar') { beats.push({ type: 'bar' }); continue; }
+          if (tok.type === 'rest') { noteIdx++; continue; }
+
+          const sIdx = noteIdx++;
+          const sMidi = tok.midi;
+          const aMidi = sIdx < aNotes.length ? aNotes[sIdx].midi : null;
+          const tMidi = sIdx < tNotes.length ? tNotes[sIdx].midi : null;
+          const bMidi = sIdx < bNotes.length ? bNotes[sIdx].midi : null;
+
+          const voicing = voiceFromSATB(sMidi, aMidi, tMidi, bMidi, keyRoot);
+
+          const beat = { type: 'note', midi: sMidi, originalMidi: sMidi };
+
+          if (voicing) {
+            // Show chord when voicing changes (different notes, not just same name)
+            const voicingKey = voicing.rhStrings.join(',') + '|' + voicing.lhStrings.join(',');
+            const lastKey = lastVoicing ? lastVoicing.rhStrings.join(',') + '|' + lastVoicing.lhStrings.join(',') : '';
+
+            if (voicingKey !== lastKey) {
+              beat.chord = voicing.rhChord + '/' + voicing.lhChord;
+              beat.rhChord = voicing.rhChord;
+              beat.lhChord = voicing.lhChord;
+              beat.rhStrings = voicing.rhStrings;
+              beat.lhStrings = voicing.lhStrings;
+              beat.rhMidi = voicing.rhMidi;
+              beat.lhMidi = voicing.lhMidi;
+              lastVoicing = voicing;
+            }
+          }
+          beats.push(beat);
+        }
+
+        if (beats.length > 0) hymns.push({ number, title, meter, key, originalKey: key, keyRoot, beats });
+      }
+      return hymns;
+    }
+
+    // Keep the lead sheet parser as fallback
     function parseLeadSheets(text) {
+      // Detect if this is a full SATB file (has voice declarations)
+      if (text.includes('[V: S1V1]')) return parseOpenHymnal(text);
+
       const hymns = [];
       const tunes = text.split(/\n(?=X:)/);
       for (const tune of tunes) {
@@ -520,8 +793,6 @@
           if (midi === null) continue;
 
           const beat = { type: 'note', midi, originalMidi: midi, chord: chordSym, activeChord: lastChord };
-
-          // Compute voicing if there's a chord
           if (chordSym) {
             const parsed = parseChordSymbol(chordSym);
             if (!parsed.error) {
@@ -798,7 +1069,8 @@
       const parsed = parseChordSymbol(ascii);
       if (parsed.error) return '';
       const rootPc = ((keyRoot + MAJOR_SCALE[parsed.rootDegree % 7] + parsed.rootAccidental) % 12 + 12) % 12;
-      const refStr = midiToHarpString(keyRoot + 36, keyRoot) || 0;
+      const lowestRoot = allOctaves(keyRoot, HARP_LOW_MIDI, HARP_HIGH_MIDI)[0];
+      const refStr = lowestRoot !== undefined ? (midiToHarpString(lowestRoot, keyRoot) || 0) : 0;
       return parsed.intervals.map(iv => {
         const pc = (rootPc + iv) % 12;
         const midi = allOctaves(pc, 48, 84)[0];
@@ -884,7 +1156,9 @@
       const status = document.getElementById('status');
       try {
         status.textContent = 'Loading ABC file...';
-        const resp = await fetch('./harp_leadsheets.abc');
+        // Try SATB OpenHymnal first, fall back to lead sheets
+        let resp = await fetch('./OpenHymnal.abc');
+        if (!resp.ok) resp = await fetch('./harp_leadsheets.abc');
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const text = await resp.text();
         processAbc(text);
