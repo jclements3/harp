@@ -36,20 +36,21 @@
     .leadsheet-container {
       background: white; border-radius: 12px; padding: 0.5rem;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 0.5rem;
-      width: 100%; overflow-x: auto;
+      width: 100%;
       font-family: 'JetBrains Mono', monospace;
     }
     #leadsheet-wrapper { width: 100%; max-width: 100%; }
     .leadsheet-table { border-collapse: collapse; width: auto; }
     .leadsheet-table td {
-      padding: 0.1rem 0.2rem; text-align: right; vertical-align: middle;
-      font-size: 0.75rem; white-space: nowrap;
+      padding: 0.1rem 0.2rem; text-align: center; vertical-align: middle;
+      font-size: 0.85rem; white-space: nowrap;
     }
     .leadsheet-table .row-chord td {
-      color: #2563eb; font-weight: 600; font-size: 0.7rem;
+      color: #000; font-weight: 700; font-size: 0.85rem;
       border-bottom: 1px solid #ddd; text-align: center;
     }
     .leadsheet-table .row-rh td { color: #333; }
+    .leadsheet-table .row-rh-thumb td { color: #2563eb; font-weight: 600; }
     .leadsheet-table .row-lh td { color: #666; }
     .leadsheet-table .row-lh-thumb td { color: #2563eb; font-weight: 600; }
     .leadsheet-table .row-label {
@@ -75,7 +76,7 @@
     .ref-table-container { width: 100%; margin-top: 1.5rem; overflow-x: auto; }
     .ref-table-container h2 { font-size: 0.9rem; color: #666; margin-bottom: 0.5rem; }
     .ref-table {
-      width: 100%; border-collapse: collapse; font-size: 1rem;
+      width: 100%; border-collapse: collapse; font-size: 0.85rem;
       background: white; border-radius: 10px; overflow: hidden;
       box-shadow: 0 1px 6px rgba(0,0,0,0.06);
     }
@@ -85,10 +86,10 @@
     }
     .ref-table td { padding: 0.3rem 0.6rem; }
     .ref-table tr:nth-child(even) td { background: #f5f5f2; }
-    .ref-table td:nth-child(2), .ref-table td:nth-child(5) { font-size: 1.2rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+    .ref-table td:nth-child(2), .ref-table td:nth-child(5) { font-size: 0.95rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; }
     .ref-table .ascii { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #2563eb; }
     .ref-table .trad { font-family: 'JetBrains Mono', monospace; color: #333; }
-    .ref-table .say { color: #666; font-style: italic; font-size: 1.2rem; }
+    .ref-table .say { color: #666; font-style: italic; font-size: 0.95rem; }
   </style>
 </head>
 <body>
@@ -633,18 +634,76 @@
     }
 
     // ── Lead Sheet Renderer ──────────────────────────────────
+    const fingerNames = ['thumb', 'index', 'middle', 'ring'];
+
+    function buildLineTable(measures) {
+      const container = document.createElement('div');
+      container.className = 'leadsheet-container';
+      const tbl = document.createElement('table');
+      tbl.className = 'leadsheet-table';
+
+      const flatCols = [{ type: 'bar' }];
+      for (let mi = 0; mi < measures.length; mi++) {
+        if (mi > 0) flatCols.push({ type: 'bar' });
+        for (const c of measures[mi]) flatCols.push(c);
+      }
+      flatCols.push({ type: 'bar' });
+
+      const makeRow = (cls, label) => {
+        const tr = document.createElement('tr');
+        tr.className = cls;
+        tr.innerHTML = `<td class="row-label">${label}</td>`;
+        return tr;
+      };
+
+      const rowRhChord = makeRow('row-chord', 'RH');
+      const rowLhChord = makeRow('row-chord', 'LH');
+      const rhRows = fingerNames.map((n, i) => makeRow(i === 0 ? 'row-rh-thumb' : 'row-rh', i === 0 ? 'thumb' : n));
+      const lhRows = fingerNames.map((n, i) => makeRow(i === 0 ? 'row-lh-thumb' : 'row-lh', i === 0 ? 'thumb' : n));
+
+      for (const c of flatCols) {
+        if (c.type === 'bar') {
+          [rowRhChord, rowLhChord, ...rhRows, ...lhRows].forEach(r => r.innerHTML += '<td class="barline-cell"></td>');
+          continue;
+        }
+
+        rowRhChord.innerHTML += `<td>${c.isChordChange ? c.rhChord.trim() : ''}</td>`;
+        rowLhChord.innerHTML += `<td>${c.isChordChange ? c.lhChord.trim() : ''}</td>`;
+
+        for (let f = 0; f < 4; f++) {
+          if (c.isChordChange && f < c.rh.length)
+            rhRows[f].innerHTML += `<td>${c.rh[f] + modeOffset}</td>`;
+          else if (f === 0 && c.melodyString !== null)
+            rhRows[f].innerHTML += `<td>${c.melodyString + modeOffset}</td>`;
+          else
+            rhRows[f].innerHTML += '<td></td>';
+        }
+
+        for (let f = 0; f < 4; f++) {
+          if (c.isChordChange && f < c.lh.length)
+            lhRows[f].innerHTML += `<td>${c.lh[f] + modeOffset}</td>`;
+          else
+            lhRows[f].innerHTML += '<td></td>';
+        }
+      }
+
+      tbl.appendChild(rowRhChord);
+      tbl.appendChild(rowLhChord);
+      rhRows.forEach(r => tbl.appendChild(r));
+      lhRows.forEach(r => tbl.appendChild(r));
+      container.appendChild(tbl);
+      return container;
+    }
+
     function renderLeadSheet(hymn) {
       const wrapper = document.getElementById('leadsheet-wrapper');
       wrapper.innerHTML = '';
 
       const cols = [];
-      let lastRh = [], lastLh = [];
       for (const beat of hymn.beats) {
         if (beat.type === 'bar') { cols.push({ type: 'bar' }); continue; }
         const rh = beat.rhStrings || [];
         const lh = beat.lhStrings || [];
-        if (rh.length) lastRh = rh;
-        if (lh.length) lastLh = lh;
         cols.push({
           type: 'beat', chord: beat.chord || '',
           rh: beat.chord ? rh : [], lh: beat.chord ? lh : [],
@@ -663,78 +722,28 @@
       }
       if (cur.length) measures.push(cur);
 
-      const containerWidth = wrapper.offsetWidth || 900;
-      const maxBeatsPerLine = Math.max(4, Math.floor(containerWidth / 38));
-      const measureLines = [];
-      let line = [], lineBeats = 0;
-      for (const m of measures) {
-        if (lineBeats + m.length > maxBeatsPerLine && line.length) {
-          measureLines.push(line); line = []; lineBeats = 0;
+      // Measure-fit: render, measure, pull back if too wide
+      const maxWidth = (wrapper.offsetWidth || 900) - 20; // account for container padding
+      let line = [];
+      let i = 0;
+      while (i < measures.length) {
+        line.push(measures[i]);
+        const test = buildLineTable(line);
+        wrapper.appendChild(test);
+        const fits = test.querySelector('table').offsetWidth <= maxWidth;
+        wrapper.removeChild(test);
+
+        if (!fits && line.length > 1) {
+          // Last measure didn't fit — render line without it
+          line.pop();
+          wrapper.appendChild(buildLineTable(line));
+          line = [];
+          // don't increment i — retry this measure on next line
+        } else {
+          i++;
         }
-        line.push(m); lineBeats += m.length;
       }
-      if (line.length) measureLines.push(line);
-
-      const fingerNames = ['thumb', 'index', 'middle', 'ring'];
-
-      for (const ml of measureLines) {
-        const container = document.createElement('div');
-        container.className = 'leadsheet-container';
-        const tbl = document.createElement('table');
-        tbl.className = 'leadsheet-table';
-
-        const flatCols = [{ type: 'bar' }];
-        for (let mi = 0; mi < ml.length; mi++) {
-          if (mi > 0) flatCols.push({ type: 'bar' });
-          for (const c of ml[mi]) flatCols.push(c);
-        }
-        flatCols.push({ type: 'bar' });
-
-        const makeRow = (cls, label) => {
-          const tr = document.createElement('tr');
-          tr.className = cls;
-          tr.innerHTML = `<td class="row-label">${label}</td>`;
-          return tr;
-        };
-
-        const rowRhChord = makeRow('row-chord', 'RH');
-        const rowLhChord = makeRow('row-chord', 'LH');
-        const rhRows = fingerNames.map((n, i) => makeRow('row-rh', i === 0 ? 'thumb' : n));
-        const lhRows = fingerNames.map((n, i) => makeRow(i === 0 ? 'row-lh-thumb' : 'row-lh', i === 0 ? 'thumb' : n));
-
-        for (const c of flatCols) {
-          if (c.type === 'bar') {
-            [rowRhChord, rowLhChord, ...rhRows, ...lhRows].forEach(r => r.innerHTML += '<td class="barline-cell"></td>');
-            continue;
-          }
-
-          rowRhChord.innerHTML += `<td>${c.isChordChange ? c.rhChord : ''}</td>`;
-          rowLhChord.innerHTML += `<td>${c.isChordChange ? c.lhChord : ''}</td>`;
-
-          for (let f = 0; f < 4; f++) {
-            if (c.isChordChange && f < c.rh.length)
-              rhRows[f].innerHTML += `<td>${c.rh[f] + modeOffset}</td>`;
-            else if (f === 0 && c.melodyString !== null)
-              rhRows[f].innerHTML += `<td>${c.melodyString + modeOffset}</td>`;
-            else
-              rhRows[f].innerHTML += '<td></td>';
-          }
-
-          for (let f = 0; f < 4; f++) {
-            if (c.isChordChange && f < c.lh.length)
-              lhRows[f].innerHTML += `<td>${c.lh[f] + modeOffset}</td>`;
-            else
-              lhRows[f].innerHTML += '<td></td>';
-          }
-        }
-
-        tbl.appendChild(rowRhChord);
-        tbl.appendChild(rowLhChord);
-        rhRows.forEach(r => tbl.appendChild(r));
-        lhRows.forEach(r => tbl.appendChild(r));
-        container.appendChild(tbl);
-        wrapper.appendChild(container);
-      }
+      if (line.length) wrapper.appendChild(buildLineTable(line));
     }
 
     // ── Chord Table ──────────────────────────────────────────
