@@ -63,6 +63,20 @@
       width: 1px; padding: 0; background: #bbb;
     }
 
+    /* Player bar */
+    .player-bar {
+      display: flex; align-items: center; gap: 0.75rem;
+      width: 100%; max-width: 900px; margin-bottom: 1rem;
+      padding: 0.5rem 1rem; background: white; border-radius: 10px;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+      font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
+    }
+    .player-bar button {
+      font-size: 1rem; padding: 0.3rem 1rem; min-width: 5rem;
+    }
+    .player-bar input[type=range] { flex: 1; max-width: 150px; }
+    .player-bar .beat-display { color: #999; margin-left: auto; }
+
     .status { font-size: 0.8rem; color: #999; margin-top: 1rem; text-align: center; }
 
     /* Reference table */
@@ -108,6 +122,13 @@
 
   <div class="leadsheet-container">
     <table class="leadsheet-table" id="leadsheet-table"></table>
+  </div>
+
+  <div class="player-bar" id="player-bar">
+    <button id="play-btn" onclick="togglePlay()">&#9654; Play</button>
+    <input type="range" id="beat-slider" min="0" max="0" value="0" style="flex:1">
+    <span id="beat-display" class="beat-display">0 / 0</span>
+    <span id="tempo-label" class="beat-display">120 bpm</span>
   </div>
 
   <div class="ref-table-container">
@@ -178,6 +199,11 @@
         }
         const beats = [];
         const musicStr = musicLines.join(' ');
+        // Extract tempo from [Q:1/4=NNN]
+        let tempo = 120;
+        const tempoMatch = musicStr.match(/\[Q:\s*\d+\/\d+=(\d+)\]/);
+        if (tempoMatch) tempo = parseInt(tempoMatch[1]);
+
         const re = /("([^"]*)")?\s*([_^=]*[A-Ga-g][,']*\d*\/?[\d]*|z\d*\/?[\d]*|\[x\d*\]|\|[\|\]\[:]*)/g;
         let m, lastChord = null;
         while ((m = re.exec(musicStr)) !== null) {
@@ -198,7 +224,7 @@
             noteName: midiToNoteName(midi),
           });
         }
-        if (beats.length > 0) hymns.push({ number, title, meter, defLen, key, beats });
+        if (beats.length > 0) hymns.push({ number, title, meter, defLen, key, tempo, beats });
       }
       return hymns;
     }
@@ -208,68 +234,42 @@
       const table = document.getElementById('leadsheet-table');
       table.innerHTML = '';
 
-      // Collect beats into columns
+      // Collect beats from precomputed JSON
       const cols = [];
-      let lastRootStr = 0; // track root string across beats
 
       for (const beat of hymn.beats) {
-        if (beat.type === 'barline') {
+        if (beat.type === 'bar') {
           cols.push({ type: 'bar' });
         } else {
-          const isChordChange = !!beat.chordSymbol;
-          let voicing = null;
+          const isChordChange = !!beat.chord;
+          const rh = beat.rh || [];
+          const lh = beat.lh || [];
 
-          if (isChordChange && voicer && beat.activeChord) {
-            try {
-              // Always use original key for generating voicings
-              voicer.set_key_root(baseKeyPC);
-              const json = voicer.suggest_voicings(beat.melodyMidi, beat.activeChord, 1);
-              const results = JSON.parse(json);
-              if (Array.isArray(results) && results.length > 0) voicing = results[0];
-            } catch(e) {}
-          }
+          // Apply mode offset to string numbers
+          const rhNums = rh.map(s => ({ num: s + modeOffset }));
+          const lhNums = lh.map(s => ({ num: s + modeOffset }));
 
-          // Compute string numbers relative to key root
-          let rhNums = [], lhNums = [];
-
-          if (voicing) {
-            lastRootStr = computeRootString(voicing);
-            rhNums = voicing.rh.map(n => {
-              const s = midiToStringNum(n.midi, 0);
-              return { num: s !== null ? s - lastRootStr + 1 + modeOffset : '?' };
-            });
-            lhNums = voicing.lh.map(n => {
-              const s = midiToStringNum(n.midi, 0);
-              return { num: s !== null ? s - lastRootStr + 1 + modeOffset : '?' };
-            });
-          }
-
-          // Thumb string for melody-only beats (uses same root reference)
-          const thumbStr = midiToStringNum(beat.melodyMidi, 0);
-          const thumbNum = thumbStr !== null ? thumbStr - lastRootStr + 1 + modeOffset : beat.noteName;
-
-          // Identify LH and RH chord names using MODAL key root
-          let lhChordName = '', rhChordName = '';
-          if (voicing && voicer) {
-            const modalRoot = (baseKeyPC + MAJOR_SCALE[modeOffset]) % 12;
-            voicer.set_key_root(modalRoot);
-            const rhMidis = new Uint8Array(voicing.rh.map(n => n.midi));
-            const lhMidis = new Uint8Array(voicing.lh.map(n => n.midi));
-            if (rhMidis.length >= 2) rhChordName = voicer.identify_chord(rhMidis);
-            if (lhMidis.length >= 2) lhChordName = voicer.identify_chord(lhMidis);
+          // Thumb: first RH string number, or compute from midi
+          let thumbNum = rh.length > 0 ? rh[0] + modeOffset : '';
+          if (!thumbNum && beat.midi) {
+            const s = midiToStringNum(beat.midi, baseKeyPC);
+            thumbNum = s !== null ? s + modeOffset : '';
           }
 
           cols.push({
             type: 'beat',
-            chord: isChordChange ? (beat.activeChord || '') : '',
+            chord: beat.chord || '',
             rhNums,
             lhNums,
             thumbNum,
             isChordChange,
-            gap: voicing ? computeGap(voicing) : 0,
-            lhTick: voicing && voicing.lh.length > 0 && voicing.lh.length < 4,
-            lhChordName,
-            rhChordName,
+            gap: 0,
+            lhTick: lh.length > 0 && lh.length < 4,
+            lhChordName: beat.lh_chord || '',
+            rhChordName: beat.rh_chord || '',
+            melodyMidi: beat.midi,
+            rhMidi: beat.rh_midi,
+            lhMidi: beat.lh_midi,
           });
         }
       }
@@ -385,6 +385,9 @@
 
     function setMode(offset) {
       modeOffset = offset;
+      stopPlay();
+      playBeatIdx = 0;
+      document.getElementById('beat-display').textContent = '0 / 0';
       document.querySelectorAll('.mode-btn').forEach((btn, i) => {
         btn.classList.toggle('active', i === offset);
       });
@@ -480,13 +483,12 @@
 
     function renderChordTable(hymn) {
       const table = document.getElementById('chord-table');
-      // Collect unique chords from the hymn
       const seen = new Set();
       const chords = [];
       for (const beat of hymn.beats) {
-        if (beat.chordSymbol && !seen.has(beat.chordSymbol)) {
-          seen.add(beat.chordSymbol);
-          chords.push(beat.chordSymbol);
+        if (beat.chord && !seen.has(beat.chord)) {
+          seen.add(beat.chord);
+          chords.push(beat.chord);
         }
       }
       let html = '<tr><th>ASCII</th><th>Traditional</th><th>Say</th><th>Example in ' + hymn.key + '</th></tr>';
@@ -501,33 +503,162 @@
 
     function selectHymn(idx) {
       currentHymn = idx;
+      stopPlay();
+      playBeatIdx = 0;
+      const slider = document.getElementById('beat-slider');
+      slider.value = 0;
+      slider.max = hymns[idx] ? hymns[idx].beats.length - 1 : 0;
+      document.getElementById('beat-display').textContent = '0 / 0';
       const hymn = hymns[idx];
       baseKeyPC = KEY_TO_PC[hymn.key] || 0;
+      currentTempo = hymn.tempo || 120;
+      document.getElementById('tempo-label').textContent = currentTempo + ' bpm';
       updateKeyDisplay(hymn.key);
       renderLeadSheet(hymn);
       renderChordTable(hymn);
     }
 
+    // ── Audio Engine ─────────────────────────────────────────
+    let audioCtx = null;
+    let isPlaying = false;
+    let playTimer = null;
+    let playBeatIdx = 0;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    function midiToFreq(midi) {
+      return 440 * Math.pow(2, (midi - 69) / 12);
+    }
+
+    function pluckNote(midi, time, duration) {
+      const freq = midiToFreq(midi);
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      const filter = audioCtx.createBiquadFilter();
+
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+
+      filter.type = 'lowpass';
+      filter.frequency.value = Math.min(freq * 4, 8000);
+      filter.Q.value = 1;
+
+      gain.gain.setValueAtTime(0, time);
+      gain.gain.linearRampToValueAtTime(0.15, time + 0.005);
+      gain.gain.exponentialRampToValueAtTime(0.001, time + duration * 0.8);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      osc.start(time);
+      osc.stop(time + duration);
+    }
+
+    function playBeat(beatData) {
+      initAudio();
+      const now = audioCtx.currentTime;
+      const dur = 60 / getTempo();
+      const transpose = MAJOR_SCALE[modeOffset] || 0;
+
+      if (beatData.voicing) {
+        // Chord change — roll all notes bottom-up like harp
+        const allNotes = [...(beatData.voicing.lh || []), ...(beatData.voicing.rh || [])];
+        allNotes.sort((a, b) => a.midi - b.midi);
+        allNotes.forEach((n, i) => {
+          pluckNote(n.midi + transpose, now + i * 0.03, dur * 1.5);
+        });
+      } else if (beatData.melodyMidi) {
+        pluckNote(beatData.melodyMidi + transpose, now, dur);
+      }
+    }
+
+    let currentTempo = 120;
+
+    function getTempo() {
+      return currentTempo;
+    }
+
+    function togglePlay() {
+      if (isPlaying) {
+        stopPlay();
+      } else {
+        startPlay();
+      }
+    }
+
+    function startPlay() {
+      initAudio();
+      isPlaying = true;
+      document.getElementById('play-btn').textContent = '⏸ Pause';
+      playBeatIdx = 0;
+      scheduleNextBeat();
+    }
+
+    function stopPlay() {
+      isPlaying = false;
+      document.getElementById('play-btn').textContent = '▶ Play';
+      if (playTimer) { clearTimeout(playTimer); playTimer = null; }
+    }
+
+    function scheduleNextBeat() {
+      try {
+        if (!isPlaying) return;
+        const hymn = hymns[currentHymn];
+        if (!hymn) { stopPlay(); return; }
+
+        while (playBeatIdx < hymn.beats.length && hymn.beats[playBeatIdx].type === 'barline') {
+          playBeatIdx++;
+        }
+        if (playBeatIdx >= hymn.beats.length) { stopPlay(); return; }
+
+        const beat = hymn.beats[playBeatIdx];
+        document.getElementById('beat-display').textContent =
+          `${playBeatIdx + 1} / ${hymn.beats.length}`;
+        document.getElementById('beat-slider').value = playBeatIdx;
+
+        // Play from precomputed voicing data
+        if (beat.rh_midi && beat.lh_midi && beat.chord) {
+          playBeat({
+            voicing: {
+              rh: beat.rh_midi.map(m => ({midi: m})),
+              lh: beat.lh_midi.map(m => ({midi: m})),
+            }
+          });
+        } else if (beat.midi) {
+          playBeat({ melodyMidi: beat.midi });
+        }
+
+        playBeatIdx++;
+        const msPerBeat = 60000 / getTempo();
+        playTimer = setTimeout(scheduleNextBeat, msPerBeat);
+      } catch(e) {
+        console.warn('playback error:', e);
+        playBeatIdx++;
+        playTimer = setTimeout(scheduleNextBeat, 200);
+      }
+    }
+
+    // Beat slider — seek to position
+    document.getElementById('beat-slider').addEventListener('input', function() {
+      playBeatIdx = parseInt(this.value);
+      const hymn = hymns[currentHymn];
+      if (hymn) {
+        document.getElementById('beat-display').textContent =
+          `${playBeatIdx + 1} / ${hymn.beats.length}`;
+      }
+    });
+
     // ── Init ───────────────────────────────────────────────
     async function init() {
       const status = document.getElementById('status');
 
-      // Load WASM voicing engine
+      // Load precomputed voicings (no WASM needed)
       try {
-        const wasm = await import('./harp-voicing-wasm/pkg/harp_voicing_wasm.js');
-        await wasm.default();
-        voicer = new wasm.HarpVoicer(0);
-        status.textContent = 'WASM loaded. Loading hymns...';
-      } catch (e) {
-        status.textContent = 'WASM unavailable: ' + e.message;
-        console.warn('WASM:', e);
-      }
-
-      // Load lead sheets
-      try {
-        const resp = await fetch('./harp_leadsheets.abc');
-        const text = await resp.text();
-        hymns = parseLeadSheets(text);
+        const resp = await fetch('./harp_voicings.json');
+        hymns = await resp.json();
 
         const sel = document.getElementById('hymn-select');
         sel.innerHTML = '';

@@ -3,7 +3,7 @@ T:Blessed Jesus at Thy Word
 M:4/4
 L:1/4
 K:G
-"V"B G "ii^1"A "ii"d | "V"B "iii"G "ii"A2 | "V^1"G "V"G "I"G "V^1"G | "IV^1"A "V"B "II~4"A2 | "V"G4 |
+[Q:1/4=120] "V"B G "ii^1"A "ii"d | "V"B "iii"G "ii"A2 | "V^1"G "V"G "I"G "V^1"G | "IV^1"A "V"B "II~4"A2 | "V"G4 |
 "V"B G "ii^1"A "ii"d | "V"B "iii"G "ii"A2 | "V^1"G "V"G "I"G "V^1"G | "IV^1"A "V"B "II~4"A2 | "V"G4 |
 "V"D "ii^1"D "iii-7"E "ii"F | "V^1"G "VI^1"A "ii"F D | "V^1"G "iii"G "ii"A "V"B | "I"c "V"B "II~4"A2 | "V"G4 |]
 
@@ -12,7 +12,7 @@ T:God Himself is Present
 M:4/4
 L:1/4
 K:G
-"V"B B "V^1"B "V"B | "II~4"A2 "ii"A2 | "iii"G G "iii^1"G "iii"G | "vii-"F2 F2 | "I"E "I^1"E "V"D "iii"G |
+[Q:1/4=130] "V"B B "V^1"B "V"B | "II~4"A2 "ii"A2 | "iii"G G "iii^1"G "iii"G | "vii-"F2 F2 | "I"E "I^1"E "V"D "iii"G |
 "ii"A "V"B "II~4"A2 | "V"G4 | B B "V^1"B "V"B | "II~4"A2 "ii"A2 | "iii"G G "iii^1"G "iii"G |
 "vii-"F2 F2 | "I"E "I^1"E "V"D "iii"G | "ii"A "V"B "II~4"A2 | "V"G4 | B2 B2 | "I"c4 |
 "ii"A2 A2 | "V"B4 | "ii"d "V^1"d "I"c "V"B | "II~4"A2 "V"B2 | | "I"d "ii"d "V"c B | A2 G2 |]
@@ -22,7 +22,7 @@ T:O Holy Spirit, Enter In
 M:4/4
 L:1/4
 K:Eb
-"III"z2 "I"E2 | "ii-7"B2 "iii"G2 | "I"E2 "ii-7"B2 | "iii"c "IV"c "vii"B2 | "III"z "IM7"B "I~4"c "V"d | "iii"e "vii-"d
+[Q:1/4=150] "III"z2 "I"E2 | "ii-7"B2 "iii"G2 | "I"E2 "ii-7"B2 | "iii"c "IV"c "vii"B2 | "III"z "IM7"B "I~4"c "V"d | "iii"e "vii-"d
 "IV"c "IVM7"c | "vii"B2 "III"z "V"B | "vi"c2 "iii^1"B2 | "vi"A "iii"G "vii-"F2 | "iii"E4 | "III"z2 "I"E2 | "ii-7"B2 "iii"G2 |
 "I"E2 "ii-7"B2 | "iii"c "IV"c "vii"B2 | "III"z "IM7"B "I~4"c "V"d | "iii"e "vii-"d "IV"c "IVM7"c | "vii"B2 "III"z "V"B | "vi"c2 "iii^1"B2 |
 "vi"A "iii"G "vii-"F2 | "iii"E4 | "V"B2 "iii"G2 | "V"B2 "iii"G2 | G G "vii-"F F | "iii"G G "vii-"F F |
@@ -33,7 +33,7 @@ T:Open Now Thy Gates of Beauty
 M:4/4
 L:1/4
 K:Bb
-"vii"B,3/2 "IV"C/ "vii-"D "ii-7"B, | "vii-"D "iii^1"E "IV"F F | "V"B "IV"A/"iii"G/ "ii-7"F "vii-"d | "iii"c "IV"c "vii-"B2 |
+[Q:1/4=100] "vii"B,3/2 "IV"C/ "vii-"D "ii-7"B, | "vii-"D "iii^1"E "IV"F F | "V"B "IV"A/"iii"G/ "ii-7"F "vii-"d | "iii"c "IV"c "vii-"B2 |
 "vii"B,3/2 "IV"C/ "vii-"D "ii-7"B, | "vii-"D "iii^1"E "IV"F F | "V"B "IV"A/"iii"G/ "ii-7"F "vii-"d | "iii"c "IV"c "vii-"B2 |
 "vii-"d3/2 "ii-7"d/ "IV"c c | "V"B "V^1"B "II"A2 | "iii"G3/2 G/ "vii-"F "V"B | "I^1"c "IV"A "vii-"B2 |]
 
@@ -42,7 +42,7 @@ T:We Gather Together
 M:3/4
 L:1/4
 K:D
-"ii"A | A3/2 "V^2"B/ "ii"A | F "iii7"G "ii^1"A | "iii7"G3/2 "III7"F/ "vi"E | "ii"F D
+[Q:1/4=100] "ii"A | A3/2 "V^2"B/ "ii"A | F "iii7"G "ii^1"A | "iii7"G3/2 "III7"F/ "vi"E | "ii"F D
 "ii"A | "vi^1"A3/2 "IM7"B/ "vi^1"c | "vii%7"d3/2 "III"e/ "vi"c | "ii"B3/2 "vii%7"A/ "III7"B | "vi"A2
 "vi"A | "vi7^3"A3/2 "iii^1"B/ "vi7^3"c | "ii^1"d A A | ("III~4"A3/2 "III7"B/) "vi7"G/"vi"A/ | "ii"F D
 "ii"D | "V^1"G3/2 "ii^2"A/ "V"B/"V^1"G/ | ("vi^1"A3/2 "I"G/) "ii"F/F/ | "iii7"G "vi7"E3/2 "ii"D/ | D2 |]
@@ -52,7 +52,7 @@ T:Abide, O Dearest Jesus
 M:4/4
 L:1/4
 K:Eb
-"iii"E | G "vii-"F "iii"G "vi^1"A | "vii-"B2 "iii"G "vi"c | "iii"B3/2 "IV"A/ "iii"G "vii-"F | "iii"G2
+[Q:1/4=120] "iii"E | G "vii-"F "iii"G "vi^1"A | "vii-"B2 "iii"G "vi"c | "iii"B3/2 "IV"A/ "iii"G "vii-"F | "iii"G2
 "III"z "V"B | "vi"c "I"c "vii-"d "iii^1"e | "vi"c2 "iii"B G | "IV"F "iii^1"E "vi"E "vii-"D | "iii"E3 |]
 
 X:28
@@ -60,7 +60,7 @@ T:In Peace and Joy I Now Depart
 M:4/4
 L:1/4
 K:C
-"ii"D2 "VI^1"A "ii"A | "iii"G "V^1"d "I"c "III~4"B | "vi"A2 c2 | "IV"A "I"c ("ii-7"B/"VI~4^2"A/ "III~4"B) | "vi"A
+[Q:1/4=120] "ii"D2 "VI^1"A "ii"A | "iii"G "V^1"d "I"c "III~4"B | "vi"A2 c2 | "IV"A "I"c ("ii-7"B/"VI~4^2"A/ "III~4"B) | "vi"A
 "ii"z/ "I~2"A/ "I"c3/2 "V"B/ | "I^1"c "IV"A/ ("V"G "ii"F/) "VI"E | "II"D2 "ii"A3/2 "iii"G/ | ("ii^1"F "V"D) "I"C2 |
 ("IV"A3/2 "vi7^2"G/) "ii"F "vi"c- | "V~4"c/"v"_B/ "ii"A "v^1"G/"bVII"F/ "v^1"G | "VI"A "III"z/ "IV~2"G/ "IV"F "V"D | "vi^1"C "ii"F ("VI"E/"bVII"D/ "VI~4"E) | "II"D4 |]
 
@@ -69,7 +69,7 @@ T:Lord, Dismiss Us With Thy Blessing
 M:4/4
 L:1/4
 K:C
-"I"G E | "I^1"c "I"G "I^2"e3/2 "V7^3"d/ | "I^1"c G "IV"A A | "I^1"G "vi"c "V^1"G "V7"F | "I"E2
+[Q:1/4=100] "I"G E | "I^1"c "I"G "I^2"e3/2 "V7^3"d/ | "I^1"c G "IV"A A | "I^1"G "vi"c "V^1"G "V7"F | "I"E2
 "I"G "I^2"E | "I^1"c "iii"G "I"e3/2 "ii-7"d/ | "vi^2"c "III"B "vi"c "iii"B | "vi^1"A "VI~4"B/"vi"c/ "V^2"B "II7"A | "V"G2
 "V"d3/2 d/ | B G "I"e3/2 "I7"d/ | "IV"c A "ii"f "iii"e | "ii^1"d "vi"c "V~4"c "V"B | "I"c2 |]
 
@@ -78,7 +78,7 @@ T:On What Has Now Been Sown
 M:4/4
 L:1/4
 K:D
-"ii"D | F D "vi^1"A "ii"F | "vii-"d3 "ii7^2"c | "V"B "ii^1"A "vi7^2"G "ii"F | "vi"E3 E | "ii"F
+[Q:1/4=140] "ii"D | F D "vi^1"A "ii"F | "vii-"d3 "ii7^2"c | "V"B "ii^1"A "vi7^2"G "ii"F | "vi"E3 E | "ii"F
 "ii"D "vii-"B "vi^1"A | "III"^G "ii-"E "vi^1"e "ii"d | "vi^2"c2 "III"B2 | "vi"A3 "ii"A | "V"B2 "I^1"c2 | "ii"d3
 "ii^1"D | "I^1"E "ii"F "V^1"G "ii"A | "V"B "I^1"c "ii^1"d "iii^1"e |  "ii^2"d2 "vi7"c2 | "ii"d3 |]
 
@@ -87,7 +87,7 @@ T:Come, Thou Long-Expected Jesus
 M:2/4
 L:1/4
 K:C
-"III~4"A A/"V"G/ | "vi"E "VI7"G/"VI"A/ | "I^2"c "III"B/"IV"A/ | "V"B "III~4"A | "i-7"A/"V~4^2"G/ "III"E/"V"D/ | "VI"E "V^2"G/"II"A/ | "III+"c "III"B | "VI"A2 |
+[Q:1/4=100]  "III~4"A A/"V"G/ | "vi"E "VI7"G/"VI"A/ | "I^2"c "III"B/"IV"A/ | "V"B "III~4"A | "i-7"A/"V~4^2"G/ "III"E/"V"D/ | "VI"E "V^2"G/"II"A/ | "III+"c "III"B | "VI"A2 |
 "III~4"A A/"V"G/ | "vi"E "VI7"G/"VI"A/ | "I^2"c "III"B/"IV"A/ | "V"B "III~4"A | "i-7"A/"V~4^2"G/ "III"E/"V"D/ | "VI"E "V^2"G/"II"A/ | "III+"c "III"B | "VI"A2 |
 "III+"c "V"d | "VI"e e | "V~4"c "VI~2"B/"VI~4"A/ | "III"B "III~4"A | "I"c "II"d | "III+"e "VI"e/"VI~4"d/ | "V~4"c "ii-7"B/"II7"A/ | "III"B2 |
 "VI"A "I^2"c/"VI~4"d/ | "VII~4"e "vi"e | "vi"c "III"B/"vi^2"A/ | "ii-7"B "III~4"A | "vi"A/"vi7"G/ "VII~4"E/"vii"D/ | "VI"E "V^2"G/"II"A/ | "I^1"c "III"B | "VI"A2 |]
@@ -97,7 +97,7 @@ T:Comfort, Comfort Ye My People
 M:6/4
 L:1/4
 K:F
-"IV"F2 "I"G "IV"A2 "I"G | "ii"F "vi"E "vii-"D2 "IV"C2 | "ii"F2 "I"G "IV"A2 "vii-"B | "IV^2"A2 "I"G2 "IV"F2 |
+[Q:1/4=160] "IV"F2 "I"G "IV"A2 "I"G | "ii"F "vi"E "vii-"D2 "IV"C2 | "ii"F2 "I"G "IV"A2 "vii-"B | "IV^2"A2 "I"G2 "IV"F2 |
 "IV"F2 "I"G "IV"A2 "I"G | "ii"F "vi"E "vii-"D2 "IV"C2 | "ii"F2 "I"G "IV"A2 "vii-"B | "IV^2"A2 "I"G2 "IV"F2 |
 "IV"A2 "ii"A "IV^1"c2 "vii-"B | "IV"A "I"G "IV"A2 z2 | c2 c "vii-"d2 "I"c | "ii-7"B "IV"A "I"G2 z2 |
 "IV"A2 "i"c "V"B2 "IV^1"A | "ii"F "I"G "IV"A2 "vii-"F2 | "IV"A2 "ii"A "vii-"B2 "IV"A | "V"G "IV^1"F "I"E2 "IV"F2 |]
@@ -107,7 +107,7 @@ T:Gabriel's Message
 M:3/4
 L:1/4
 K:C
-"III"E | "vi"A2 c | "VI~4"B2 d | "vi"c2 "VI~4"B | "vi"A3 | "vii%7^3"B3 | "VI~4"E3- | "bvi-"E2
+[Q:1/4=200] "III"E | "vi"A2 c | "VI~4"B2 d | "vi"c2 "VI~4"B | "vi"A3 | "vii%7^3"B3 | "VI~4"E3- | "bvi-"E2
 "V"E | "vi"A2 c | "VI~4"B2 "ii^2"d | "vi"c2 "ii-7"B | "vi^1"A3- | "III~4"A2 "iii"G | "vi"A3- | A2
 "I"c | c2 "vii-"d | "I"c2 "ii-7"B | "I^1"c2 "ii-7"d | "I"e2 e | ("ii^1"d3 | "#iv-"c3) | ("V"B3 | B2)
 "I^1"c | "ii^1"d2 "IV"c | "vii%7^2"B2 "ii^1"A | "III~4"B3 | "III7"E3 | ("IV"A3 | "ii7"c "ii"B "ii7"c | "vi^1"A3 | "III~4"A2) "iii"G | "vi"A3- | A3 |]
@@ -117,7 +117,7 @@ T:Hark the Glad Sound
 M:3/4
 L:1/4
 K:G
-"V"D G B | "ii"d2 "ii7"c | ("iii"B "vi"c) "ii"A | "V"G2 B | ("ii"A "vii7"d) "VI7"G | ("ii"F "iii"G) "VI7"E | "bVII"D2
+[Q:1/4=130] "V"D G B | "ii"d2 "ii7"c | ("iii"B "vi"c) "ii"A | "V"G2 B | ("ii"A "vii7"d) "VI7"G | ("ii"F "iii"G) "VI7"E | "bVII"D2
 "ii"A | ("V^2"B "II~2"A) "V^2"G | ("II~2"c "V^2"B) "ii7"A | ("V^2"d "II~2"c) "V"B | "I"e2 "V"G | ("I"E "II7"c) "iii"B | ("vi"A "V"G) "ii7"F | "V"G3 |]
 
 X:35
@@ -125,7 +125,7 @@ T:Jesus Came, the Heavens Adoring
 M:4/4
 L:1/4
 K:D
-"vii-"F "IV^1"F "V"B "iii"B | "vi^1"A3/2 "vi7"G/ "ii"F D | "vi^1"A "ii"F "V"B "ii^1"A | "iii7"G "I^1"G "ii"F2 |
+[Q:1/4=100] "vii-"F "IV^1"F "V"B "iii"B | "vi^1"A3/2 "vi7"G/ "ii"F D | "vi^1"A "ii"F "V"B "ii^1"A | "iii7"G "I^1"G "ii"F2 |
 "vi"E "vi^1"E "III"E "IV"C | "ii"D "vi^1"E "ii"F F | "vii-"F "III"^G "IV"A "vii-"B | "IV^2"A "IM7"G "IV"F2 |
 "IV~4"c "IV"c "ii-7"d "I^1"c/"iii"B/ | "IV~4"^A "V"B "IV~4"c "IV"F | "vii-"d "IM7^2"c/"iii^1"B/ "IV~4"^A "ii-7"B | "iii"B "IV~4"^A "vii-"B2 |]
 
@@ -134,7 +134,7 @@ T:Lift Up Your Heads, Ye Mighty Gates
 M:3/4
 L:1/4
 K:A
-"iii"E | "vi"c2 A | ("vi^1"A "iii^2"G) "vi"A | "iii^1"B2 "iii^2"G | "iii"E2 E | (E "biii-"F) "iii7^3"G | "vi^1"A2 "ii"F | "vi^2"E2 "iii7"D |
+[Q:1/4=140] "iii"E | "vi"c2 A | ("vi^1"A "iii^2"G) "vi"A | "iii^1"B2 "iii^2"G | "iii"E2 E | (E "biii-"F) "iii7^3"G | "vi^1"A2 "ii"F | "vi^2"E2 "iii7"D |
 "vi"C2 C | (E "vi^1"A) "vi"c | ("iii^1"B G) E | ("IV^1"A F) "VII"^D | "iii"E2 "I"E | "IV"A2 "iii"B | "vi"c2 "IV"A | "iii^2"G2
 "VII"F | "iii"E2 "vi"A | "iii"G2 "iii7^3"B | "vi^1"A2 "vi"c | "iii^1"B2 "V"d | "vi"c2 "iii"E | ("V"d "vi"c) "iii^2"B | ("vi^1"A "I"G) "ii"F |
 "vi^2"E2 "iii"E | "vi"E2 e | "iii^1"e2 "vi"c | "ii^1"d2 "iii^1"e | "vi"c2 E | ("ii"F "vii-"d) "ii-7"B | "vi^2"A2 "iii"G | "vi"A2 |]
@@ -144,7 +144,7 @@ T:Lo! He Comes With Clouds Descending
 M:4/4
 L:1/4
 K:G
-"V"G2 (B "ii^1"d) | ("iii"G "vii-"F) ("I"E "V"D) | ("I"E3/2 "I~4"F/ "I"G) "I~4"F/"I"E/ | ("ii"D3/2 "ii7"C/) "V"B,2 | "ii"D3 "I~4"D | "V^1"G2 "vi"A2 |
+[Q:1/4=150] "V"G2 (B "ii^1"d) | ("iii"G "vii-"F) ("I"E "V"D) | ("I"E3/2 "I~4"F/ "I"G) "I~4"F/"I"E/ | ("ii"D3/2 "ii7"C/) "V"B,2 | "ii"D3 "I~4"D | "V^1"G2 "vi"A2 |
 ("V"B d) ("vi^1"c "IM7"B) | ("V^2"B2 "ii"A2) | "V"G2 (B "ii^1"d) | ("iii"G "vii-"F) ("I"E "V"D) | ("I"E3/2 "I~4"F/ "I"G) "I~4"F/"I"E/ | ("ii"D3/2 "ii7"C/) "V"B,2 | "ii"D3
 "I~4"D | "V^1"G2 "vi"A2 | ("V"B d) ("vi^1"c "IM7"B) | ("V^2"B2 "ii"A2) | (A3/2 "V^2"B/ "ii"A) "V^1"B | "vi"c2 "V"B2 | (G3/2 "ii^1"A/ "iii^1"G) "vi"c |
 ("V^1"B "ii"A) "iii"G2 | (B3/2 "vi^2"c/ "iii"B) "V^1"d | ("IV^1"c "V"B) "II~4"A2 | "V^1"G2 ("vi"A "V"B) | "ii^1"D2 "I^1"c2 | "V^2"B2 "ii"A2 | "V"G4 |]
@@ -154,7 +154,7 @@ T:Magnificat
 M:3/4
 L:1/4
 K:Ab
-"IV"F "IV^1"F/"vi"E/ "vii-"D | "IV"C2 "I^1"G | ("IV"A "I^1"G) "ii7"F | "I"=E3 | "vi"c "vi^1"c "vi"c |
+[Q:1/4=110] "IV"F "IV^1"F/"vi"E/ "vii-"D | "IV"C2 "I^1"G | ("IV"A "I^1"G) "ii7"F | "I"=E3 | "vi"c "vi^1"c "vi"c |
 "iii"B2 "IV"A | "ii-7"B "iii"G2 | "vi"A3 | e "vi^1"e "iii7"d | "vi"c2 c | (c "iii^1"B) "IVM7"A |
 "iii"G2 "I"G | ("IV"A "I^1"G) "ii7"F | "I"=E2 "IV^1"c | "IV^2"A2 "I"G/"I~4"F/ | "IV"F3 |]
 
@@ -163,7 +163,7 @@ T:O Come O Come Emmanuel
 M:4/4
 L:1/4
 K:G
-"iii"E | G "ii-7"B "V^1"B "V"B | ("I"A "vi7"c "V^1"B) "ii7"A | "V"G3 "ii"A | "V"B "V^1"G "I"E "V^1"G | ("vi^1"A "IV^1"F "iii^2"E) "vii-"D | "iii"E3
+[Q:1/4=130] "iii"E | G "ii-7"B "V^1"B "V"B | ("I"A "vi7"c "V^1"B) "ii7"A | "V"G3 "ii"A | "V"B "V^1"G "I"E "V^1"G | ("vi^1"A "IV^1"F "iii^2"E) "vii-"D | "iii"E3
 "vi^1"A | "vi"A E "iii^1"E "IV7"F | ("iii"G2 "ii^2"F) "VI7"E | "ii"D3 "iii"G | "ii"A "vii-"B "V"B "V^1"B | ("I"A "vi7"c "V^1"B) "ii7"A | "V"G3
 "V"d | "ii"d3 "iii"B | "vii-"B3 "V"B | ("I"A "vi7"c "V^1"B) "ii7"A | "iii"G3 "ii"A | "V"B "V^1"G "I"E "V^1"G | ("vi^1"A "IV^1"F "iii^2"E) "vii-"D | "iii"E3 |]
 
@@ -172,7 +172,7 @@ T:On Jordan's Bank the Baptist's Cry
 M:3/4
 L:1/4
 K:D
-"ii"D | "vii-"D2 "vi"E | "ii"F2 "V^1"G | "ii^2"F2 "vi"E | "II"D2 "V"D | "ii^1"A2 "ii"A |
+[Q:1/4=120] "ii"D | "vii-"D2 "vi"E | "ii"F2 "V^1"G | "ii^2"F2 "vi"E | "II"D2 "V"D | "ii^1"A2 "ii"A |
 ("vi^1"A "IM7"B) "vi"c | "ii"d2 "V^2"d | "ii"d2 "vi^1"A | "vii"d2 "bvi-"d | "vi"c2 "ii"A |
 "V"B2 "V^1"B | "ii"A2 "iii"G | "vi^1"A2 "ii"F | "vi"E2 "ii^1"F | "V"D2 "vi"C | "ii"D2 |]
 
@@ -181,7 +181,7 @@ T:Of The Father's Love Begotten
 M:none
 L:1/4
 K:F
-"IV"F3/2 "IV~2"G/ "IV"A "vii-"B "IV^2"A "I"G | ("IV"A3/2 "iv-"G/) "IV"F4 | A "ii-7"B "IV^2"c "vii-"d ("I"c "IV"A3/2)
+[Q:1/4=120] "IV"F3/2 "IV~2"G/ "IV"A "vii-"B "IV^2"A "I"G | ("IV"A3/2 "iv-"G/) "IV"F4 | A "ii-7"B "IV^2"c "vii-"d ("I"c "IV"A3/2)
 "ii-7"B/ | "I"c4 | "V"d3/2 "iii^1"e/ "IV^1"f c "vii-"c B | ("ii7"A3/2 "iii7^3"G/) "ii"F4 | "ii"D3/2 "VI7"E/ "ii"F "V"G
 ("ii"F D3/2) "I"E/ | "IV"F4 | F3/2 "IV~2"G/ "IV"A "vii-"B "IV^2"A "I"G | "IV^1"c2 "vii-"d4 | ("IV"c A) "iv-7"B
 ("IV"c F3/2) "IVM7"E/ "V"D "IM7"E | ("ii"F3/2 "vii-"D/ "IV"C2) z2 | F3/2 "I"G/ "IV"A "IV^1"c "IV"A "ii-7"F | ("IM7"G2 "IV"F4) |]
@@ -191,7 +191,7 @@ T:O Lord, How Shall I Meet Thee
 M:4/4
 L:1/4
 K:Eb
-"iii"E2 | G "vi^1"A "vii-"B "iii"B | "IV"A2 "I"G "vi"A | "iii"G "iii^1"E "IV^1"F "vii-"F | "iii"E2
+[Q:1/4=140] "iii"E2 | G "vi^1"A "vii-"B "iii"B | "IV"A2 "I"G "vi"A | "iii"G "iii^1"E "IV^1"F "vii-"F | "iii"E2
 "iii"E2 | G "vi^1"A "vii-"B "iii"B | "IV"A2 "I"G "vi"A | "iii"G "iii^1"E "IV^1"F "vii-"F | "iii"E2
 "iii"B2 | "vi"c "ii^1"d "iii"e "vii-"d | "IV"c2 "vii"B "iii"G | "vi"c "vii-"B "vi^1"A "iii"G | "vii-"F2
 "iii"G2 | "I"E "vii-"F "iii"G "iii^1"B | "vi"A2 "iii"G B | "vi^1"A "iii"G "vii-"F F | "iii"E2 |]
@@ -201,7 +201,7 @@ T:Savior Of The Nations Come
 M:4/4
 L:1/4
 K:Bb
-"V"G "I"G "ii"F "vii-"B | "vi^1"A/"V"G/ "II"A "V"G2 | G B "I"c3/2 "V"B/ | "IV"c "vii-"d B2 |
+[Q:1/4=100] "V"G "I"G "ii"F "vii-"B | "vi^1"A/"V"G/ "II"A "V"G2 | G B "I"c3/2 "V"B/ | "IV"c "vii-"d B2 |
 "vii-"B "IV"c "vii-"d "iii"B | "I"c "V^2"B/"II"A/ "V"G2 | "iii"G "I"G "ii"F "V"B | "II"A/"V^2"G/ "ii"A "V"G2 |]
 
 X:44
@@ -209,7 +209,7 @@ T:The Advent of Our God
 M:4/4
 L:1/4
 K:G
-"V"D | "V^1"G "V"G B "ii^1"A/"VI7^2"G/ | "ii"A3 "V"B/"ii7^2"c/ | "V^1"d "ii7^2"c/"V"B/ "vi"c "V"B | "ii"A3
+[Q:1/4=140] "V"D | "V^1"G "V"G B "ii^1"A/"VI7^2"G/ | "ii"A3 "V"B/"ii7^2"c/ | "V^1"d "ii7^2"c/"V"B/ "vi"c "V"B | "ii"A3
 "ii^1"d | "V"B "V^1"G "ii"A "ii^1"D | "V"G/A/ "iii"B/"iii-7"^c/ "ii"d3/2 "V"d/ | "I"e "V^1"d/"I"c/ "V^2"B "ii7"A | "V"G3 |]
 
 X:45
@@ -217,7 +217,7 @@ T:The King Shall Come
 M:4/4
 L:1/4
 K:Ab
-"I"C | "IV^1"F "V"G "IV"A "vii-"B/"vii%7"A/ | "I"G "I~4"F/"I"E/ "IV"C "I^1"C | "ii-7"F "I"G "IV"A "iii"B | "vi"c3
+[Q:1/4=100] "I"C | "IV^1"F "V"G "IV"A "vii-"B/"vii%7"A/ | "I"G "I~4"F/"I"E/ "IV"C "I^1"C | "ii-7"F "I"G "IV"A "iii"B | "vi"c3
 "vi^1"A/"III~4^2"B/ | "vi"c "vii-"d/"I~4"c/ "ii-7"B "vii%7"A | "iii"G "I~4"F/"I"E/ "IV"C C | "IV^1"F "iii"G "vi"A/"IV^1"F/ "I"G | "IV"F3 |]
 
 X:46
@@ -225,7 +225,7 @@ T:A Great and Mighty Wonder
 M:none
 L:1/4
 K:F
-"IV"c2 | c c "vii-"d "IV"c | "I"c2 "ii"A2 "vii-"B2 | "IV"A "I^1"G2 "ii"F2 "I"E | "IV"F3
+[Q:1/4=100] "IV"c2 | c c "vii-"d "IV"c | "I"c2 "ii"A2 "vii-"B2 | "IV"A "I^1"G2 "ii"F2 "I"E | "IV"F3
 "IV"c2 | c c "vii-"d "IV"c | "I"c2 "ii"A2 "vii-"B2 | "IV"A "I^1"G2 "ii"F2 "I"E | "IV"F3
 "IV"A | "V"G "vi"E "IV"F "V"D | "I"C3 c | "I^1"c "IV"c "vii-"d "IV"c | "I"c2 "II"A2 "V"B2 | "IV^1"A "V^1"G2 "IV^2"F2 "I"E | "IV"F3 |]
 
@@ -234,7 +234,7 @@ T:All My Heart This Night Rejoices
 M:4/4
 L:1/4
 K:G
-"V"G2 "ii"A2 | "V"B3 "ii^1"A | "V"B "V^1"d "I"e2 | "V^1"d4 | d "iv-"e "vi7^3"c2 | "I"c "II"d "V"B2 |
+[Q:1/4=140] "V"G2 "ii"A2 | "V"B3 "ii^1"A | "V"B "V^1"d "I"e2 | "V^1"d4 | d "iv-"e "vi7^3"c2 | "I"c "II"d "V"B2 |
 "V"B d "I^1"c "V"B | "ii"A2 "V"G2 | "vii"d2 "vi"c2 | "V"B3 "ii^1"A | "V"G "ii"F
 "VI~4"E2 | "ii"D4 | "ii^1"d "iii^1"e "vi"c2 | "I^1"c "ii^1"d "V"B2 | B "ii"A "I"c "V"B | "II~4"A2 "V"G2 |]
 
@@ -243,7 +243,7 @@ T:All Praise to Jesus' Hallowed Name
 M:4/4
 L:1/4
 K:C
-"V"G | "iii"G "I"G "IV"A "iii"G | "vi"c "V"d "I"c2 | "V"B d "I"e "II"d |
+[Q:1/4=120] "V"G | "iii"G "I"G "IV"A "iii"G | "vi"c "V"d "I"c2 | "V"B d "I"e "II"d |
 "V"B "II"A "V"G "I"G | "I^1"c "V"B "V^1"d "II"A | "iii"G "VI"E "II"D "ii"D |
 "VI"A "VI^1"A "II"A "V^1"d | "I"c "II"A ("iii"G/"vi7^2"A/ "V^1"B | "II"A) "iii"G "V^1"G "I"G | "iii^1"G z2 |]
 
@@ -252,7 +252,7 @@ T:Angels From the Realms of Glory
 M:4/4
 L:1/4
 K:C
-"I"G E | "I^1"c "I"G "I^2"e3/2 "V7^3"d/ | "I^1"c G "IV"A A | "I^1"G "vi"c "V^1"G "V7"F | "I"E2
+[Q:1/4=100] "I"G E | "I^1"c "I"G "I^2"e3/2 "V7^3"d/ | "I^1"c G "IV"A A | "I^1"G "vi"c "V^1"G "V7"F | "I"E2
 "I"G "I^2"E | "I^1"c "iii"G "I"e3/2 "ii-7"d/ | "vi^2"c "III"B "vi"c "iii"B | "vi^1"A "VI~4"B/"vi"c/ "V^2"B "II7"A | "V"G2
 "V"d3/2 d/ | B G "I"e3/2 "I7"d/ | "IV"c A "ii"f "iii"e | "ii^1"d "vi"c "V~4"c "V"B | "I"c2 |]
 
@@ -261,7 +261,7 @@ T:Angels We Have Heard On High
 M:4/4
 L:1/4
 K:F
-"IV"A A "vi"A c | "V~4"c3/2 "IM7"B/ "IV"A2 | A "I"G "IV"A "IV^1"c | "IV^2"A3/2 "IM7"G/ "IV"F2 |
+[Q:1/4=130] "IV"A A "vi"A c | "V~4"c3/2 "IM7"B/ "IV"A2 | A "I"G "IV"A "IV^1"c | "IV^2"A3/2 "IM7"G/ "IV"F2 |
 "IV"A A "vi"A c | "V~4^2"c3/2 "III"B/ "IV"A2 | A "I"G "IV"A "IV^1"c | "IV^2"A3/2 "IM7"G/ "IV"F2 |
 ("IV"c2 "ii"d/"ii7"c/"iv-7"B/"ii^1"A/ | "V7"B2 "I"c/"IM7"B/"vi^2"A/"I^1"G/ | "IVM7"A2 "vii"B/"vii7"A/"V^2"G/"ii-7"F/ | "I^1"G3/2) C/ "I"C2 | "IV^1"F "I"G "IV"A "vii-"B | "IV^2"A2 "I"G z |
 ("IV"c2 "ii"d/"ii7"c/"iv-7"B/"ii^1"A/ | "V7"B2 "I"c/"IM7"B/"vi^2"A/"I^1"G/ | "IVM7"A2 "vii"B/"vii7"A/"V^2"G/"ii-7"F/ | "I^1"G3/2) C/ "I"C2 | "IV^1"F "I"G "IV"A "vii-"B | ("IV^2"A2 "I"G2) | "IV"F4 |]
@@ -271,7 +271,7 @@ T:Away In A Manger
 M:3/4
 L:1/4
 K:F
-"IV"[Ac] | [A3/2c3/2] ["IV~2"G/"iv-"B/] "IV"[FA] | [F3/2A3/2] ["IVM7"E/"IV~2"G/] "IV"[CF] | "vii"[DF] "VII"[CE] [B,D] | ["IV"A,2C2] [A,C] | ["IM7"B,3/2"I"C3/2] ["III"B,/"III7"D/] "III"[B,C] |
+[Q:1/4=100] "IV"[Ac] | [A3/2c3/2] ["IV~2"G/"iv-"B/] "IV"[FA] | [F3/2A3/2] ["IVM7"E/"IV~2"G/] "IV"[CF] | "vii"[DF] "VII"[CE] [B,D] | ["IV"A,2C2] [A,C] | ["IM7"B,3/2"I"C3/2] ["III"B,/"III7"D/] "III"[B,C] |
 "IM7"[B,C] [B,G] "III"[B,E] | "iv-"[B,D] "IV"[A,C] [CF] | [F2A2] [Ac] | [A3/2c3/2] ["IV~2"G/"iv-"B/] "IV"[FA] | ([F3/2A3/2] ["IVM7"E/"IV~2"G/]) "IV"[CF] |
 "vii"[DF] "VII"[CE] [B,D] | ["IV"A,2C2] [A,C] | ["I"G3/2"IM7"B3/2] ["I~4"F/"i-7"A/] "I"[EG] | "IV"[FA] [CG] [CF] | "vii"[DG] "VII"[B,D] [CE] | ["IV"C2F2] |]
 
@@ -280,7 +280,7 @@ T:Come, Your Heart and Voices Raising
 M:3/4
 L:1/4
 K:F
-"IV"F2 A | "I^1"c2 "IV"A | ("ii-7"B "ii7"c) "vii-"d | "I~4"c2 "IM7"G | ("IV"A B) "IV^1"c |
+[Q:1/4=120]  "IV"F2 A | "I^1"c2 "IV"A | ("ii-7"B "ii7"c) "vii-"d | "I~4"c2 "IM7"G | ("IV"A B) "IV^1"c |
 ("V"B A) "IM7"G | "ii"F2 "V"D | "I"E2 C | "IV"A2 "ii-7"B | "IV^1"c2 "vii-"d |
 "I~4"c2 "IM7"G | "VI^1"A2 "ii"F | "V"B2 B | ("vi"A "vi7"G) "ii^2"F | ("V7"F "V"D) "IM7"E | "IV"F3 |]
 
@@ -289,7 +289,7 @@ T:Far, Far Away On Judea's Plains
 M:4/4
 L:1/4
 K:F
-"IV"F "I~4"F3/4 "I"G// "IV"A "IV^2"A3/4 "IM7"B// | "vi"c "i-7"c3/4"IM7"B// "IV"A2 | "I"G G3/4 "IV^2"A// "IM7"B "IV"A/ c/ |
+[Q:1/4=100] "IV"F "I~4"F3/4 "I"G// "IV"A "IV^2"A3/4 "IM7"B// | "vi"c "i-7"c3/4"IM7"B// "IV"A2 | "I"G G3/4 "IV^2"A// "IM7"B "IV"A/ c/ |
 "vii"d/"VII7"c/ "VII+"B/"vii%7"A/ ("IV^2"A "I"G) | "IV"F "IV^1"F3/4 "I^2"G// "IV"A2 | "I"c c3/4 "IM7"B// "IV"A2 | "vii-"d "ii-7"d3/4 "III7"d// "IV"c "vii-"F/ "IV^1"F/ |
 ("V"B "IV"A) "I"G2 | ."IV"F .C ."vii-"D "iii^1"E | "IV^1"F "I"G "IV"A2 | "I"c3/2 "I"c/ "IV"c3/2 "V^1"B/ | "IV^2"A "I"G "IV"F2 |]
 
@@ -298,7 +298,7 @@ T:From Heaven Above To Earth I Come
 M:4/4
 L:1/4
 K:D
-"ii"d/ | "vi"c "III"B "vi"c "ii"A | "V"B "I^1"c "ii"d z/ "II"d/ | "vii-"d "IV"A "vi^1"A "ii"F | A "iii"G "vii%7"F z/
+[Q:1/4=100] "ii"d/ | "vi"c "III"B "vi"c "ii"A | "V"B "I^1"c "ii"d z/ "II"d/ | "vii-"d "IV"A "vi^1"A "ii"F | A "iii"G "vii%7"F z/
 "vii-"F/ | B "V"B "vi"A c | "vii-"d "III"B "vi"A "vii"z/ "bVII"d/ | "IV"c "V"B "ii"A "vi^1"A | "V^1"G/"ii"F/ "VI~4"E "ii"D z/ |]
 
 X:55
@@ -306,7 +306,7 @@ T:Gentle Mary Laid Her Child
 M:4/4
 L:1/4
 K:A
-"vi"A A "IV"A "iii^1"B | "vi"A "ii"A "iii"E2 | "ii"F "vi^1"E "ii"F "V^1"G | "vi"A2 A2 |
+[Q:1/4=140] "vi"A A "IV"A "iii^1"B | "vi"A "ii"A "iii"E2 | "ii"F "vi^1"E "ii"F "V^1"G | "vi"A2 A2 |
 "vi"A A "IV"A "iii^1"B | "vi"A "ii"A "iii"E2 | "ii"F "vi^1"E "ii"F "V^1"G | "vi"A2 A2 |
 "vi^1"e "ii"d "vi^2"c "iii"B | "vi"c "iii"B "IV"A2 | "ii"F "vi^1"E "ii"F "V^1"G | "vi"A2 A2 |
 "vi^1"E E "ii"F "V^1"G | "IV"A A "iii"B2 | "vi^1"e "ii"d "vi^2"c "iii"B | ("IV"A2 "ii"d2) | "vi"A4 |]
@@ -316,7 +316,7 @@ T:God Rest Ye Merry Gentlemen
 M:4/4
 L:1/4
 K:G
-"III"E | "iii"E B "bIII+"B "VII7"A | "iii"G "vii-"F "I"E "V"D | "I"E "VII"F "iii"G "vi^1"A | "VII"B3
+[Q:1/4=160] "III"E | "iii"E B "bIII+"B "VII7"A | "iii"G "vii-"F "I"E "V"D | "I"E "VII"F "iii"G "vi^1"A | "VII"B3
 "III"E | "iii"E B "bIII+"B "VII7"A | ("iii"G "vii-"F) "I"E "V"D | "I"E "VII"F "iii"G "vi^1"A | "VII"B2 z
 "III"B | "vi"c "ii^1"A "V"B "I^1"c | "vii-"d "I"e "V"B "VII7"A | "iii"G "iii-7"E "ii"F "V^1"G | "ii"A2
 ("iii"G "ii^1"A) | "V"B2 "I"c "V"B | (B "IV^1"A) "iii^2"G "VII"F | "iii"E2 G/F/ "iii-7"E | "ii"A2 ("iii7^2"G "IV^1"A) | ("V"B "I^1"c) "V^1"d "I"e | ("V"B "IV^1"A) "iii^2"G "VII"F | "iii"E3 |]
@@ -326,7 +326,7 @@ T:Hark! The Herald Angels Sing
 M:4/4
 L:1/4
 K:F
-"IV"C F F3/2 "I"E/ | "IV^1"F "IV"A ("IV^2"A "I"G) | "IV^1"c "vi"c "vii"c3/2 B/ | "IV^2"A "I"G "IV"A2 |
+[Q:1/4=100] "IV"C F F3/2 "I"E/ | "IV^1"F "IV"A ("IV^2"A "I"G) | "IV^1"c "vi"c "vii"c3/2 B/ | "IV^2"A "I"G "IV"A2 |
 "ii7"C "I~4"F "vii-"F3/2 "V7"E/ | "vi"F "vii7"A ("vi^1"A "I^1"G) | "IV"c "V7"G "I"G3/2 E/ | E D C2 |
 "I"c c c "IV^1"F | "iii"B "IV"A ("IV^2"A "I"G) | c c c "IV^1"F | "iii"B "IV"A ("IV^2"A "I"G) |
 "vii"d d d "vii7"c | "V^1"B "II"A "V"B2 | "IM7^3"G "vi"A/"VII~4"B/ "IV^1"c3/2 F/ | "IV^2"F "I"G "IV"A2 |
@@ -337,7 +337,7 @@ T:I Heard The Bells On Christmas Day
 M:4/4
 L:1/4
 K:Eb
-"iii"E  | G3/2 "VII~4"^F/ "iii"G G | "vii%7^2"A3/2 "V^1"G/ "vii%7^2"A "#iv%7"=A |
+[Q:1/4=100] "iii"E  | G3/2 "VII~4"^F/ "iii"G G | "vii%7^2"A3/2 "V^1"G/ "vii%7^2"A "#iv%7"=A |
 "iii^1"B "iii^2"e "iii7"d "I^2"c | "ii7^2"c3/2 "vii%7^3"B/ B "iii^1"B | "vi"B3/2 A/ "iii"G
 "III~4"A | "V^2"G3/2 "V7^2"F/ "I"E "IVM7"F | "iii^2"G "vi"A "iii^1"B "vi"c | "vii-"D3/2 "vii%7"F/ "iii"E |]
 
@@ -346,7 +346,7 @@ T:In The Bleak MidWinter
 M:4/4
 L:1/4
 K:F
-!()!A | .("IV"A3/2 "V7"B/) "IV^1"c "IV"A | "II~4"G.- G "ii"F2 | .("V^1"G3/2 "I~2"A/) "V^1"G "ii7^2"D | "V7"G4 |
+[Q:1/4=100] !()!A | .("IV"A3/2 "V7"B/) "IV^1"c "IV"A | "II~4"G.- G "ii"F2 | .("V^1"G3/2 "I~2"A/) "V^1"G "ii7^2"D | "V7"G4 |
 .("IV"A3/2 "V7"B/) "IV^1"c "IV"A | "II~4"G.- G "ii"F.- F | .(.("vii-"G "vii%7"A) "IM7"G3/2) "IV"F/ | F3.- F |
 "ii-7"B3/2 "IV"A/ "ii-7"B "i-7"c | "vii"d.- d "ii"A.- A | .("IV^1"c "vi"A) "V^1"G "vii%7"F | "I"E4 |
 "IV"A3/2 "V7"B/ "IV^1"c "IV"A | "II~4"G2 "ii"F2 | ("vii-"G "vii%7"A "IM7"G3/2) "IV"F/ | F3 |]
@@ -356,7 +356,7 @@ T:It Came Upon A Midnight Clear
 M:6/8
 L:1/4
 K:Bb
-"vii-"F/ | d "vii7"A/ "IM7^3"c/"iii^2"B/ G/ | "vii-"F "VI7"G/ "vii-"F F/ | "iii"G/"IVM7"A/ "iii^1"B/ B/"IM7^2"c/ "IM7"d/ | "IV"c3/2- c
+[Q:1/4=60] "vii-"F/ | d "vii7"A/ "IM7^3"c/"iii^2"B/ G/ | "vii-"F "VI7"G/ "vii-"F F/ | "iii"G/"IVM7"A/ "iii^1"B/ B/"IM7^2"c/ "IM7"d/ | "IV"c3/2- c
 "IV"F/ | "vii-"d "vii7"A/ "IM7^3"c/"iii^2"B/ G/ | "vii-"F "VI7"G/ "vii-"F F/ | "iii"G "I"G/ "IVM7"A/"iii"G/ "IVM7"F/ | "vii"B3/2- B
 "II"d/ | d D/ D/"II~4"=E/ "II7^3"^F/ | "V^1"G "II"A/ "V"B "V^1"d/ | "IV^2"c/"vii-"B/ "IV^2"A/ "IM7"G/"vi^1"A/ "IM7"G/ | "IV"F3/2- F
 "IV7"F/ | "vii"d "vii7"A/ "IM7^3"c/"iii^2"B/ G/ | "vii-"F "VI7"G/ "vii-"F "ii-7"F/ | "iii"G "I"G/ "IVM7"A/"iii"G/ "IVM7"F/ | "vii"B3/2- B |]
@@ -366,7 +366,7 @@ T:Joy to the World
 M:2/4
 L:1/4
 K:D
-"ii"d "II7"c3/4"V^2"B// | "ii"A3/2 "iii^1"G/ | "ii^2"F "vi"E | "ii"D3/2 "ii^1"A/ | "V"B3/2 B/ | "vi"c3/2 c/ | "ii"d3/2
+[Q:1/4=80] "ii"d "II7"c3/4"V^2"B// | "ii"A3/2 "iii^1"G/ | "ii^2"F "vi"E | "ii"D3/2 "ii^1"A/ | "V"B3/2 B/ | "vi"c3/2 c/ | "ii"d3/2
 "ii"d/ | d/"II7"c/ "V^2"B/"ii"A/ | A3/4"II~4"G//"ii"F/ d/ | d/"II7"c/ "V^2"B/"ii"A/ | A3/4"II~4"G//"ii"F/ "bVII"F/ | "ii"F/"bVII"F/ F/"ii"F//"VI7"G// | "ii"A3/2
 "II~4"G//"ii"F// | "vi"E/E/ E/E//"ii^2"F// | "VI7"G3/2 "ii^2"F//"vi7"E// | ("ii"D/ d) "V^2"B/ | "ii"A3/4"II~4"G//"ii"F/ "iii^1"G/ | "ii^2"F "vi"E | "ii"D2 |]
 
@@ -375,7 +375,7 @@ T:Let Our Gladness Have No End
 M:4/4
 L:1/4
 K:G
-"V^1"G "ii^1"A "V"B "I^1"c | "ii"d "V"d "ii"d2 | "vi"c "V"d "I"e2 | "V"d3 z |
+[Q:1/4=160]  "V^1"G "ii^1"A "V"B "I^1"c | "ii"d "V"d "ii"d2 | "vi"c "V"d "I"e2 | "V"d3 z |
 "V^1"d d "I"c "vi^1"c | "ii-7"B "vii-"B "vi^1"A2 | "V"B "I"c "II~4"A2 | "V"G3 z | B "ii^1"A "iii"B "I"c |
 ("vii-"d3 "ii7^2"c) | "V"B2 z2 | "iii"B "vi^1"A "VII"B "vi"c | ("V"d3 "vi"c) | "iii"B2 z2 | "V"z4 | "V^1"G2 "I"e2 | "ii"d "iii"B "vi^1"A2 | "V"G4 |]
 
@@ -384,7 +384,7 @@ T:Lo, How A Rose E'er Blooming
 M:none
 L:1/4
 K:F
-"IV"c2 | c c "vii-"d "IV"c | "I"c2 "ii"A2 "vii-"B2 | "IV"A "I^1"G2 "ii"F2 "I"E | "IV"F3
+[Q:1/4=100] "IV"c2 | c c "vii-"d "IV"c | "I"c2 "ii"A2 "vii-"B2 | "IV"A "I^1"G2 "ii"F2 "I"E | "IV"F3
 "IV"c2 | c c "vii-"d "IV"c | "I"c2 "ii"A2 "vii-"B2 | "IV"A "I^1"G2 "ii"F2 "I"E | "IV"F3
 "IV"A | "V"G "vi"E "IV"F "V"D | "I"C3 c | "I^1"c "IV"c
 "vii-"d "IV"c | "I"c2 "II"A2 "V"B2 | "IV^1"A "V^1"G2 "IV^2"F2 "I"E | "IV"F3 |]
@@ -394,7 +394,7 @@ T:Now Praise We Christ, the Holy One
 M:4/4
 L:1/4
 K:C
-"ii"D2 F "I"G | "ii^1"A "V"D "iii"G "ii"F | "VI"E2 "III"z "V"G | "ii"A "vi"c "I"c "V"B | "ii"A "V"B "I"c2 |
+[Q:1/4=130] "ii"D2 F "I"G | "ii^1"A "V"D "iii"G "ii"F | "VI"E2 "III"z "V"G | "ii"A "vi"c "I"c "V"B | "ii"A "V"B "I"c2 |
 "I"z "vi7"G "IV"A c | "I"c "V"B "vi"A "III"^G | "vi"A2 "V"z D | "IV"A "ii"A "I"c "IV"A | ("iii"G/"vi^1"A/ "ii"F) "vi^2"E2 | "III"E4 |]
 
 X:65
@@ -402,7 +402,7 @@ T:O Come, All Ye Faithful
 M:4/4
 L:1/4
 K:G
-!()!"V"G | G2 "vii"D "V"G | "ii^1"A2 D2 | "V"B "ii^1"A "V"B "I"c | "V^2"B2 "ii"A !()!"iii"G |
+[Q:1/4=120] !()!"V"G | G2 "vii"D "V"G | "ii^1"A2 D2 | "V"B "ii^1"A "V"B "I"c | "V^2"B2 "ii"A !()!"iii"G |
 "iii"G2 .("ii"F "VI"E) | .('"ii"F "V^1"G) .("ii^1"A "V"B) | ("ii^2"F2 "VI7"E3/2) "ii"D/ | D3 z | "vii"d2 "vi"c "V"B |
 .("vi7"c2 "V"B2) | "ii^1"A "V"B "iii"G "vi^1"A | ("ii"F3/2 "II~4"E/) "ii"D "V^1"G | G "ii^2"F "V^1"G "I~2"A |
 "V^1"G2 "vii"D "V"B | B "ii^1"A "V"B "vi"c | "V"B2 "ii^1"A "V"B | "ii7^2"c "V"B "ii^1"A "iii7"G | "ii"F2 ("V^1"G "I"c) | ("V^2"B2 "ii"A3/2) "V"G/ | G3 |]
@@ -412,7 +412,7 @@ T:O Little Town of Bethlehem
 M:4/4
 L:1/4
 K:F
-"IV"A | A A "iv-"^G "IV"A | "VII"c "V^1"B D G | "IV^2"F "I"E/"IV^2"F/ "IM7"G C | "IV"A3
+[Q:1/4=100] "IV"A | A A "iv-"^G "IV"A | "VII"c "V^1"B D G | "IV^2"F "I"E/"IV^2"F/ "IM7"G C | "IV"A3
 "IV"A | A "biii-"A "II"d "II7"c | "V~4"c "V"B D "V^1"G | "IV^2"F "I+"E/"IV^2"F/ "vi^1"A "IM7"G | "IV"F3
 "IV"A | A A "iii^1"G "bvi-7"F | "VI"E2 E E | "ii^1"D "VI^2"E "ii"F "V^1"G | "VI"A3
 "IV"A | A A "iv-"^G "IV"A | "vii"c "V^1"B D "vii"d | "IV^2"c "V7^2"F "IV^2"A3/2 "I7"G/ | "IV"F3 |]
@@ -422,7 +422,7 @@ T:See Amid the Winter's Snow
 M:4/4
 L:1/4
 K:G
-"V"G3/2 A/ "vi7"G "vii-"F | "I"E3/2 "ii7^3"D/ "V"D2 | "V"G "vii%7^2"A "I^1"c "V"B | "V^2"B3/2 "II~4"A/ "ii"A2 |
+[Q:1/4=100] "V"G3/2 A/ "vi7"G "vii-"F | "I"E3/2 "ii7^3"D/ "V"D2 | "V"G "vii%7^2"A "I^1"c "V"B | "V^2"B3/2 "II~4"A/ "ii"A2 |
 "V^1"G3/2 A/ "vi7"G "vii-"F | "I"E3/2 "ii7^3"D/ "V"D2 | "iii"G "vi7^2"A "V^2"B "I"c | "II~4"A3/2 G/ "V"G2 |
 "V"d3/2 d/ "I^2"c "V"B | "IV"A "V"G "ii"F2 | "V^1"d3/2 d/ "I"c "V"B | "vi"A "V^1"G "ii"F2 |
 "iii"G3/2 A/ "VI7"G "vii-"F | "V"E3/2 "VI7"D/ "ii"D2 | "V^1"d3/2 B/ "I"G "vi7"c | "ii-7"B "ii7"A "V"G2 |]
@@ -432,7 +432,7 @@ T:Silent Night
 M:3/4
 L:1/4
 K:Bb
-"vii-"F3/4"iii^2"G// "vii-"F/ D3/2 | F3/4"iii^2"G// "vii-"F/ D3/2 | "IVM7"c c/ A3/2 | "vii"B B/ "vii-"F3/2 |
+[Q:1/4=60] "vii-"F3/4"iii^2"G// "vii-"F/ D3/2 | F3/4"iii^2"G// "vii-"F/ D3/2 | "IVM7"c c/ A3/2 | "vii"B B/ "vii-"F3/2 |
 "iii"G G/ B3/4"III~4"A// "iii"G/ | "vii-"F3/4"iii^2"G// "vii-"F/ "vii"D3/2 | "iii"G G/ B3/4"III~4"A// "iii"G/ | "vii-"F3/4"iii^2"G// "vii-"F/
 "vii"D3/2 | "IV"c c/ "IVM7"e3/4"IV"c// "IVM7"A/ | ("vii-"B3/2 d3/2) | "ii-7"B/F/ "vii-"D/ "IV"F3/4"IVM7"E// C/ | "vii"B,3 |]
 
@@ -441,7 +441,7 @@ T:Sing, O Sing, This Blessed Morn
 M:4/4
 L:1/4
 K:C
-"I"c "ii-7"B "III+"c "I"E | "IV^1"F "IV"A "I"G2 | "IV"A A "I"G "vi"A | "V^1"G "V7"F "I"E2 |
+[Q:1/4=120] "I"c "ii-7"B "III+"c "I"E | "IV^1"F "IV"A "I"G2 | "IV"A A "I"G "vi"A | "V^1"G "V7"F "I"E2 |
 "vi"c c "vii-7"B "vi^1"A | "III"^G B "vi"A2 | A3/2 "I"G/ "II"^F "iii"G | "V^2"B "II"A "V"G2 |
 "IV"A A "I"c E | "IV^1"F "IV"A "I"G2 | E "vi"E "V"G "I^1"G | "IV"A A "I"c2 |]
 
@@ -450,7 +450,7 @@ T:The First Noel
 M:3/4
 L:1/4
 K:D
-"ii"F/"II~4"E/ | ("ii"D3/2 E/) "vii-"F/"V^1"G/ | "vi"A2 "iii^1"B/"IM7^2"c/ | .("ii^1"d "IV"c) "V"B | "ii"A2 "V"B/"vi7^3"c/ | .("ii^1"d "ii7"c) "iii"B | .("ii^1"A "V"B)
+[Q:1/4=100] "ii"F/"II~4"E/ | ("ii"D3/2 E/) "vii-"F/"V^1"G/ | "vi"A2 "iii^1"B/"IM7^2"c/ | .("ii^1"d "IV"c) "V"B | "ii"A2 "V"B/"vi7^3"c/ | .("ii^1"d "ii7"c) "iii"B | .("ii^1"A "V"B)
 "I^1"c | .("ii^1"d "ii^2"A) "VI7"G | "ii"F2 "IV^1"F/"vi7"E/ | ("ii"D3/2 E/) "vii-"F/"V^1"G/ | "VI~4"A2 "iii^1"B/"IM7^2"c/ | .("ii^1"d "IV"c) "V"B | "ii"A2
 "V"B/"vi7^3"c/ | .("ii^1"d "ii7"c) "iii"B | .("ii^1"A "V"B) "I^1"c | .("ii^1"d "ii^2"A) "VI7"G | "ii"F2
 "IV^1"F/"vi7"E/ | ("ii"D3/2 E/) "vii-"F/"V^1"G/ | "IV"A2 "ii"d/"ii7"c/ | "V"B2 "V^1"B | ("ii"A2 "vi^1"A) | "vii-"d "ii7^2"c "V"B | ("ii"A "ii-7"B) "I^1"c | ("ii^1"d "VI+"A) "VI7"G | "ii"F2 |]
@@ -460,7 +460,7 @@ T:To Shepherds As They Watched By Night
 M:4/4
 L:1/4
 K:D
-"ii"d/ | "vi"c "III"B "vi"c "ii"A | "V"B "I^1"c "ii"d z/ "II"d/ | "vii-"d "IV"A "vi^1"A "ii"F | A "iii"G "vii%7"F z/
+[Q:1/4=100] "ii"d/ | "vi"c "III"B "vi"c "ii"A | "V"B "I^1"c "ii"d z/ "II"d/ | "vii-"d "IV"A "vi^1"A "ii"F | A "iii"G "vii%7"F z/
 "vii-"F/ | B "V"B "vi"A c | "vii-"d "III"B "vi"A "vii"z/ "bVII"d/ | "IV"c "V"B "ii"A "vi^1"A | "V^1"G/"ii"F/ "VI~4"E "ii"D z/ |]
 
 X:72
@@ -468,7 +468,7 @@ T:Twas In The Moon of Wintertime
 M:4/4
 L:1/4
 K:D
-"IV"F "VII"B "vi"c "iv-7"d | "iii^1"e "iv-7"d "IV"c "ii-7"B | "IV"A "V"B B "IV"c | A "ii-7"B3 |
+[Q:1/4=120] "IV"F "VII"B "vi"c "iv-7"d | "iii^1"e "iv-7"d "IV"c "ii-7"B | "IV"A "V"B B "IV"c | A "ii-7"B3 |
 "IV"F "VII"B "vi"c "iv-7"d | "iii^1"e "iv-7"d "IV"c "ii-7"B | "IV"A "V"B B "IV"c | A "ii-7"B3 |
 "iii"B "ii-7"f f "IV"c | "iv-7"d "iii^1"e3/2 "V"d/ "vi"c | "V~4"c "iv-7"d "IV"c "ii-7"B | "V"B "IV"c3/2 "V^2"B/ ("ii-7"B | "IV^2"A2) z2 |
 "vii-"F B B2 | "IV^2"A "I"G "ii"F2 | "vii"B2 "IV^2"A F | "ii"B2 "ii-7"B "IV"c | "iv-7"d "iii^1"e "iv-7"f F | "vii"B2 z2 |]
@@ -478,7 +478,7 @@ T:What Child Is This?
 M:3/4
 L:1/4
 K:D
-"iii"E/ | G "ii^1"A/ "V"B3/4"V~4"=c// "V"B/ | "ii"A F/ D3/4E// F/ | "iii"G E/ "vi^1"E3/4"i-7"^D// "I"E/ | "VII"F3/2 B,
+[Q:1/4=80]  "iii"E/ | G "ii^1"A/ "V"B3/4"V~4"=c// "V"B/ | "ii"A F/ D3/4E// F/ | "iii"G E/ "vi^1"E3/4"i-7"^D// "I"E/ | "VII"F3/2 B,
 "iii"E/ | G "ii^1"A/ "V"B3/4"V~4"=c// "V"B/ | "ii"A F/ D3/4E// F/ | "iii"G3/4F// "vi"E/ "VII"^D3/4"vii-"^C// "vii"D/ | "III~4"E3/2 "iii"E3/2 |
 "vii-"d3/2 "V"d3/4"V~4"c// "V"B/ | "ii"A F/ D3/4E// F/ | "iii"G E/ "vi^1"E3/4"i-7"^D// "I"E/ | "VII"F "vii"D/ "VII"B,3/2 |
 "vii-"d3/2 "V"d3/4"V~4"c// "V"B/ | "ii"A F/ D3/4E// F/ | "iii"G3/4F// "vi"E/ "VII"^D3/4"vii-"^C// "vii"D/ | "III~4"E3/2 "iii"E |]
@@ -488,7 +488,7 @@ T:As With Gladness Men of Old
 M:4/4
 L:1/4
 K:G
-"V"G "ii7^2"F/"V"G/ "ii^1"A "V"G | "I^1"c "IV"c "V"B2 | "I"E "ii7^3"F "V^1"G "I"E | "V^2"D "ii"D "V"D2 |
+[Q:1/4=100] "V"G "ii7^2"F/"V"G/ "ii^1"A "V"G | "I^1"c "IV"c "V"B2 | "I"E "ii7^3"F "V^1"G "I"E | "V^2"D "ii"D "V"D2 |
 "V"G "ii7^2"F/"V"G/ "ii^1"A "V"G | "I^1"c "IV"c "V"B2 | "I"E "ii7^3"F "V^1"G "I"E | "V^2"D "ii"D "V"D2 |
 "V"B "ii^1"A "V"G B | "ii^1"d3/2 "ii7"c/ "V"B2 | "I"E "ii7^3"F "V^1"G "I^1"c | "V^2"B "ii"A "V"G2 |]
 
@@ -497,7 +497,7 @@ T:In His Temple Now Behold Him
 M:6/8
 L:1/4
 K:G
-"V"B2 "ii^1"d "V"B2 G | "I^1"c2 "vi^1"A "ii"F2 D | "V^1"G2 "IV^1"A ("V"B3/2 "ii"A/) "iii-7"G | "ii"F "VI~4"E2 "ii"D3 |
+[Q:1/4=120] "V"B2 "ii^1"d "V"B2 G | "I^1"c2 "vi^1"A "ii"F2 D | "V^1"G2 "IV^1"A ("V"B3/2 "ii"A/) "iii-7"G | "ii"F "VI~4"E2 "ii"D3 |
 "ii"F2 "VI^1"A "ii"F2 D | "V^1"G2 "IV^1"A "V"B2 G | "I^1"c2 "ii"B ("vi^1"A3/2 "IM7"B/) "VII+"G | "vi7"G/"vi"F/ "vii-"F2 "III"E3 |
 "III"^G2 "iii7^3"G "VI^1"A2 A | "ii"F2 "ii7^3"F "V^1"=G2 G | "I"E2 "vi"E "ii"F2 "V"G | "ii"G2 "ii"F "V"G3 |]
 
@@ -506,7 +506,7 @@ T:O Chief of Cities Bethlehem
 M:3/4
 L:1/4
 K:D
-"ii"D | "vii-"D2 "vi"E | "ii"F2 "V^1"G | "ii^2"F2 "vi"E | "II"D2 "V"D | "ii^1"A2 "ii"A |
+[Q:1/4=120] "ii"D | "vii-"D2 "vi"E | "ii"F2 "V^1"G | "ii^2"F2 "vi"E | "II"D2 "V"D | "ii^1"A2 "ii"A |
 ("vi^1"A "IM7"B) "vi"c | "ii"d2 "V^2"d | "ii"d2 "vi^1"A | "vii"d2 "bvi-"d | "vi"c2 "ii"A |
 "V"B2 "V^1"B | "ii"A2 "iii"G | "vi^1"A2 "ii"F | "vi"E2 "ii^1"F | "V"D2 "vi"C | "ii"D2 |]
 
@@ -515,7 +515,7 @@ T:Songs of Thankfulness and Praise
 M:4/4
 L:1/4
 K:G
-"V"B3/2 B/ | "ii^1"d "V"B "iii"G "ii"A | "V"B2 B3/2 B/ | "ii^1"d "V"B "iii"G "vi^1"A | "VII"B2
+[Q:1/4=120] "V"B3/2 B/ | "ii^1"d "V"B "iii"G "ii"A | "V"B2 B3/2 B/ | "ii^1"d "V"B "iii"G "vi^1"A | "VII"B2
 "iii"B3/2 B/ | "vi7^3"c c "V~2"A3/2 A/ |"V7^3"B2 B "VI7"^c | "II"d "iii7^3"G "ii"F "VI"E | "bVII"D2
 "ii"F3/2 F/ | A "ii7^3"F "V^1"G "vi7"A | "V"B2 B3/2 B/ | d "V7^3"B "I^1"c "ii7"d | "I"e2
 "III^1"e3/2 e/ | "vi"c A "ii^1"d3/2 d/ | "V"B2 "I^1"c "I"e | "V^1"d "iii"G "V^2"B "ii"A | "V"G2 |]
@@ -525,7 +525,7 @@ T:The People That in Darkness Sat
 M:4/4
 L:1/4
 K:F
-"IV"F | c "I^1"c "IV"c "IV^1"c | "vii-"d "IM7^2"c/"iii^1"B/ "IV"A A | "ii-7"B "I^1"c
+[Q:1/4=120] "IV"F | c "I^1"c "IV"c "IV^1"c | "vii-"d "IM7^2"c/"iii^1"B/ "IV"A A | "ii-7"B "I^1"c
 "IV"d "V"d | "I"c3 c | "IV"c "I^1"c "IV"c A | "IV^1"c "vii-"B/"vii%7"A/ "I"G c |
 "IV"A "IV^1"F "vii-"G "I"G | "IV"F2 A2 | "I^1"c "ii"F "V^1"G "I"G | "IV"F3 |]
 
@@ -534,7 +534,7 @@ T:The Star Proclaims the King is Here
 M:4/4
 L:1/4
 K:Eb
-"iii"E2 B "ii-7"B | "iii"G "vii-"F "iii"G "vi^1"=A | "vii-"B3/2 "iii"B/ G "vii-"B | "IV"A "ii-7"B "iii"G "vii-"F | "iii"E3/2
+[Q:1/4=100]  "iii"E2 B "ii-7"B | "iii"G "vii-"F "iii"G "vi^1"=A | "vii-"B3/2 "iii"B/ G "vii-"B | "IV"A "ii-7"B "iii"G "vii-"F | "iii"E3/2
 "iii"B/ "vi"c "vi^1"c | "iii"G "vii-"B "IV"A A | "I"G3/2 "i"_e/ "V"d "vi"c | "iii"B "I"c "IV"A/G/ "vii-"F | "iii"E4 |]
 
 X:80
@@ -542,7 +542,7 @@ T:To Jordan Came Our Lord, The Christ
 M:4/4
 L:1/4
 K:C
-"ii"D2 F "V^1"G | "vi"A "iii"G "vi^1"c "III"B | "vi"A3 "ii"A | "I"c "iii"B "IV"A "I"G | ("ii"F "VI~4"E) "ii"D2 | D2
+[Q:1/4=120] "ii"D2 F "V^1"G | "vi"A "iii"G "vi^1"c "III"B | "vi"A3 "ii"A | "I"c "iii"B "IV"A "I"G | ("ii"F "VI~4"E) "ii"D2 | D2
 "ii"F "V^1"G | "vi"A "iii"G "vi^1"c "III"B | "vi"A3 "ii"A | "I"c "iii"B "IV"A "I"G | ("ii"F "VI~4"E) "ii"D2 | "II"z "I"D "V^1"G "V"G |
 "I"E "vi"A "ii"A "iii"G | "vi"A3 A | "V"d "ii^1"d "III"e3/2 "IV"c/ | ("ii"d/ "II7"c/ "III~4"B) "vi"A2 | "IV"z "vi^1"A "I^1"c "V"B | "IV"A "I"G "vi"A
 "ii"F | "VI"E3 "ii"D | "bVII"F "V"G "IV"A3/2 "bVII"F/ | ("v"G/"ii"F/ "VI~4"E) "ii"D2 | z "ii^1"d "V~2"d "V"d | "I"e "ii"d ("vi"c "III"B) | "VI"A4 |]
@@ -552,7 +552,7 @@ T:Within the Father's House
 M:4/4
 L:1/4
 K:Eb
-"iii"E | "vii-"F "iii"G "vi^1"A "vii-"B | "iii"G3 B | "vi"c "iii^1"e "ii^1"A "iii"G | "vii-"F3
+[Q:1/4=120] "iii"E | "vii-"F "iii"G "vi^1"A "vii-"B | "iii"G3 B | "vi"c "iii^1"e "ii^1"A "iii"G | "vii-"F3
 "vii-"B | "iii^1"e "vii-"d "I^1"c "V"B | "IV"c c "vii"B B | "I"E "iii^1"G "vi"F "vii-"F | "iii"E3 |]
 
 X:82
@@ -560,7 +560,7 @@ T:Author of All Life
 M:4/4
 L:1/4
 K:A
-z2 "VI"A A | "III"B2 "III~4"A2 | "IV"c c ("III"B "III~4"A) | "I~4"F2 "VI"A "vi"A | "I~4"F2 "III"E2 | "IV"F "III~4"A "VI"A2 |
+[Q:1/4=160]  z2 "VI"A A | "III"B2 "III~4"A2 | "IV"c c ("III"B "III~4"A) | "I~4"F2 "VI"A "vi"A | "I~4"F2 "III"E2 | "IV"F "III~4"A "VI"A2 |
 z2 "VI"A A | "III"B2 "III~4"A2 | "IV"c c ("III"B "III~4"A) | "I~4"F2 "VI"A "vi"A | "I~4"F2 "III"E2 | "IV"F "III~4"A "VI"A2 |
 z2 "VI"A "IV"c | "III~4"e2 e2 | "I~4"f "III+"e "IV"c2 | "VI"A2 A "vi"c | "III+"e2 "III~4"A2 | "VII~4"c/B/ "III~4"A "IV"F2 |
 "IV^1"f "VI"e "IV"c2 | "III~4"A2 "IV"c "IVM7"c | ("III"B "vi^2"A) "I~4"F2 | "VI"A "VI~4"A "I~4"F2 | "III"E2 "IV"F "III~4"A | "VI"A4 |]
@@ -570,7 +570,7 @@ T:O Wondrous Type, O Vision Fair
 M:3/4
 L:1/4
 K:E
-"I"c | c2 "iii"B   | "vi"c2   "V"B  | "iii^1"B    "vi"A2          | "I^1"G2 "vi"c | (c "iii^1"B) "iii"G |
+[Q:1/4=140] "I"c | c2 "iii"B   | "vi"c2   "V"B  | "iii^1"B    "vi"A2          | "I^1"G2 "vi"c | (c "iii^1"B) "iii"G |
 ("IV"F "I^1"G) "IV^1"F/"vi"C/ | "I^1"E "V~4"D2 | "I"C2 G | "V"B2 "iii"B | ("vi"c "iii^1"B) "IV"A |
 "iii^1"G "vii-"F2 | "iii"E2 "vi^2"E | "iii"G2 "I"G | "IV"F2 "I"E | "vi"E "II7"D2 | "I"C2 |]
 
@@ -579,7 +579,7 @@ T:Tis Good, Lord, To Be Here
 M:2/4
 L:1/4
 K:E
-"iii"E | "ii-7"F "vi^1"A | "iii^2"G "vii-"F | "iii"E "ii-7"B | "I^1"c "I"e | "ii-7"d "IV~4"c | "vii"B
+[Q:1/4=100] "iii"E | "ii-7"F "vi^1"A | "iii^2"G "vii-"F | "iii"E "ii-7"B | "I^1"c "I"e | "ii-7"d "IV~4"c | "vii"B
 "iii"G | "vi^2"A c | "ii-7"B "vii7"A | "iii"G "IV~4"^A | "vii"B "iii^1"E | "IV^1"F "IV"A | "iii^1"G "vii-"F | "iii"E |]
 
 X:85
@@ -587,7 +587,7 @@ T:A Lamb Goes Uncomplaining Forth
 M:4/4
 L:1/4
 K:F
-"IV"c2 "vii-"d "I"c | "ii"A2 "IV^1"c2 | "vii-"B "iii^1"B "IV"A2 | "I"G2 "IV"A "ii-7"B | "IV^1"c2 ("vii-"B "IV"A) | "I~4"G2 "IV"F2 |
+[Q:1/4=120] "IV"c2 "vii-"d "I"c | "ii"A2 "IV^1"c2 | "vii-"B "iii^1"B "IV"A2 | "I"G2 "IV"A "ii-7"B | "IV^1"c2 ("vii-"B "IV"A) | "I~4"G2 "IV"F2 |
 "IV"c2 "vii-"d "I"c | "ii"A2 "IV^1"c2 | "vii-"B "iii^1"B "IV"A2 | "I"G2 "IV"A "ii-7"B | "IV^1"c2 ("vii-"B "IV"A) | "I~4"G2 "IV"F2 |
 "IV"F2 "I"G "IV"A | "vii-"B2 "I"G2 | "IV"A "I"G "IV"F2 | "vii-"F2 "IV"A "ii-7"B | "I"c2 "vii-"d2 |
 "ii"A "ii-7"=B "I"c2 | "ii"z2 "IV"A2 | "IV^1"c "vii-"d "I"c "ii"A | "V"B2 "II"A2 | "vii-"d2 "ii-7"d "vii-"d |
@@ -599,7 +599,7 @@ T:Jesus Grant That Balm and Healing
 M:4/4
 L:1/4
 K:C
-"vi"A "iii^1"E "IV"A "ii-7"B | "I"c "ii-7"B/"ii7"A/ "III"^G E | B "vi"c "ii^1"d "vi^2"c | "ii"B "III"B "vi"A2 |
+[Q:1/4=100] "vi"A "iii^1"E "IV"A "ii-7"B | "I"c "ii-7"B/"ii7"A/ "III"^G E | B "vi"c "ii^1"d "vi^2"c | "ii"B "III"B "vi"A2 |
 "vi"A "iii^1"E "IV"A "ii-7"B | "I"c "ii-7"B/"ii7"A/ "III"^G E | B "vi"c "ii^1"d "vi^2"c | "ii"B "III"B "vi"A2 |
 "I"G "V^1"G "I"G E | "IV^1"F "v-7"G "IV"A2 | "I"G "V^1"G "IV^1"F "I"E | "V~4"D "V"D "I"C2 |
 "I"c "vi"c "ii"B "iii"B | "IV"A "ii-7"B "III"^G E | B "vi"c "ii"d "vi"c | "III"B "vi^1"c "III~4"B2 | "vi"A4 |]
@@ -609,7 +609,7 @@ T:Lord Who Throughout These Forty Days
 M:4/4
 L:1/4
 K:F
-"IV"F | "I~4"F "I"E "IV"F "ii"A | "vii-"G "I"G "IV"F F | "ii-7"B "IV"A "vii-"F "V^1"G | "VI"A3
+[Q:1/4=100] "IV"F | "I~4"F "I"E "IV"F "ii"A | "vii-"G "I"G "IV"F F | "ii-7"B "IV"A "vii-"F "V^1"G | "VI"A3
 "IV"A | A "ii-7"B "I"c "vi^1"A | "ii"F "I"G "IV"A A | "I"G "ii"F "vii-"F "I"E | "IV"F3 |]
 
 X:88
@@ -617,7 +617,7 @@ T:Savior When In Dust To Thee
 M:4/4
 L:1/4
 K:F
-"ii"D "ii^1"D/"VI"E/ "ii"F/"II~4"G/ "IV"A | "ii^2"F "VI"E "ii"D2 | F "VI^2"E "ii^1"D "v-"^C | "ii^1"D/"III~4"E/ "ii"F "VI"E2 |
+[Q:1/4=100] "ii"D "ii^1"D/"VI"E/ "ii"F/"II~4"G/ "IV"A | "ii^2"F "VI"E "ii"D2 | F "VI^2"E "ii^1"D "v-"^C | "ii^1"D/"III~4"E/ "ii"F "VI"E2 |
 "ii"D "ii^1"D/"VI^2"E/ "ii"F/"II~4"G/ "IV"A | "ii^2"F "VI"E "ii"D2 | "VI"E "ii"F/"I"G/ "IV"A "iii^1"G | "ii^2"F "VI"E "ii"D2 |
 "vii-"D "IV"C "vii-"D "iii^1"E | "IV"F "vi^1"A/"IM7"G/ "IV"F2 | "ii"F "VI"E "ii"F "I"G | "IV"A "vi^2"c/"III7"=B/ "vi"A2 |
 "vii-"d d "IV^1"c "IV"A | "ii"F "V^1"G "VI"A2 | "ii^1"D "ii^1"D/"iii-7"E/ "ii"F/"II~4"G/ "IV"A | "ii^2"F "VI"E "ii"D2 |]
@@ -627,7 +627,7 @@ T:When I Survey the Wondrous Cross
 M:4/4
 L:1/4
 K:Eb
-"iii"E2 G "vii%7^2"A | "iii^1"B2 ("vi"c "ii^1"d) | "iii"e2 ("iv-7"d "IVM7"c) | "vii"B4 |
+[Q:1/4=130] "iii"E2 G "vii%7^2"A | "iii^1"B2 ("vi"c "ii^1"d) | "iii"e2 ("iv-7"d "IVM7"c) | "vii"B4 |
 "iii"B2 B "iii^1"B | "vi"c2 "iii^1"B2 | "IV"A2 "iii"G2 | "vii-"F4 |
 "iii"G2 G "ii-7"F | ("iii"E G) ("iii^1"B e) | ("vi"c "iii^1"B) ("vii%7^2"A "iii"G) | "vii-"F4 |
 "iii^1"B2 "vi"c"ii^1"d | "iii"e3 "IV^1"A | "iii^2"G2 "vii%7"F2 | "iii"E4 |]
@@ -637,7 +637,7 @@ T:When I Survey the Wondrous Cross
 M:4/4
 L:1/4
 K:F
-"IV"F2 F "I"G | "IV"A2 ("V^1"G "vi-7"A) | "V"B2 ("IV^2"A "I"G) | "IV"A4 |
+[Q:1/4=130] "IV"F2 F "I"G | "IV"A2 ("V^1"G "vi-7"A) | "V"B2 ("IV^2"A "I"G) | "IV"A4 |
 "IV"A2 A A | "iv-7"B2 ("IV"A "IM7^3"G) | "IV^1"F2 ("IM7^2"E "IV"F) | "I"G4 |
 "IV"F2 F"I"G | "IV"A2 ("V^1"G "vi-7"A) | "V"B2 ("IV^2"A "I"G) | "IV"A4 |
 "IV"A2 A A | "I"G2 "IV"F2 | "vii-"G2 ("vi^1"A "IM7"F) | "IV"F4 |]
@@ -647,7 +647,7 @@ T:When I Survey the Wondrous Cross
 M:4/4
 L:1/4
 K:G
-"II"D "V"G "IV"A | "V^2"B4- | B "V~2"A "V"G E | D4- | D D "iii^1"G "V7"F |
+[Q:1/4=130] "II"D "V"G "IV"A | "V^2"B4- | B "V~2"A "V"G E | D4- | D D "iii^1"G "V7"F |
 "iii^1"G4- | "I"G "IV^2"A "IM7"B "I"c/"IM7"B/ | "IV"A4- | "V~2"A A "V"B "V~4"c | "V"d4- | "V^2"d "ii7"c/"V7^2"B/ "ii"A "II~4"G |
 "V"B4- | "V^2"B "ii"A "II~4"G E | "II"D4- | D D "III"E "V"G | G4 |]
 
@@ -656,7 +656,7 @@ T:When I Survey the Wondrous Cross
 M:3/4
 L:1/4
 K:D
-"ii"D | (F "V"G) "vi"E | "ii"D2 F | "ii^1"A2 "V"B | "ii"A2 A | "ii^1"d2 "ii7"c |
+[Q:1/4=130] "ii"D | (F "V"G) "vi"E | "ii"D2 F | "ii^1"A2 "V"B | "ii"A2 A | "ii^1"d2 "ii7"c |
 "V"B2 "II"A | ("vi^1"A "I"G) "ii"F | ("ii^2"F "vi"E) E | "vi^1"A2 "iii"B | "vi"c2 "V~4"A |
 ("ii^1"d "ii"F) "iii7"G | "vi"A2 "ii^1"D | "iii7"G2 "ii"F | "iii^1"E2 "ii^1"D | ("ii^2"D F) "vi7"E | "ii"D2 |]
 
@@ -665,7 +665,7 @@ T:All Glory, Laud, and Honor
 M:4/4
 L:1/4
 K:C
-"I"C | G "I"G "IV"A "V7^2"B | "I~4"c2 "I"c e | "V"d "I^1"c "IV"A "V"B | "I"c3
+[Q:1/4=140]  "I"C | G "I"G "IV"A "V7^2"B | "I~4"c2 "I"c e | "V"d "I^1"c "IV"A "V"B | "I"c3
 "I"C | G "I"G "IV"A "V7^2"B | "I~4"c2 "I"c e | "V"d "I^1"c "IV"A "V"B | "I"c3 |]
 "IV"c | "I"e "vi"e "V^1"d "I^1"c | "II"B2 "V"B "iii"B | "vi"c "V^1"B "vi^1"A "II7"A | "V"G3
 "V^1"G | "I"E "iii"G "IV"A "I^1"G | ("V^1"G "V7"F) "I"E "I^1"G | "IV"F "I"E "V~4"D "V"D |  "I"C3 ||
@@ -675,7 +675,7 @@ T:Hosanna, Loud Hosanna
 M:4/4
 L:1/4
 K:Bb
-"IV"F | "VII"B "VI"A/"V"G/ "IV"F "ii-7"B | ("V"D "IM7^2"E) "IV"F "vii-"F | "iii"G/"III~4"A/ "ii-7"B "iii"c "IV"c | "vii-"d3
+[Q:1/4=130]  "IV"F | "VII"B "VI"A/"V"G/ "IV"F "ii-7"B | ("V"D "IM7^2"E) "IV"F "vii-"F | "iii"G/"III~4"A/ "ii-7"B "iii"c "IV"c | "vii-"d3
 "IV"F | "VII"B "VI"A/"V"G/ "IV"F "ii-7"B | ("V"D "IM7^2"E) "IV"F "vii-"F | "iii"G/"III~4"A/ "V"B "IV"B A | "vii-"B3
 "vii"B/"VII~4"c/ | "vii-"d "IV^1"c "vii-"d "iii"e | ("IV"c A/"iv-"B/) "IV"c "vii"B/"VII~4"c/ | "vii-"d "IV^1"c "vii-"d "iii"e | "IV"c3
 "IV"F | "VII"B "VI"A/"V"G/ "IV"F "ii-7"B | ("V"D "IM7^2"E) "IV"F "vii-"F | "iii"G/"III~4"A/ "V"B "IV"B A | "vii-"B3 |]
@@ -685,7 +685,7 @@ T:Go To Dark Gethsemane
 M:4/4
 L:1/4
 K:Eb
-"iii"E E "vii-"F "iii"G | "vi"A3/2 A/ "iii"G2 | E "I"E "vii-"F "iii"G | "vi"F "vii-"F "iii"E2 |
+[Q:1/4=90] "iii"E E "vii-"F "iii"G | "vi"A3/2 A/ "iii"G2 | E "I"E "vii-"F "iii"G | "vi"F "vii-"F "iii"E2 |
 "iii"E "I"G "vii-"B "iii"B | "vi"c "ii7^2"c "iii"B2 | "iii^1"E "iii"G "ii-7"B "V"B | "iii"c "IV"c "vii"B2 |
 "iii^1"E E "ii^1"F "iii"G | "vi"A3/2 A/ "iii"G2 | "iii^1"E "ii^1"F "iii"G "IV^1"F | "iii^2"E "vii-"D "iii"E2 |]
 
@@ -694,7 +694,7 @@ T:Over Kidron Jesus Treadeth
 M:4/4
 L:1/4
 K:Ab
-"IV"c "iii^1"B "IV^1"A "ii"F | "IV^1"A "V^1"G "I"=E "IM7"C | "ii"F3/2 "V^1"G/ "IV"A "iii"G | "vi^1"c "iii"B "vi"A3/2 z/ |
+[Q:1/4=100] "IV"c "iii^1"B "IV^1"A "ii"F | "IV^1"A "V^1"G "I"=E "IM7"C | "ii"F3/2 "V^1"G/ "IV"A "iii"G | "vi^1"c "iii"B "vi"A3/2 z/ |
 "IV^1"c "V^1"B "vi^1"A "ii"F | "vii7"A "V^1"G "I"=E C | "ii7^3"F3/2 "V^1"G/ "vi"A "iii7"G | "vi^2"c "iii"B "vi"A3/2 z/ |
 "iii"B "iii7^3"B "vi^1"c "IV"A | "V^1"d "vi^1"c "iii"B3/2 z/ | "vi"c "#iv%7"c "iv-7"d "vii^2"B | "vi^1"e "ii-7"d "IV"c3/2 z/ | "vii-"d "I"c
 "ii-7"B "I"c | "IV"A "iii^1"G "IV^1"F "vii-"D | "IM7"C3/2 =E/ "ii"F A | "vii7"c2 ("V^1"B "vii%7"A) | "I~4"G4 | "IV"F4 |]
@@ -704,7 +704,7 @@ T:'Tis Midnight and On Olive's Brow
 M:4/4
 L:1/4
 K:F
-"ii"F2 F "I"G | "IV"A3 "vii-"d | "IV^2"c2 "I~2"B2 | "IV"A4 | "ii"A2 "IVM7^2"A "vii-"B |
+[Q:1/4=140] "ii"F2 F "I"G | "IV"A3 "vii-"d | "IV^2"c2 "I~2"B2 | "IV"A4 | "ii"A2 "IVM7^2"A "vii-"B |
 "IV^1"c2 "ii"F2 | "IV^2"A2 "I"G2 | "IV"F3 A | F3 "ii^1"A | "iii7"G2 "VI"A2 |
 "ii"F2 "iii^1"G2 | "VI"E4 | "II"D2 D D |  "VI"A3 "V"G | "ii^2"F2 "vi7"^E2 | "bVII"D4 |]
 
@@ -713,7 +713,7 @@ T:'Twas On That Dark, That Doleful Night
 M:4/4
 L:1/4
 K:F
-"ii"F2 F "I"G | "IV"A3 "vii-"d | "IV^2"c2 "I~2"B2 | "IV"A4 | "ii"A2 "IVM7^2"A "vii-"B |
+[Q:1/4=140] "ii"F2 F "I"G | "IV"A3 "vii-"d | "IV^2"c2 "I~2"B2 | "IV"A4 | "ii"A2 "IVM7^2"A "vii-"B |
 "IV^1"c2 "ii"F2 | "IV^2"A2 "I"G2 | "IV"F3 A | F3 "ii^1"A | "iii7"G2 "VI"A2 |
 "ii"F2 "iii^1"G2 | "VI"E4 | "II"D2 D D |  "VI"A3 "V"G | "ii^2"F2 "vi7"^E2 | "bVII"D4 |]
 
@@ -722,7 +722,7 @@ T:Jesus, In Thy Dying Woes
 M:4/4
 L:1/4
 K:F
-"ii"F F "V"G "ii"F | "VI7"E3/2 "ii"D/ D2 | "ii^1"D "ii"F "VI7^3"E "ii^1"D | "bii-"G "ii"F "VI"E2 |
+[Q:1/4=100] "ii"F F "V"G "ii"F | "VI7"E3/2 "ii"D/ D2 | "ii^1"D "ii"F "VI7^3"E "ii^1"D | "bii-"G "ii"F "VI"E2 |
 "vi"E A "I^1"c "IV"A | "I"c "iii"B "IV"A2 | A "VI7^2"A "ii"A F | "V"E2 "ii"D2 |]
 
 X:100
@@ -730,7 +730,7 @@ T:O Sacred Head, Now Wounded
 M:4/4
 L:1/4
 K:C
-"I"E | "IV"A "I^1"G "IV^1"F "I"E | "IV"D2 "I"E "vii-7"B | "vi"c "vi^1"c "III~4"B/A/ "III"B | "vi"A3
+[Q:1/4=100] "I"E | "IV"A "I^1"G "IV^1"F "I"E | "IV"D2 "I"E "vii-7"B | "vi"c "vi^1"c "III~4"B/A/ "III"B | "vi"A3
 "I"E | "IV"A "I^1"G "IV^1"F "I"E | "IV"D2 "I"E "vii-7"B | "vi"c "vi^1"c "III~4"B/A/ "III"B | "vi"A3
 "vi"c | "ii-7"B/"ii"A/ "I^1"G "IV"A "ii-7"B | "IV^2"c2 "I"c G | "IV"A "iii%7^3"G "ii"F "ii^1"F | "VI"E3
 "#iv-"=c | "V"B/"V~4"c/ "II^1"d "I^1"c "V^2"B | "bii-"A2 "V"B "I"E | "ii"F "I^1"E "V~4"D "V"G | "I"E3 |]
@@ -740,7 +740,7 @@ T:Stricken, Smitten, and Afflicted
 M:6/4
 L:1/4
 K:Bb
-"V"G "II^1"A | "V"B2 "iii"B2 "I"c "V"B | "II~4"A2 "II"A2 "V"B "II"A | "iii"G2 "vi^1"A2 "V^2"G "II"^F | "V"G4
+[Q:1/4=180] "V"G "II^1"A | "V"B2 "iii"B2 "I"c "V"B | "II~4"A2 "II"A2 "V"B "II"A | "iii"G2 "vi^1"A2 "V^2"G "II"^F | "V"G4
 "V"G "II^1"A | "V"B2 "iii"B2 "I"c "V"B | "II~4"A2 "II"A2 "V"B "II"A | "iii"G2 "vi^1"A2 "V^2"G "II"^F | "V"G4
 "V"B "IV"c | "vii-"d2 "V"d2 "iii"e "vii-"d | "IV"c2 c2 "vii-"d "IV"c | "V"B2 "iii"B2 "I"c "V"B | "II"A4
 "V^1"G "II"^F | "V"G2 B2 "II"A "iii"G | "II~4"A2 "II"A2 "V"B "ii^1"A | "iii"G2 "vi^1"A2 "V^2"G "II"^F | "V"G4 |]
@@ -750,7 +750,7 @@ T:Were You There?
 M:none
 L:1/4
 K:E
-"VII"B, "iii^1"E | "iii"G2 G G | "vii-"F "I"E "V^1"G3/2 "vii%7"F/ | "iii"E2 E G |
+[Q:1/4=100] "VII"B, "iii^1"E | "iii"G2 G G | "vii-"F "I"E "V^1"G3/2 "vii%7"F/ | "iii"E2 E G |
 "V"B2 "iii"B "ii-7"B | "I"c "ii-7"B "iii"B3/2 "iii^1"G/ | "vii-"F4 | ("iii^1"B2 "iii^1"e3/2 c/ | "V^1"B4) |
 "vi"c "iii"B2 "V^1"G| "I~2"G3/2 "vii%7"F/ "I"E E | "IV^1"F "vi"E2 | E "iii^1"E2 | "VI~2"B, "vii-"B,3 |
 "vi^1"E "vi"A | "iii^2"G2 "IM7^3"G "V^1"G | "vii%7"F "I"E "V"G3/2 "vii%7"F/ | "iii^2"E4 |]
@@ -760,7 +760,7 @@ T:Awake, My Heart, With Gladness
 M:3/4
 L:1/4
 K:Eb
-"iii"B G "iii^1"B | "vi"A2 "iii"G | "vii-"F3 | "iii"E2 B | ("vi"c3/2 "vii7"d/) "I"e | ("V"d3/2 "V~4"c/) "V"d | "I"c3 |
+[Q:1/4=140] "iii"B G "iii^1"B | "vi"A2 "iii"G | "vii-"F3 | "iii"E2 B | ("vi"c3/2 "vii7"d/) "I"e | ("V"d3/2 "V~4"c/) "V"d | "I"c3 |
 "iii"B G "iii^1"B | "vi"A2 "iii"G | "vii-"F3 | "iii"E2 B | ("vi"c3/2 "vii7"d/) "I"e | ("V"d3/2 "V~4"c/) "V"d | "I"c3 |
 "iii"G "ii-7"B "I"E | ("vii-"D3/2 "VII~4"E/) "vii-"F | "iii"E3 | "IV"A "vi"c "vii-"F | ("I"=E3/2 "I~4"F/) "I"G | "IV"F2
 "vii-"F | ("iii"G3/2 "III~4"A/) "ii-7"B |  ("IV"=A3/2 "iv-"B/) "IV"c | "vii"B2 "iii"B | ("vi"c3/2 "vii7"d/) "I"e | ("vii-"d3/2 c/) d | "iii"e3 |]
@@ -770,7 +770,7 @@ T:Christ Arose
 M:4/4
 L:1/4
 K:C
-"I"G2 G "IV^2"A | A "I"G G2 | "V"G2 "V7"F A | "IV^2"A2 "I"G2 |
+[Q:1/4=100] "I"G2 G "IV^2"A | A "I"G G2 | "V"G2 "V7"F A | "IV^2"A2 "I"G2 |
 "IV"A2 "IV~2"B "IV"c | "I^1"c "I"G G2 | "vi^1"A2 "V^2"G "II7"^F | "V"G4 |
 "I"C C3/4 C// "III"E "V"G3/4 G// | "I"c3 c3/4 "I~4"d// | "I"e "I^1"c "IV"d3/4 c// "IV~2"B3/4 "IV"A// |
 "I"G3 "V"B3/4 "I^2"c// | "V7"d d d3/4 "I^2"c// "V7"d3/4 "v-7"e// | "vi"c "IV"A "I"G G3/4 G// | "IV"A A "II7"A3/4 "II"d// d3/4 "II7"c// |
@@ -781,7 +781,7 @@ T:Christ Jesus Lay In Death's Strong Bands
 M:4/4
 L:1/4
 K:C
-"ii"A2 | "iii"G "vi"A "IV"c "ii"d | "vi^2"c "III"B "vi"A3/2 "IV"A/ | "ii"F "I"G "IV"A "v"G/"ii"F/ |
+[Q:1/4=110] "ii"A2 | "iii"G "vi"A "IV"c "ii"d | "vi^2"c "III"B "vi"A3/2 "IV"A/ | "ii"F "I"G "IV"A "v"G/"ii"F/ |
 "VI~4"E "ii"D A2 | "iii"G "vi"A "IV"c "ii"d | "vi^2"c "III"B "vi"A3/2 "IV"A/ | "ii"F "I"G "IV"A "v"G/"ii"F/ |
 "VI~4"E "ii"D D F | "v"G "bVII"D "IV^1"F "V"G | "IV"A3/2 A/ "ii"d "vi"c | "V"d "iii"e
 "vi"c "III"B | "vi"A3/2 "IV"A/ "I^1"c "IV"A | "vi"c "I"G ("ii^1"F/"V~2"D/ "VI"E) | "bVII"D2 "IV"A "v"G/"ii"F/ | "VI~4"E "ii"D |]
@@ -791,7 +791,7 @@ T:Christ The Lord Is Risen Today (Lyra)
 M:4/4
 L:1/4
 K:F
-"IV"F F "ii"A A | "IV^1"c "V^1"B/"vii%7"A/ "I"G2 | ("vi"c3/2 "iii^1"B/ "IV"A) "ii-7"B/"IV^2"A/ | "vii-"G2 "IV"F2 |
+[Q:1/4=120] "IV"F F "ii"A A | "IV^1"c "V^1"B/"vii%7"A/ "I"G2 | ("vi"c3/2 "iii^1"B/ "IV"A) "ii-7"B/"IV^2"A/ | "vii-"G2 "IV"F2 |
 "IV"F F "ii"A A | "IV^1"c "V^1"B/"vii%7"A/ "I"G2 | ("vi"c3/2 "iii^1"B/ "IV"A) "ii-7"B/"IV^2"A/ | "vii-"G2 "IV"F2 |
 "ii"A A "i"c "i-7"c | "vii"d/c/ "V"B/A/ "I"G2 | ("IV"A3/2 "I^1"G/ "IV"A) "ii-7"=B | "I"c2 "I"c2 |
 "IV^1"F F "IV"A "ii"A | "IV^1"c "V^1"B/"vii%7"A/ "I"G2 | ("IV^1"c3/2 "iii^1"B/ "IV"A) "V7"B/"VI+"A/ | "vii-"G2 "IV"F2 |]
@@ -801,7 +801,7 @@ T:Christ The Lord Is Risen Today (Lyra)
 M:4/4
 L:1/4
 K:G
-"V"G3/2 "V~4"A/ "V"B "V^1"G | "vi^1"A "ii"F "V"G2 | d d "I"e "iii"B/"I^1"c/ | "II~4"d "ii"d "V"B2 |
+[Q:1/4=130] "V"G3/2 "V~4"A/ "V"B "V^1"G | "vi^1"A "ii"F "V"G2 | d d "I"e "iii"B/"I^1"c/ | "II~4"d "ii"d "V"B2 |
 "V"B "ii^1"A "I^1"c "V^2"B | "vi^1"A "I"G/"vi^1"A/ "VII"B2 | "V^1"d3/2 "I"c/ "ii-7"B "iii"G | "vi^1"A "ii"F "V"G2 |]
 
 X:108
@@ -809,7 +809,7 @@ T:I Know That My Redeemer Lives
 M:4/4
 L:1/4
 K:D
-"ii"D2 F "vi7^2"G | "ii^1"A2 ("V"B "I^1"c) | "ii"d2 ("vi^2"c "III7"B) | "vi"A4 | "ii"A2 A "ii^1"A | "V"B2 "ii^1"A2 | "iii"G2 "ii"F2 | "vi"E4 |
+[Q:1/4=140] "ii"D2 F "vi7^2"G | "ii^1"A2 ("V"B "I^1"c) | "ii"d2 ("vi^2"c "III7"B) | "vi"A4 | "ii"A2 A "ii^1"A | "V"B2 "ii^1"A2 | "iii"G2 "ii"F2 | "vi"E4 |
 "ii"F2 F "vi7"E | ("ii"D F) ("ii^1"A d) | ("V"B "ii^1"A) ("vi7^2"G "ii"F) | "vi"E4 | "ii^1"A2 "V"B "I^1"c | "ii"d3 "iii^1"G | "ii^2"F2 "vi7"E2 | "ii"D4 |]
 
 X:109
@@ -817,7 +817,7 @@ T:Jesus Christ Is Risen Today
 M:4/4
 L:1/4
 K:C
-"I"C E "V^1"G "I"C | "IV^1"F "IV"A ("IV^2"A "I"G) | (E/"ii7"F/"I^1"G/C/ "ii7"F) "I"E/"IV"F/ | ("I^2"E "V"D) "I"C2 |
+[Q:1/4=120] "I"C E "V^1"G "I"C | "IV^1"F "IV"A ("IV^2"A "I"G) | (E/"ii7"F/"I^1"G/C/ "ii7"F) "I"E/"IV"F/ | ("I^2"E "V"D) "I"C2 |
 "IV^1"F "I"G "IV"A "I^1"G | "ii7"F "I"E ("I^2"E "V"D) | ("I"E/"ii7"F/"I^1"G/C/ "ii7"F) "I"E/"IV"F/ | ("I^2"E "V"D) "I"C2 |
 "V"B "vi7"c "V^1"d "V"G | "I^1"c "ii7"d "I"e2 | ("V"B/"vi7"c/"V^1"d/G/ "vi7"c) "V"B/"I^1"c/ | ("V^2"B "II"A) "V"G2 |
 "V"G/"V~4"A/ "V"B/"iv-"G/ "I^1"c "I"E | "IV^1"F "IV"A ("IV^2"A "I"G) | (c/"V7^2"B/"I^1"c/"I"G/ "IV"A/"ii-7"B/) "I^1"c/"ii^1"d/ | ("I^2"c "V"B) "I"c2 |]
@@ -827,7 +827,7 @@ T:Jesus Christ Who Came to Save
 M:4/4
 L:1/4
 K:C
-"vi"A "vi^1"A "iii"G "II^1"A | "V"B "vi-7"A ("iii^2"G "VII"^F | "iii"E) "I"G "ii^1"A "V7"B | "vi"A "III"^G "vi"A
+[Q:1/4=120] "vi"A "vi^1"A "iii"G "II^1"A | "V"B "vi-7"A ("iii^2"G "VII"^F | "iii"E) "I"G "ii^1"A "V7"B | "vi"A "III"^G "vi"A
 "vii%7"d | "vi^1"A/"IM7"B/ "vi"c ("ii"B "vii%7^2"A) | "III"B "VI7"A "ii"A "II"A | "V"B "vi"A ("iii^2"G "VII"^F) | "iii"E "I"G "vi-7"A "V"B | ("vi"A "III"^G) "VI"A2 |]
 
 X:111
@@ -835,17 +835,17 @@ T:The Strife Is O'er, The Battle Done
 M:3/4
 L:1/4
 K:E
-"III"z "iii"G G | "vi"A3 | "iii"G B B | "vi"c3 | "iii"B "iii^1"B "iii"e | "vii-"d3 | "III"e2 z |
+[Q:1/4=140] "III"z "iii"G G | "vi"A3 | "iii"G B B | "vi"c3 | "iii"B "iii^1"B "iii"e | "vii-"d3 | "III"e2 z |
 |: "iii"B B B | "vi"c2 "iii"B | ("V"B "IV"A) "I"G | "vii-"B3 | "iii"G G G | "I"G2 "V"G |
 ("iii"G "IV"F) "I"E | "vii-"F3 | "V"B "iii"B B | "vi"c2 "iii"B | ("V"B "IV"A) "I"G | "vii-"B3 | "v-7"z "iii"B "III"e | "vii-"d3 | "iii"e3 :|
-"III"z "iii"G G | "vi"A3 | "iii"G B B | "vi"c3 | "iii"B "iii^1"B "iii"e | "vii-"d3 | "III"e2 z |]
+[Q:1/4=140] "III"z "iii"G G | "vi"A3 | "iii"G B B | "vi"c3 | "iii"B "iii^1"B "iii"e | "vii-"d3 | "III"e2 z |]
 
 X:112
 T:Lo, God To Heav'n Ascendeth
 M:4/4
 L:1/4
 K:F
-"IV"c | "vii-"d3/2 "IV^1"c/ "vii-"B "IV"A | "I~4"G2 "I"G "IV"z/ A/ | "vii-"B "IV"A "I~4"G3/2 A/ | "IV"F2 z
+[Q:1/4=140] "IV"c | "vii-"d3/2 "IV^1"c/ "vii-"B "IV"A | "I~4"G2 "I"G "IV"z/ A/ | "vii-"B "IV"A "I~4"G3/2 A/ | "IV"F2 z
 "IV"c | "vii-"d3/2 "IV^1"c/ "vii-"B "IV"A | "I~4"G2 "I"G "IV"z/ A/ | "vii-"B "IV"A "I~4"G3/2 A/ | "IV"F2 z
 "IV"A | A A "I"G "ii"F | "VI"E3 "IV"A | A3/2 "iii^1"G/ "IV"A "ii-7"B | "I"c2 "IV"A z/
 "IV"F/ | A3/2 "iii^1"G/ "IVM7"A "ii-7"B | "I"c2 "IV"A z/ A/ | "V"G "IV^1"F "vii-"F "I"E | "IV"F3 |]
@@ -855,7 +855,7 @@ T:See, The Lord Ascends In Triumph
 M:4/4
 L:1/4
 K:A
-"vi"A "iii^1"E "IV"A "iii"B | "vi^1"c3/2 "VI~4"d/ "vi^2"c "iii"B | "vi^1"e "IV"A "ii"B "IV^2"c/"vii%7"d/ | "vi^2"c "iii"B "vi"c2 |
+[Q:1/4=120] "vi"A "iii^1"E "IV"A "iii"B | "vi^1"c3/2 "VI~4"d/ "vi^2"c "iii"B | "vi^1"e "IV"A "ii"B "IV^2"c/"vii%7"d/ | "vi^2"c "iii"B "vi"c2 |
 "vi"c "iii"B "vi"c "iii^1"e | "IV"A "iii^1"G "iii^2"G "vii-"F | "biii-"B "VII+"B "I"e "iii^2"G | "vii-"F "VII"F "iii"E2 |
 "iii"E3/2 "III~4"F/ "iii"G "vii-"B | "vi^1"A "iii"G "ii^1"F "vi"E | "IV"A "iii"B "vi"c/"VI~4"d/ "I"e | "iii7^2"d "vi"c "iii"B2 |
 "vi^1"A "iii"E "vi^1"A "iii^2"B | "vi"c3/2 "vii%7^2"d/ "vi^2"c "iii"B | "vi^1"e "IV"A "ii"d "vi"c | "III~4"B "iii"B "vi"A2 |]
@@ -869,7 +869,7 @@ T:The Cloud Received Christ From Their Sight
 M:3/2
 L:1/4
 K:Ab
-"III"E2 | "vi^1"A "vi"A "iii"B2 B2 | "vi"c "iii7"B "IV"A2 "iii"B2 | "vi"c c "V"d2 "vi"c2 | "iii"B4
+[Q:1/4=200] "III"E2 | "vi^1"A "vi"A "iii"B2 B2 | "vi"c "iii7"B "IV"A2 "iii"B2 | "vi"c c "V"d2 "vi"c2 | "iii"B4
 "iii"e2 | "vi"e c c2 "vi^1"A2 | "ii"A F F2 (A F) | "vi^2"E A A2 "iii7"B2 | "vi"A4 |]
 
 X:115
@@ -877,7 +877,7 @@ T:Breathe on Me, Breath of God
 M:4/4
 L:1/4
 K:Ab
-"IV"F2 "IV^1"c "V^1"B | "IV^2"A "I"G "IV"F2 | "vi-"c2 "vi^1"e "ii"d | "vi^2"c "iii"B "vi"c2 |
+[Q:1/4=110] "IV"F2 "IV^1"c "V^1"B | "IV^2"A "I"G "IV"F2 | "vi-"c2 "vi^1"e "ii"d | "vi^2"c "iii"B "vi"c2 |
 "IV"z "vi^1"A "V~4^2"G "IV"F | "vi"c "ii"A "vii-"B "IV"A | "I"G "ii"F "IV^1"c "V^1"B | "IV^2"A2 "I"G2 | "IV"F4 |]
 
 X:116
@@ -885,7 +885,7 @@ T:Come Down, O Love Divine
 M:4/4
 L:1/4
 K:D
-"ii"D2 "vi^1"E "ii"F | "VI~4"A2 "V"B2 | "ii"A4 | A2 "ii-7"B "vi^1"A | ("vii-"d "vi^1"c) "III~4"B2 |
+[Q:1/4=120] "ii"D2 "vi^1"E "ii"F | "VI~4"A2 "V"B2 | "ii"A4 | A2 "ii-7"B "vi^1"A | ("vii-"d "vi^1"c) "III~4"B2 |
 "vi"A2 "ii"A2 | "V"B "vi"A "V^1"G "ii"F | "iii^1"E "ii^1"D "V"E "III7"F/"iii7"G/ | "VI~4"E2 "ii"D2 |
 "vii-"d2 "IV"c "V"B | "ii"A2 "III^1"B2 | "vi"A4 | "I^1"=c2 "V"B "ii"A | "iii"G2 "ii^1"F2 | "vi"E2
 "vi"E2 | "ii^1"A "V"B "vi"A "V^1"G | "ii"F "ii^1"D "V"E "iii7"F/G/ | "VI~4"E2 "ii"D2 |]
@@ -895,7 +895,7 @@ T:Come, God Creator, Holy Ghost
 M:4/4
 L:1/4
 K:C
-"I"G2 "IV"A "I"G | "ii"F "I"G "vi"c "V"d | "I"c2 z c | "I^1"G "IV"A "I^1"c "V^2"d | "I"e e "V"d2 |
+[Q:1/4=130] "I"G2 "IV"A "I"G | "ii"F "I"G "vi"c "V"d | "I"c2 z c | "I^1"G "IV"A "I^1"c "V^2"d | "I"e e "V"d2 |
 "V"z "I~2"d "I^1"e "I"c | "IV"A "I^1"G "ii-7"B "I"c | "V"d2 z G | "III+"c "IV"A "IV^1"F ("IV"A- | A "I"G) "V^1"G2- | "V~4"G2 "I"G2 |]
 
 X:118
@@ -903,7 +903,7 @@ T:Come Holy Spirit, Lord Our God
 M:4/4
 L:1/4
 K:G
-"V"d2 "I"e "V"d | (B "ii"d) A2 | ("V"B G B) "iii-7"^c | "ii"d2 "V"z d | "I"e2 ("V"d B) | ("ii"d A) ("iii"G "I^1"c) |
+[Q:1/4=120] "V"d2 "I"e "V"d | (B "ii"d) A2 | ("V"B G B) "iii-7"^c | "ii"d2 "V"z d | "I"e2 ("V"d B) | ("ii"d A) ("iii"G "I^1"c) |
 ("V"B "ii"A "iii"G/E/) "ii"F | "V"G2 z G | ("II~4"A3/2 "ii-7"B/) "I"c2 | ("V"B3/2 "iii-7"^c/) "ii"d2 | ("VI^1"A "ii"F) ("V"G "VI"E) |
 "ii"D D z D | "iii"G2 "vi"A2 | ("V"B d2) "vi^1"c | ("V"B "V^1"G "II~4"A2) | "V"B4 |
 "V"d2 "I"e "V"d | (B "ii"d) A2 | ("V"B G B) "iii-7"^c | "ii"d2 "V"z d | "I"e2 ("V"d B) | ("ii"d A) ("iii"G "I^1"c) |
@@ -916,7 +916,7 @@ T:Holy Ghost, with Light Divine
 M:4/4
 L:1/4
 K:Eb
-"iii"G "vi^1"A "iii^1"B "vi"c | "vii-"F F "iii"G2 | "ii-7"B "IV"c "vii-"d "iii^1"e | "iii"c "IV"c "vii"B2 |
+[Q:1/4=100] "iii"G "vi^1"A "iii^1"B "vi"c | "vii-"F F "iii"G2 | "ii-7"B "IV"c "vii-"d "iii^1"e | "iii"c "IV"c "vii"B2 |
 "iii"G "vi^1"A "iii^2"B "vi"c | "IV^2"A "I"G "IV"F2 | "ii-7"B "ii"A/"iii"G/ "vii%7"F "I"E | "vi"F "vii-"F "iii"E2 |]
 
 X:120
@@ -924,7 +924,7 @@ T:Holy Spirit, Ever Dwelling
 M:8/4
 L:1/4
 K:Ab
-"IV"F2(3"IV^1"F"vi7"G"vi^1"A  "I"G2 F2 | "vii-"G2(3"I"G"vi^1"A"IV"B  (A3/2 G/) F2 | "vi"c2(3"V+"Bc"ii^1"d  ("I^1"c3/2 "iii"B/) "IV"A2 | ("vii-"B3/2 "IV"A/) "IM7"G2 "IV"F4 |
+[Q:1/4=180] "IV"F2(3"IV^1"F"vi7"G"vi^1"A  "I"G2 F2 | "vii-"G2(3"I"G"vi^1"A"IV"B  (A3/2 G/) F2 | "vi"c2(3"V+"Bc"ii^1"d  ("I^1"c3/2 "iii"B/) "IV"A2 | ("vii-"B3/2 "IV"A/) "IM7"G2 "IV"F4 |
 "IV"F2(3"IV^1"F"vi7"G"vi^1"A  "I"G2 F2 | "vii-"G2(3"I"G"vi^1"A"IV"B  (A3/2 G/) F2 | "vi"c2(3"V+"Bc"ii^1"d  ("I^1"c3/2 "iii"B/) "IV"A2 | ("vii-"B3/2 "IV"A/) "IM7"G2 "IV"F4 |
 "vi"c2(3"vi^1"A"IM7"B"vi^2"c  "III~4"B2 B2 | "IV"A2(3"IV^1"F"vi7"G"IV^2"A  "I~4"G2 G2 | "IV"F2(3"IVM7^3"F"vi7^2"G"ii"A  B2 B2 | "IV"A2(3"ii-7"B"ii"A"IM7"B  "I"c4 |
 "ii"F2(3"IV^1"F"vi7"G"vi^1"A  "I"G2 F2 | "vii-"G2(3"I"G"vi^1"A"IV"B  (A3/2 G/) F2 | "vi"c2(3"iii"B"vi^2"c"VI~4"d  ("vi"c3/2 "V7^2"B/) "ii"A2 | ("vii-"B3/2 "IV"A/) "IM7"G2 "IV"F4 |]
@@ -934,7 +934,7 @@ T:The Comforter Has Come
 M:3/4
 L:1/8
 K:C
-"I"G2 | G6/2 "IV^2"A "I"GE | G4 c2 | "IV"c6/2 "ii^1"d "IV"cA | c4 A2 |
+[Q:1/4=95] "I"G2 | G6/2 "IV^2"A "I"GE | G4 c2 | "IV"c6/2 "ii^1"d "IV"cA | c4 A2 |
 "I"G6/2 "IV^2"A "I"GE | G4 E2 | "vi"E6/2 E "II7"D"ii7"C | "V"D4 "V7"G2 | "I"G6/2 "IV^2"A "I"GE |
 "I"G4 "iii-"c2 | "IV"c6/2 "ii^1"d "IV"cA | c4 A2 | "I^2"G4 c2 | e4 "V7"d2 | "I"c4 ||
 "I"c2 | e6/2 "I~4"d "I"c"I~4"d | "I"e4 c2 | "IV"c6/2 "ii^1"d "IV"cA | c4 A2 | "I"G6/2 "IV^2"A "I"GE |
@@ -946,7 +946,7 @@ T:God the Father Be Our Stay
 M:none
 L:1/4
 K:D
-"ii"A A "vii-"B "vi"c | "V"d "vii-"d "vi"c "iii"B | "vii-"d "ii"A F "V"G | ("ii^2"F "vi"E) "ii"D2 |
+[Q:1/4=100] "ii"A A "vii-"B "vi"c | "V"d "vii-"d "vi"c "iii"B | "vii-"d "ii"A F "V"G | ("ii^2"F "vi"E) "ii"D2 |
 "ii"A A "vii-"B "vi"c | "V"d "vii-"d "vi"c "iii"B | "vii-"d "ii"A F "V"G | ("ii^2"F "vi"E) "ii"D2 | D "vi^1"E "ii"F "vii-"F |
 "vii-"D "vi"E "ii"F3/2 d/ "vi"c "ii^1"d | "iii"e3/2 "vii"d/ ("vi^1"c "III"B) "vi"A3/2 "ii"D/ | A "vii-"d "IV"c A | ("III"B3/4"III~4"A// "iii"G) "VII"F3/2
 "iii"E/ "ii"F "vii-"F | "vi"A3/2 "iii"G/ ("vii-"F "I"E) | "ii"D2 z | "vii-"D "iii"E "ii"F F | "vii-"D "iii"E "ii"F3/2 d/ "vi"c "vii-"d | "iii"e3/2 "V"d/
@@ -958,7 +958,7 @@ T:Holy God, We Praise Thy Name
 M:3/4
 L:1/4
 K:F
-"IV"F2 F | (F "IV~2"E) "IV"F | ("IM7"G "vi^1"A) "IM7"G | "IV"F3 | A2 A | (A "IV~2"G) "IV"A |
+[Q:1/4=120] "IV"F2 F | (F "IV~2"E) "IV"F | ("IM7"G "vi^1"A) "IM7"G | "IV"F3 | A2 A | (A "IV~2"G) "IV"A |
 ("III+"c "III"B) "IV"A | "IV^2"A "I"G2 | "IV"F2 F | (F "IV~2"E) "IV"F | ("IM7"G "vi^1"A) "IM7"G | "IV"F3 |
 "IV"A2 A | .(A "IV~2"G) "IV"A | ("III+"c "III"B) "IV"A | "IV^2"A "I"G2 | G2 "vi-7"A/c/ | .("V"B A) "I"G |
 "IV"A2 "ii-7"B/"ii"d/ | "I"c3 | "vii-"d2 d | ("I~4"c "IM7"B) "ii"A | ("vii-"B "IV^2"A) "IM7"G | "IV"F3 |]
@@ -968,7 +968,7 @@ T:Holy, Holy, Holy
 M:4/4
 L:1/4
 K:D
-"ii"D D "vii-"F F | "vi"A2 "ii"A2 | "V"B.- B B "IM7^2"B | "ii"A2 F2 | "vi^1"A3/2 A/ "ii"A "vi^1"A |
+[Q:1/4=110] "ii"D D "vii-"F F | "vi"A2 "ii"A2 | "V"B.- B B "IM7^2"B | "ii"A2 F2 | "vi^1"A3/2 A/ "ii"A "vi^1"A |
 "vii-"d.- "III7^2"d "vi^1"c "ii"A | "III+"E "vi^2"A "III7"B3/2 "vi"A/ | A4 | "ii"D D "vii-"F F | "vi"A.- "VI7"A "ii"A2 |
 "V"B3/2 B/ B "IM7^2"B | "ii"A2 A2 | "vii-"d2 "ii^1"A "IV"A | "V"B2 "ii"F2 | "V"G "iii^1"E "VI7"E3/2 "ii"D/ | "iv-7"D4 |]
 
@@ -977,7 +977,7 @@ T:Isaiah, Mighty Seer, In Days of Old
 M:4/4
 L:1/4
 K:Eb
-"iii"B2 "vii-"B "iii"G | "I"E "iii"G "ii-7"B "iii"B | "vi"c c "iii"B2 | "V"B2 "iii"B "IV"A | "vii"B "I"E "ii"A "iii"G | "vi"F "vii-"F "iii"E2 |
+[Q:1/4=140] "iii"B2 "vii-"B "iii"G | "I"E "iii"G "ii-7"B "iii"B | "vi"c c "iii"B2 | "V"B2 "iii"B "IV"A | "vii"B "I"E "ii"A "iii"G | "vi"F "vii-"F "iii"E2 |
 "iii"B2 "V"B "vii-"B | "vi"e e "I"e "iii"B | "vi"c "vii-"B "I"G2 | "iii"G2 "IV"A "ii-7"B | "iii"G "IV"A "I"G "iii"E | "vi"F "vii-"F "iii"E2 |
 "I"E2 "V"G "ii-7"F | "iii"G "vi^1"=A "vii-"B "ii-7"B | "iii"G "vi^1"=A "vii-"B2 | "IM7^3"e2 "vi"e "vii-"d | "I"c "ii-7"B "iii"B "IV"A | "iii^1"B "vi"A "iii"G2 |
 "vii-"F2 "iii"G "IV"A | "iii^1"B "vii-"B "vi"c "iii^1"B | "vi"c "vii-"d "iii"e2 | B2 B "vi"A | "iii"G "IV"A "vii-"B "I"E | "iii"G "vii-"F "I"E2 |
@@ -991,7 +991,7 @@ T:We All Believe in One True God
 M:none
 L:1/4
 K:C
-"II"z2 "ii"D2 ("II7"A "I^1"G "IV"A) "I"E "ii7"F2 ("II~2"E "v^2"G) ("VI+"F "V~2"E) ("II"D "VI"^C) "bVII"D2 | "ii"A2 "VI~4"A2 "V"d "vi"c
+[Q:1/4=120] "II"z2 "ii"D2 ("II7"A "I^1"G "IV"A) "I"E "ii7"F2 ("II~2"E "v^2"G) ("VI+"F "V~2"E) ("II"D "VI"^C) "bVII"D2 | "ii"A2 "VI~4"A2 "V"d "vi"c
 "iii"B "IV"A "I"c2 "IV"A2 | "ii"z "VI~4"B "IV"c "ii7"A "bII+"A "II~2"E "ii"F "VI+"F "VI"E2 | "ii"D "vi^1"E "bVII"F "v"G
 "IV^1"F "I"E ("ii"D "VI"^C) "ii"D2 | d2 "V"d2 "I^2"e "V~2"d "I7"e "IV+"^c "V~2"d2 "ii"d2 | "I"e "V"B "vi"c "IV"A
 "ii"A "VI^1"E "ii"F2 "II~2"E2 | "IV"A "I"G "IV"A "ii-7"B "vi"c "iii"B ("IV"A "III"^G) "vi"A2 |
@@ -1003,7 +1003,7 @@ T:A Mighty Fortress Is Our God
 M:4/4
 L:1/4
 K:D
-"ii"d | "ii^1"d "ii"d "vi^1"A/"III^2"B/ "vi"c | "vii-"d/c/ "III"B "vi"A "vii-"d | "IV"c "V"B "ii"A "vii-"B | ("iii"G/F/ "vi"E) "ii"D
+[Q:1/4=110] "ii"d | "ii^1"d "ii"d "vi^1"A/"III^2"B/ "vi"c | "vii-"d/c/ "III"B "vi"A "vii-"d | "IV"c "V"B "ii"A "vii-"B | ("iii"G/F/ "vi"E) "ii"D
 "ii"d | "ii^1"d "ii"d "vi^1"A/"III^2"B/ "vi"c | "vii-"d/c/ "III"B "vi"A "vii-"d | "IV"c "V"B "ii"A "vii-"B | ("iii"G/F/ "vi"E) "ii"D
 "ii"D | F "vi^1"A "vii-"B "III"^G | "vi"A "vii-"D "vi^1"A "ii"A | "V"B "I^1"c "ii"d "IV"c | "vii-"d "vi^1"c "ii"B "III"B | "vi"A
 "V"B "V^1"B "ii"A | "bIII+"B "iii"G "IV~4"F "vii-"d | "IV"c "V"B "ii"A "bIII+"B | ("iii"G/F/ "vi"E) "ii"D |]
@@ -1013,7 +1013,7 @@ T:A Mighty Fortress Is Our God
 M:none
 L:1/4
 K:D
-"ii"z d d2 "vii-"d2 "IV"A2 "ii-7"B ("ii"d2 "vi^2"c) "III~4"B2 A2 | "vii"z "iv-7"d "IV"c2 "V"B2 "ii"A2 "III"B ("I^1"G2 "ii^2"F "vi"E2) "ii"D2 |
+[Q:1/4=160] "ii"z d d2 "vii-"d2 "IV"A2 "ii-7"B ("ii"d2 "vi^2"c) "III~4"B2 A2 | "vii"z "iv-7"d "IV"c2 "V"B2 "ii"A2 "III"B ("I^1"G2 "ii^2"F "vi"E2) "ii"D2 |
 "ii"z d d2 "vii-"d2 "IV"A2 "ii-7"B ("ii"d2 "vi^2"c) "III~4"B2 A2 | "vii"z "iv-7"d "IV"c2 "V"B2 "ii"A2 "III"B ("I^1"G2 "ii^2"F "vi"E2) "ii"D2 |
 "II"z "vii-"D (F3/2 "V7^2"G/ "vii%7"A) ("vii-"B2 "vi^1"A2) "vi"^G A2 | "ii"D2 "vi^1"A2 "vii-"B2 "vi"c2 "ii"d2 | "IV"z2 c2 "I~2"d2 "III+"c2 "VI~2"B2 "IV"A2 |
 "V"B2 B2 "ii"A "V"B2 "vi"A "ii"F2 | "vii-"z "iv-7"d "IV"c2 "V"B2 "ii"A2 "III"B ("iii"G2 "ii^2"F "vi"E2) "ii"D2 |]
@@ -1023,7 +1023,7 @@ T:If God Had Not Been on Our Side
 M:4/4
 L:1/4
 K:A
-"IV"F2 A "ii"A | "vii-"B "IV"c "V"B "IV~4"^A | "vii-"B2 z "V"B | "vi^1"A "ii"F "vii-"B "IV"c | ("iii^1"B/"IV^1"A/ "iii7"B) "vi"A2 |
+[Q:1/4=120] "IV"F2 A "ii"A | "vii-"B "IV"c "V"B "IV~4"^A | "vii-"B2 z "V"B | "vi^1"A "ii"F "vii-"B "IV"c | ("iii^1"B/"IV^1"A/ "iii7"B) "vi"A2 |
 "IV"F2 A "ii"A | "vii-"B "IV"c "V"B "IV~4"^A | "vii-"B2 z "V"B | "vi^1"A "ii"F "vii-"B "IV"c | ("iii^1"B/"IV^1"A/ "iii7"B) "vi"A2 |
 "iii"z "VI~2"B "vii-"c "V"B | "iii"G "IV"A "vii-"B "vi^1"A | "ii"F2 "IV"z F | "iii"B "vi^1"A "vii-"B "vi"c |
 "ii"A "iii"G "vi"E2 | "IV"z F A "V"B | "vi"c "IV"A ("I"G/"ii"F/ "I~4"G) | "IV~4"F4 |]
@@ -1033,7 +1033,7 @@ T:If God Had Not Been on Our Side
 M:4/4
 L:1/4
 K:C
-"ii"D2 A "IV"A | "I"E "v"G "ii"F "VI"E | "ii"D "iv-7"z/ "II"D/ "ii"A "V"B | "I"c "ii^1"d ("vi^2"c "III"B) | "vi"A4 |
+[Q:1/4=120] "ii"D2 A "IV"A | "I"E "v"G "ii"F "VI"E | "ii"D "iv-7"z/ "II"D/ "ii"A "V"B | "I"c "ii^1"d ("vi^2"c "III"B) | "vi"A4 |
 "ii"D2 A "IV"A | "I"E "v"G "ii"F "VI"E | "ii"D "iv-7"z/ "II"D/ "ii"A "V"B | "I"c "ii^1"d ("vi^2"c "III"B) | "vi"A
 "II"z/ "vii7"A/ "vii-"d "V"d | "vi"c "iii"B "I"c "II"A | "V"G z/ "iii"G/ "I^1"c "V"B |
 "vi"A "iii"G "IV"A "ii"F | "VI"E "II"z/ "bVII"D/ F "V"G | "ii^1"A "ii"F "VI"E2 | "ii"D4 |]
@@ -1043,7 +1043,7 @@ T:Look Down, O Lord, From Heaven Behold
 M:4/4
 L:1/4
 K:F
-"II"A | "V"B "II^1"A "V"G "II"d | "V"d B "II"A "i"c | "V"B "II"A "bIII+"G "i"c | ("V^2"B "II"A) "V"G
+[Q:1/4=100] "II"A | "V"B "II^1"A "V"G "II"d | "V"d B "II"A "i"c | "V"B "II"A "bIII+"G "i"c | ("V^2"B "II"A) "V"G
 "II"G | "V"B "II^1"A "V"G "II"d | "V"d B "II"A "i"c | "V"B "II"A "bIII+"G "i"c | ("V^2"B "II"A) "V"G
 "I"G | "IV"A "ii"F "vi"E "vii-"D | "ii"F "V^1"G "VI"A "ii"F | "I"G "vii-"B "IV"A "vii-"B |
 "bIII+"G "II"^F "V"G G | "II^1"d "V"B "IV"c "vii-"d | ("IV"c "V"B) "II"A |]
@@ -1053,7 +1053,7 @@ T:Look Down, O Lord, From Heaven Behold
 M:4/4
 L:1/4
 K:D
-"ii"A | "ii^1"A "I"A "ii"A "vi"=c | "V^1"B "ii"A "iii"G "VI^1"A | "ii"F "V"D "ii"F "vii-7"^G | ("IV"A "III"B) "vi"A
+[Q:1/4=110] "ii"A | "ii^1"A "I"A "ii"A "vi"=c | "V^1"B "ii"A "iii"G "VI^1"A | "ii"F "V"D "ii"F "vii-7"^G | ("IV"A "III"B) "vi"A
 "ii"A | "ii^1"A "I"A "ii"A "vi"=c | "V^1"B "ii"A "iii"G "VI^1"A | "ii"F "V"D "ii"F "vii-7"^G | ("IV"A "III"B) "vi"A
 "ii"A | "ii^1"d "vi"c "III"B "vi^1"c | "vii%7"d "III"B "vi"A A | "ii^1"d "ii"A "V"B "vii-"F |
 "vi"A "iii"G "vii-"F "ii"F | "vi"E "V"G "ii"F "vi"E | ("vii-"D "vi7"E) "ii"D |]
@@ -1063,7 +1063,7 @@ T:Lord, Keep Us Steadfast in Thy Word
 M:none
 L:1/4
 K:G
-"iii"E2 | G "vi^1"E "vii-"D "vi"E "iii^1"G "VII"F | "iii"E2 "I"G2 | "vi"A "ii"A "V"B "I"G "vi"A "ii"A | "V"B2
+[Q:1/4=150] "iii"E2 | G "vi^1"E "vii-"D "vi"E "iii^1"G "VII"F | "iii"E2 "I"G2 | "vi"A "ii"A "V"B "I"G "vi"A "ii"A | "V"B2
 "V"B2 | "I"c "V"B "ii"d "iii"B "vi^1"A "ii"A | "V"G2 B2 | "I"G "vi"A "V^1"G "ii"F "iii"E "VII"^D | "iii"E2 |]
 
 X:134
@@ -1071,7 +1071,7 @@ T:The Mouth of Fools Doth God Confess
 M:4/4
 L:1/4
 K:G
-"V"G2 G "vi^1"E | "vii-"D "iii"G "ii"A "V"B | "I"G2 "V"z G | "iii"G "vi^1"A "vii-"B "vi"c | "ii"A2 "V"G2 |
+[Q:1/4=120] "V"G2 G "vi^1"E | "vii-"D "iii"G "ii"A "V"B | "I"G2 "V"z G | "iii"G "vi^1"A "vii-"B "vi"c | "ii"A2 "V"G2 |
 "V"G2 G "vi^1"E | "vii-"D "iii"G "ii"A "V"B | "I"G2 "V"z G | "iii"G "vi^1"A "vii-"B "vi"c | "ii"A2 "V"G2 |
 "vii"z "I"G "II~4"E "IV"F | "iii"G "vi"E "vii-"D "VI"^C | "ii"D2 "V"z D | "iii"G "vi^1"A "vii-"B "vi"c |
 "iii"B "vi"A "V"B2 | "iv-7"z "iii"A "VI~2"B "I"c | "ii^1"d "V"B ("vi^1"A/"iii"G/ "ii"A) | "V"G4 |]
@@ -1081,7 +1081,7 @@ T:All Who Believe and Are Baptized
 M:4/4
 L:1/4
 K:Eb
-"iii"B/ | B "ii-7"B "iii"B "vii-"_d | "vi"c "iii"B "vi"A3/2 "iii"B/ | G "vi"E "iii"G "vi^1"A | ("vii-"B "IV"c) "vii"B3/2
+[Q:1/4=100] "iii"B/ | B "ii-7"B "iii"B "vii-"_d | "vi"c "iii"B "vi"A3/2 "iii"B/ | G "vi"E "iii"G "vi^1"A | ("vii-"B "IV"c) "vii"B3/2
 "iii"B/ | B "ii-7"B "iii"B "vii-"_d | "vi"c "iii"B "vi"A3/2 "iii"B/ | G "vi"E "iii"G "vi^1"A | ("vii-"B "IV"c) "vii"B3/2
 "iii"B/ | "I"e3/2 "bII+"_d/ "vi"c "iii"B | "vi^1"e "vi"c "iii"B3/2 "ii-7"B/ | "I"e3/2 "iii"B/ "vii-"B "vi"E |
 "iii"G "ii-7"B "iii"G3/2 "vi"E/ | "bII+"F "vi^1"A "iii"G "IV^1"F | ("iii^2"E "vii-"F) "iii"E3/2 |]
@@ -1091,7 +1091,7 @@ T:Baptized Into Thy Name Most Holy
 M:3/4
 L:1/4
 K:F
-"IV"F A F | "I"G2 "IV^1"c | "vii-"B2 "IV"A | "I"G "IV"F2 | "I"G "V^1"G "I"G | "IV"A2 "I^1"c |
+[Q:1/4=140] "IV"F A F | "I"G2 "IV^1"c | "vii-"B2 "IV"A | "I"G "IV"F2 | "I"G "V^1"G "I"G | "IV"A2 "I^1"c |
 "IV"c2 "V"=B | "I"c3 | "IV"F A F | "I"G2 "IV^1"c | "vii-"B2 "IV"A | "I"G "IV"F2 |
 "I"G "V^1"G "I"G | "IV"A2 "I^1"c | "IV"c2 "V"=B | "I"c3 | G "V7^2"G "I^1"G | "IV"A2
 "ii"F | "V"B2 "IV"A | "I"G3 | "I~2"c c "IV"c | "V7"B2 "vi"A | "vii-"G "I~4"G2 | "IV"F3 |]
@@ -1110,7 +1110,7 @@ T:You People Who Now Are Baptized
 M:4/4
 L:1/4
 K:G
-"V"z "iii"G "V~4"G "VII"B | "ii"A "iii"G "vi^1"A "ii"A | "V"B2 "iii"G2 | "V"B "I^1"c "ii^1"d "V"B |
+[Q:1/4=130] "V"z "iii"G "V~4"G "VII"B | "ii"A "iii"G "vi^1"A "ii"A | "V"B2 "iii"G2 | "V"B "I^1"c "ii^1"d "V"B |
 "II~4"A2 "V"G2 | z "iii"G "V~4"G "VII"B | "ii"A "iii"G "vi^1"A "ii"A | "V"B2 "iii"G2 |
 "V"B "I^1"c "ii^1"d "V"B | "II~4"A2 "V"G2 | z "iii"B "VI+"B "IV"A | "I"G "ii"F "iii"G "I"E | "V"D2 z D |
 "V"G "I"G "V"G "ii"F | "iii"G "vi^1"A "VII"B2 | "iii"G2 "V"B "vi"c | "ii^1"d "V"B "ii"A2 | "V"G4 |]
@@ -1120,17 +1120,17 @@ T:Have Mercy On Me, O My God
 M:none
 L:1/4
 K:Bb
-"ii"D F F | F3 "ii^1"F "iii"G "I^1"G | "II"A2 "ii"A | "II"A2 "VI"A "ii"A "V"B | "II"A3
+[Q:1/4=100] "ii"D F F | F3 "ii^1"F "iii"G "I^1"G | "II"A2 "ii"A | "II"A2 "VI"A "ii"A "V"B | "II"A3
 "ii"D A A | A3 "ii^1"F "iii7"G "I^1"G | "II"A2 "ii"A | "II"A2 "ii"A "V"B G | "II"A3
 "ii"A | A3/2 ("V7^2"B/ "vi^1"c)  "vii"d2 "IV"c | "V"B B "ii"A2 F | "V"G2 "V^1"D "I"E E | "V"D3
-"V"G | B3/2 ("V7"A/ "iii^1"G) "vii-"F2 D | "V"G3/2 ("III~4"F/ "iii"E) "vii-"D2 F |  "iii"E "I^1"C "V"D D | "II"D3 |]
+"V"G | B3/2 ("V7"A/ "iii^1"G) "vii-"F2 D | "V"G3/2 ("III~4"F/ "iii"E) "vii-"D2 F | [Q:1/4=90] "iii"E "I^1"C "V"D D | "II"D3 |]
 
 X:140
 T:Jesus Sinners Doth Receive
 M:none
 L:1/4
 K:G
-"V"G "iii-7"G "ii"F "V^1"G | "I"E "IV^1"F "V"G2 | B B "ii^1"A "V"d | "vi"c "V"B "II~4"A2 "V"G2 |
+[Q:1/4=120] "V"G "iii-7"G "ii"F "V^1"G | "I"E "IV^1"F "V"G2 | B B "ii^1"A "V"d | "vi"c "V"B "II~4"A2 "V"G2 |
 "V"G "iii-7"G "ii"F "V^1"G | "I"E "IV^1"F "V"G2 | B B "ii^1"A "V"d | "vi"c "V"B "II~4"A2 "V"G2 |
 "V"B "ii^1"A "iii"G "ii^1"A | "V"B "V^1"B "ii"A2 | "V"B d "vi"c "V^1"B | "I"A "ii"A "V"G2 |]
 
@@ -1139,7 +1139,7 @@ T:Lord Jesus Think On Me
 M:4/4
 L:1/4
 K:Ab
-"IV"F | A "ii"A "vii-"G "I"G | "IV"F3 A | A "vi^2"A "ii"B "iii"B | "vi"c3
+[Q:1/4=110] "IV"F | A "ii"A "vii-"G "I"G | "IV"F3 A | A "vi^2"A "ii"B "iii"B | "vi"c3
 "vi"c | e "iii"e "ii^1"d "V"d | "vi"c "vi^1"c "iii"B "I"c | "ii-7"B "IV^2"A "vii-"G "I"G | "IV"F3 |]
 
 X:142
@@ -1147,7 +1147,7 @@ T:O Lord My Soul Convicted
 M:4/4
 L:1/4
 K:C
-"I"G | "I^1"c "I"G "IV"A "IV^1"A | "V^1"G "V7"F "I"E E |
+[Q:1/4=100] "I"G | "I^1"c "I"G "IV"A "IV^1"A | "V^1"G "V7"F "I"E E |
 "IV^1"F "I"E "V"D "iii"G | "I"G "II"^F "V"G G | "I^1"c "ii-7"d "I"e "I^1"c |
 "ii"f "I"e "V"d "I"e | "I^1"c "IV"A "V"G "vi"c | "IV"c "V7"B "I"c |]
 
@@ -1156,7 +1156,7 @@ T:Out of the Deep I Cry to Thee
 M:4/4
 L:1/4
 K:C
-"III"B2 "vi^1"E "vii-7"B | "vi"c "V^1"B/"vii%7"A/ "I"=G "vi-7"A | "III"B2 B2 | "vi"c "V7"d "I^1"c/"iii"B/ "IV"A | ("I"G "ii"F) "III"E2 |
+[Q:1/4=110] "III"B2 "vi^1"E "vii-7"B | "vi"c "V^1"B/"vii%7"A/ "I"=G "vi-7"A | "III"B2 B2 | "vi"c "V7"d "I^1"c/"iii"B/ "IV"A | ("I"G "ii"F) "III"E2 |
 "III"B2 "vi^1"E "vii-7"B | "vi"c "V^1"B/"vii%7"A/ "I"=G "vi-7"A | "III"B2 B2 | "vi"c "V7"d "I^1"c/"iii"B/ "IV"A | ("I"G "ii"F) "III"E2 |
 "vi^1"A2 "V^1"G "vi"c | "V"B "ii^1"A "ii-7"d/"ii7"c/ "III"B | "vi"A2 c2 | "iii"B "I"c "V^1"d
 "I"G | "vii^1"B "II~4"A "V"G2 | "I"G2 "vi"c "III"B | "IV"A "I"E ("v^1"G "ii^2"F) | "bvi-"E4 |]
@@ -1166,7 +1166,7 @@ T:Out of the Deep I Cry to Thee
 M:4/4
 L:1/4
 K:C
-"V"G | "IV^1"F "V^1"G "I"A "ii"A | "iii"G "ii"A "V"B "I"c | "V"B "ii"A "iii"G "V^1"G | "I"A2 "V"G
+[Q:1/4=110] "V"G | "IV^1"F "V^1"G "I"A "ii"A | "iii"G "ii"A "V"B "I"c | "V"B "ii"A "iii"G "V^1"G | "I"A2 "V"G
 "V"G | "IV^1"F "V^1"G "I"A "ii"A | "iii"G "ii"A "V"B "I"c | "V"B "ii"A "iii"G "V^1"G | "I"A2 "V"G
 "iii"G | "ii^1"A "I^1"c "bIII+"B "iii"G | "VI^1"A "ii"F "VI"E "VI+"F | "vii-"D "V"D "ii^1"A
 "III7"B | "vi"c "ii7"A "iii"G "ii^1"d | "V"B "ii"A "iii"G "V^1"G | "I"A2 "V"G |]
@@ -1176,7 +1176,7 @@ T:While O'er Our Guilty Land, O Lord
 M:4/4
 L:1/4
 K:F
-"IV"A2 A A | "iv-7"B2 ("IV"A c) | "I^1"c2 "IM7"B2 | "IV"A4 | "IM7"B2 "iii"B "IM7"B | "IV"A3 A |
+[Q:1/4=130] "IV"A2 A A | "iv-7"B2 ("IV"A c) | "I^1"c2 "IM7"B2 | "IV"A4 | "IM7"B2 "iii"B "IM7"B | "IV"A3 A |
 "ii-7"=B2 "V7^2"B2 | "I"c4 | "IV"c2 "I^1"c "IM7"B | "IV"A2 F2 | ("I"E "IV^2"F) ("IM7"G "IV^2"A) |
 "IM7"B4 | "IV"A2 "vii-"d "ii-7"d | "IV"c2 A2 | "IV^2"F2 "IM7"G2 | "IV"F4 |]
 
@@ -1185,7 +1185,7 @@ T:At The Lamb's High Feast
 M:4/4
 L:1/4
 K:C
-"I"C C | G "I^1"c "ii-7"B/"ii"A//G//A/ "II~2"A/ | "I"G2 "IV^2"A A | "III~4^2"B "IV^2"A "iii"G/A/G/ =F/ | "I^2"E2
+[Q:1/4=110] "I"C C | G "I^1"c "ii-7"B/"ii"A//G//A/ "II~2"A/ | "I"G2 "IV^2"A A | "III~4^2"B "IV^2"A "iii"G/A/G/ =F/ | "I^2"E2
 "I"E/ D/ "I^1"E/ F/ | "iii"G/ "v-7"G/ "I"C "I^1"E/ "V^2"D/ "I^1"E/ C/ | "V^1"B,/ "I"C/ "V^2"D/ "IV"F/ "I"E "I~4"D | "I"C2 |]
 
 X:147
@@ -1193,7 +1193,7 @@ T:I Come, O Savior, To Thy Table
 M:4/4
 L:1/4
 K:C
-"I"z "I^1"c "iv-"B "IV"A | "I"G "vi"A "ii"F "V"G | "I"E/"I~4"D/ "I"C2 E |
+[Q:1/4=100] "I"z "I^1"c "iv-"B "IV"A | "I"G "vi"A "ii"F "V"G | "I"E/"I~4"D/ "I"C2 E |
 "V"D "iii"G "II"^F "vi"c | "V^1"B "II~4"A "V"G2 | "I"z "I^1"c "iv-"B "IV"A | "I"G "vi"A "ii"F "V"G |
 "I"E/"I~4"D/ "I"C2 E | "V"D "iii"G "II"^F "vi"c | "V^1"B "II~4"A "V"G2 |
 "V"z "iii"G "I"c c | "IV"A "VI7^2"A "II"d "II^1"d | "V"B3 "I^1"c | "ii"F "I^1"E "V"D "I^1"c | "IV"c "V"B "I"c2 |]
@@ -1203,7 +1203,7 @@ T:Jesus Christ, Our Blessed Savior
 M:4/4
 L:1/4
 K:C
-"ii"D2 "VI"A2 | ("ii"A3/2 "v^1"G/ "VI"A) "ii"D | F2 F2 | ("ii^2"F2 "VI~4"E2) | "ii"D2 z2 | F F "bVII"F "IV^1"F |
+[Q:1/4=140] "ii"D2 "VI"A2 | ("ii"A3/2 "v^1"G/ "VI"A) "ii"D | F2 F2 | ("ii^2"F2 "VI~4"E2) | "ii"D2 z2 | F F "bVII"F "IV^1"F |
 "v"G2 "I"G2 | ("IV"A3/2 "I"G/ "ii"F "VI"E) | "ii"D4 | F F "IV"F "ii"F | "v"G2 "I"G2 | ("IV"A3/2 "I"G/ "ii"F2) |
 "IV"c "bVII"d ("I"c/ "IM7"B/ "IV"A) | "ii"F2 "I"G2 | ("IV"A3/2 "I"G/ "ii"F) "VI"E | "ii"D4 |]
 
@@ -1212,7 +1212,7 @@ T:Jesus Christ, Our Blessed Savior
 M:4/4
 L:1/4
 K:F
-"IV"F2 "I"c2 | "IV"A "ii"F "IM7^3"G "IV"A | "vii-"B2 "IV"A2 | F "I"c "ii"A "vii-"d | "IV"c "V"B "I"c2 | "IV"A4 |
+[Q:1/4=140] "IV"F2 "I"c2 | "IV"A "ii"F "IM7^3"G "IV"A | "vii-"B2 "IV"A2 | F "I"c "ii"A "vii-"d | "IV"c "V"B "I"c2 | "IV"A4 |
 "IV"c "I^1"c "ii-7"B "IV"A | "IV^1"A "I"G "ii"F2 | "I"c2 "IV"A "IV^1"F | "I"c "V"B "ii"A "V^1"G | "VI"A4 |]
 
 X:150
@@ -1220,7 +1220,7 @@ T:Let All Mortal Flesh Keep Silence
 M:4/4
 L:1/4
 K:F
-"ii"D E F G | A2 ("vii%7"A "iii7^2"G) | "ii^1"A2 "ii"A2 | A A "vii-"B "ii7^2"c | "V7"B2 ("IV^2"A "I"G) | "IV"A4 |
+[Q:1/4=120] "ii"D E F G | A2 ("vii%7"A "iii7^2"G) | "ii^1"A2 "ii"A2 | A A "vii-"B "ii7^2"c | "V7"B2 ("IV^2"A "I"G) | "IV"A4 |
 "vii-"D E F G | "ii^1"A2 ("V"A G) | "ii^1"A2 "ii"A2 | A A "I~4"B "IV"c | "vii-"B2 ("vii7"A "V^1"G) | "VI"A4 |
 "II^1"A A "#IV+"d "II^1"A | "V"G3 "V7"F | ("ii"D F A "ii-7"F) | "vi"E4 | "ii^1"A A "iv-7"d "IV"A | "V"G2 ("I"E "IV^1"F) | "ii"D4 |]
 
@@ -1229,7 +1229,7 @@ T:O Lord, I Am Not Worthy
 M:4/4
 L:1/4
 K:Bb
-"vii"D/"IM7"E/ | "ii-7"F "iii"G "vii-"F "ii-7"B | "IV"B A2 A/"IV~2"B/ | "IV"c "IVM7"E "vi7"G "IV^1"F | "vii-"D3
+[Q:1/4=120] "vii"D/"IM7"E/ | "ii-7"F "iii"G "vii-"F "ii-7"B | "IV"B A2 A/"IV~2"B/ | "IV"c "IVM7"E "vi7"G "IV^1"F | "vii-"D3
 "vii"D/"IM7"E/ | "ii-7"F "vii-"F "V"B "ii"A | "III~4"A "iii"G2 G | "iv-7"F B "IV"A "IVM7"c | "vii"B3 |]
 
 X:152
@@ -1237,7 +1237,7 @@ T:Thou, Who at Thy First Eucharist
 M:4/4
 L:1/4
 K:D
-"ii"F | F3/2 D/ D "II~4"E | "ii"F3/2 F/ F "vi7^2"G | "ii^1"A3 "ii"F | "vi7^3"E "ii^1"F "iii"G3/2 "iii7^3"G/ |
+[Q:1/4=120] "ii"F | F3/2 D/ D "II~4"E | "ii"F3/2 F/ F "vi7^2"G | "ii^1"A3 "ii"F | "vi7^3"E "ii^1"F "iii"G3/2 "iii7^3"G/ |
 "I"G "ii"F "ii^1"A F | "vi"E3 "ii"F | F3/2 D/ D "II~4"E | "ii"F3/2 "vii-"F/ F "iii7^2"G | "ii^1"A3
 "ii"F | "V"B "ii^1"A "III7"^G3/2 ^G/ | "IV"A "ii"B "vi^2"c "III7"B | "vi"A3 "V~4"A | "ii^1"d A "vi7^2"G "ii"F |
 "V"B B "V^1"d "V"B | "ii"A3 "ii^1"A | "vi7^2"G "ii"F "vi7"E "vii-"D | "V"B3/2 "iii^1"G/ "ii^2"F "vi7"E | "ii"D3 |]
@@ -1247,7 +1247,7 @@ T:To Avert From Men God's Wrath
 M:4/4
 L:1/4
 K:Eb
-"iii"E E "vii-"F "iii"G | "vi"A3/2 A/ "iii"G2 | E "I"E "vii-"F "iii"G | "vi"F "vii-"F "iii"E2 |
+[Q:1/4=90] "iii"E E "vii-"F "iii"G | "vi"A3/2 A/ "iii"G2 | E "I"E "vii-"F "iii"G | "vi"F "vii-"F "iii"E2 |
 "iii"E "I"G "vii-"B "iii"B | "vi"c "ii7^2"c "iii"B2 | "iii^1"E "iii"G "ii-7"B "V"B | "iii"c "IV"c "vii"B2 |
 "iii^1"E E "ii^1"F "iii"G | "vi"A3/2 A/ "iii"G2 | "iii^1"E "ii^1"F "iii"G "IV^1"F | "iii^2"E "vii-"D "iii"E2 |]
 
@@ -1256,7 +1256,7 @@ T:Almighty God Your Word Is Cast
 M:4/4
 L:1/4
 K:C
-"I"G | E "IV"A "I^1"G "vi"c | "IV"c "V"B "I"c G | "vi"c "iii"G "vi^1"A "II"^F | "V"G3
+[Q:1/4=100] "I"G | E "IV"A "I^1"G "vi"c | "IV"c "V"B "I"c G | "vi"c "iii"G "vi^1"A "II"^F | "V"G3
 "V"B | "I"c "IV"A "ii"d "V"B | "I"c "IVM7"A "III"B "I^1"G | "ii"A "I"c "ii^1"d "V"B | "I"c3 |]
 
 X:155
@@ -1264,7 +1264,7 @@ T:Jesus Loves Me
 M:4/4
 L:1/4
 K:Eb
-"iii"[GB] "III"[EG] [EG] "vii"[DF] | "III"[EG] "iii"[GB] [G2"VII"B2] | "VI"[Ac] [Ac] "vi"[ce] "i-7"[Ac] | "III~4"[Ac] "iii"[GB] [G2"VII"B2] |
+[Q:1/4=120]  "iii"[GB] "III"[EG] [EG] "vii"[DF] | "III"[EG] "iii"[GB] [G2"VII"B2] | "VI"[Ac] [Ac] "vi"[ce] "i-7"[Ac] | "III~4"[Ac] "iii"[GB] [G2"VII"B2] |
 "iii"[GB] "III"[EG] [EG] "vii"[DF] | "III"[EG] "iii"[GB] [G2"VII"B2] | "VI"[Ac] "i-7"[Ac] "iii"[GB] "III"E | "VII~4"[EG] "vii"[DF] "III"E2 |
 ["iii"G2"V"B2] "III"[EG] "iii"[GB] | "VI"[Ac] ["vi"c3"III"e3] | ["iii"G2"III"B2] [EG] "v-7"E | "VII~4"[EG] ["vii"D3"vii-"F3] |
 ["v-7"E2"VII"B2] "III"[EG] "iii"[GB] | "VI"[Ac] ["vi"c2"III"e2] "i-7"[Ac] | "iii"[GB] "v-7"E ["VII~4"E3/2"VII+"G3/2] [D/F/] | "III"E4 |]
@@ -1274,7 +1274,7 @@ T:Lamp of Our Feet
 M:3/4
 L:1/4
 K:G
-"V"B B "V^1"B | "vi^1"A2 "V^1"B | "vi"c2 "ii"F | "V"G3 | "vi"D "V"D "ii^1"D | "V"B2 "VI7^2"A | "ii"A3 |
+[Q:1/4=140] "V"B B "V^1"B | "vi^1"A2 "V^1"B | "vi"c2 "ii"F | "V"G3 | "vi"D "V"D "ii^1"D | "V"B2 "VI7^2"A | "ii"A3 |
 "vi"c c "bvi-"B | "vi"A2 "VI7"G | "ii"F2 "bii-"E | "ii"D3 | "V^1"D "I"E "I^1"G | "V^2"B2 "ii7"A | "V"G3 |]
 
 X:157
@@ -1282,7 +1282,7 @@ T:That Men a godly Life Might Live
 M:4/4
 L:1/4
 K:C
-"V"z "iii"G "IM7"G "I"G | "V"G "I"G "V^1"G/"vi7"A/ "V"B | "I"c2 z c | "V"d "ii"d "vi"c "iii"G |
+[Q:1/4=120] "V"z "iii"G "IM7"G "I"G | "V"G "I"G "V^1"G/"vi7"A/ "V"B | "I"c2 z c | "V"d "ii"d "vi"c "iii"G |
 "ii^1"A "V"B "I"c2 | "IV"z "ii7"c "ii"d "II"d | "vi"c "iii"G "IV"A "I"G | "ii"F2
 "II"z "IV"F | "ii^1"A "V"B "I"c2 | "v"_B "V"G B2 | "v"_B3/2 "ii"A/ "iii7"G2 | "V"G4 |]
 
@@ -1291,7 +1291,7 @@ T:The Gospel Shows The Father's Grace
 M:6/4
 L:1/4
 K:F
-"IV"F2 | A2 "I^1"c "IV"A2 "I"G | "IV"A "ii-7"=B "I"c2 "vii-"d2 | "IV"c2 A "I"G2 "IV^1"F | "vii-"F "I"E "IV"F2
+[Q:1/4=140] "IV"F2 | A2 "I^1"c "IV"A2 "I"G | "IV"A "ii-7"=B "I"c2 "vii-"d2 | "IV"c2 A "I"G2 "IV^1"F | "vii-"F "I"E "IV"F2
 "I"G2 | "IV"A2 A "I"G2 c | "V~4"c "V"=B "I"c2 "IV"A2 | "vii-"B2 "IV"A "I"G2 "ii"F | "vii-"F "I"E "IV"F2 |]
 
 X:159
@@ -1299,7 +1299,7 @@ T:The Law Of God Is Good And Wise
 M:4/4
 L:1/4
 K:G
-["iii"B,2"III"E2] [B,G] [A,E] | "vii-"[B,D] "vi"[CE] "iii^1"[EG] "VII"[^DF] | ["iii"B,2"I"E2] [E2G2] | "vi"[EA]
+[Q:1/4=120] ["iii"B,2"III"E2] [B,G] [A,E] | "vii-"[B,D] "vi"[CE] "iii^1"[EG] "VII"[^DF] | ["iii"B,2"I"E2] [E2G2] | "vi"[EA]
 "ii"[FA] "V"[GB] "I"[EG] | "vi"[EA] "ii"[FA] ["V"G2B2] | [D2"IM7"B2] [Ec] [DB] | "ii"[Fd] "iii"[GB] "I"[EA]
 "ii"[FA] | ["V"D2G2] [D2B2] | "I"[EG] "vi"[EA] "vii"[DG] "II"[DF] | "iii"[B,E] "vii-"[B,^D] ["iii"B,2E2] |]
 
@@ -1308,7 +1308,7 @@ T:Wilt Thou, O Man, Live Happily
 M:4/4
 L:1/4
 K:C
-"iii"E2 "I"G "V^1"G | "vi"A "iii"B "vi"c "III"B | "vi"A2 "III"B2 | "vi^1"c "V^1"G "vi"A
+[Q:1/4=120] "iii"E2 "I"G "V^1"G | "vi"A "iii"B "vi"c "III"B | "vi"A2 "III"B2 | "vi^1"c "V^1"G "vi"A
 "vi"E | ("V"G2 "I"E C | "V"G) "ii"F "VI"E2 | "V"B2 "I"c "V^1"d | "I"c "ii"A "III"^G "vi"A | "III"B2
 "iii"E2 | "ii-7"B "I"c ("V"B "iii"G) | "vi^1"A "ii"F ("vi"E C) | "V"G3/2 "ii"F/ "vi"E2 | "III"E4 |]
 
@@ -1317,7 +1317,7 @@ T:All Hail The Power Of Jesus' Name
 M:4/4
 L:1/4
 K:G
-"II"D | "V"G G B B | "ii"A "iii"G "ii"A "V^1"B | "ii7"A "iii"G "V^2"B "ii7"A | "V"G3
+[Q:1/4=120] "II"D | "V"G G B B | "ii"A "iii"G "ii"A "V^1"B | "ii7"A "iii"G "V^2"B "ii7"A | "V"G3
 "II"A | "V"B "II"A "VII+"G "V"B | "vii"d/"vi"c/ "V"B/"IV"A/ "V"B "ii"d | "V"d2 "ii^1"d2 | "iii"e2 ("ii^2"d "VI"^c) | "ii"d3
 "V"B | d B "V^1"G "V"B | "ii7"A/"iii7^3"G/ "ii7"A/"V^2"B/ "ii7"A "iii"G | "V^1"d2 "I"c2 | ("V^2"B3/2 "II~4"c/ "ii"A) "ii7"A | "V"G3 |]
 
@@ -1326,7 +1326,7 @@ T:Alleluia, Sing To Jesus!
 M:3/4
 L:1/4
 K:F
-"IV"F2 "I"G | ("IV"F3/2 "iv-"G/) "IV"A | "V7^3"B2 "IV"A | ("I"G "ii"F) "I"G | "IV^1"c2 "V"B | "IV"A2 "IV^1"A | ("V^1"G "ii"F) "I"G | "IV"F3 |
+[Q:1/4=130] "IV"F2 "I"G | ("IV"F3/2 "iv-"G/) "IV"A | "V7^3"B2 "IV"A | ("I"G "ii"F) "I"G | "IV^1"c2 "V"B | "IV"A2 "IV^1"A | ("V^1"G "ii"F) "I"G | "IV"F3 |
 "IV"F2 "I"G | ("IV"F3/2 "iv-"G/) "IV"A | "V7^3"B2 "IV"A | ("I"G "ii"F) "I"G | "IV^1"c2 "V"B | "IV"A2 "IV^1"A | ("V^1"G "ii"F) "I"G | "IV"F3 |
 "vi"c2 c | ("ii7"c "V7^2"B) "ii"A | "V7"B2 "V"B | ("IM7"B "ii7"A) "iii"G | "IV"A2 "IVM7^3"A | ("ii"A "V^2"B) "vi"c | ("V~4"c "V"B) "vii%7"A | "I~4"G3 |
 ("IV^1"c A) "IV"c | ("V7^3"B "iii7"G) "iii"B | ("IV"A "IVM7^3"F) "ii"A | ("I^1"G/"vi^1"A/ "ii-7"B/"ii"A/) "iii"G | "IV"c2 "vi-"c | ("vii"d "IV^1"c) "vii-"B | "IV^2"A2 "IM7"G | "IV"F3 |]
@@ -1336,7 +1336,7 @@ T:Beautiful Savior
 M:4/4
 L:1/4
 K:Eb
-"iii"E2 "I"E E | ("IV^1"F "vii-"D) "iii"E2 | G2 "I"G "IM7^3"G | ("IV^1"A "vii-"F) "iii"G2 | B2 .("vi"e "vi^1"c) |
+[Q:1/4=120] "iii"E2 "I"E E | ("IV^1"F "vii-"D) "iii"E2 | G2 "I"G "IM7^3"G | ("IV^1"A "vii-"F) "iii"G2 | B2 .("vi"e "vi^1"c) |
 "iii"B2 ("III~4"A "iii"G) | "IVM7"A2 "iii"G2 | "vii-"F4 | "iii^1"B2 "vi"c "iii^1"B | ("IM7"B "I"G) "IV"A2 |
 "vii%7"A2 "VII+"B "IV"A | ("vii%7"A "vii-"F) "iii"G2 | G2 "iii7^3"G "I"G | "iii^1"B3 "vi"A | "iii^2"G2 "vii-"F2 | "iii"E4 |]
 
@@ -1345,7 +1345,7 @@ T:Crown Him With Many Crowns
 M:4/4
 L:1/4
 K:D
-"ii"D D/D/ "vii-"F F | "V"B3 B | "ii^1"A "V"D "I^1"G "ii"F | "vi"E3
+[Q:1/4=110] "ii"D D/D/ "vii-"F F | "V"B3 B | "ii^1"A "V"D "I^1"G "ii"F | "vi"E3
 "vi"E | "ii"F "vi^1"A "vii-"B "ii"A | "III"^G "ii-7"F/"III7^3"E/ "vi^1"A "V^1"d | "vi"c "ii"d "III~4"B "III"B | "vi"A3
 "V~4"A | "ii^1"A "ii"F "I^1"E "ii^1"D | "V"B3 "IV7"B | "III"B ^G "ii^1"F "bvi-"E | "vi"c3
 "vi7^3"c | "ii^1"d3/2 "IV"c/ "V"B "ii^1"A | "iii7"G "vi"E "ii"F "ii^1"A | "V"G "ii"F "VI~4"E "vi"E | "ii"D4 |]
@@ -1355,7 +1355,7 @@ T:From Nazareth
 M:3/4
 L:1/4
 K:D
-"ii"D | "vii-"D2 "vi"E | "ii"F2 "V^1"G | "ii^2"F2 "vi"E | "II"D2 "V"D | "ii^1"A2 "ii"A |
+[Q:1/4=120] "ii"D | "vii-"D2 "vi"E | "ii"F2 "V^1"G | "ii^2"F2 "vi"E | "II"D2 "V"D | "ii^1"A2 "ii"A |
 ("vi^1"A "IM7"B) "vi"c | "ii"d2 "V^2"d | "ii"d2 "vi^1"A | "vii"d2 "bvi-"d | "vi"c2 "ii"A |
 "V"B2 "V^1"B | "ii"A2 "iii"G | "vi^1"A2 "ii"F | "vi"E2 "ii^1"F | "V"D2 "vi"C | "ii"D2 |]
 
@@ -1364,7 +1364,7 @@ T:Hallelujah, What a Savior!
 M:4/4
 L:1/4
 K:C
-"I"G G G E | "vi"c c "III"B2 | "IV"A A "I^1"G "vi^1"c | "V^2"B "II7"A "V"G2 |
+[Q:1/4=110] "I"G G G E | "vi"c c "III"B2 | "IV"A A "I^1"G "vi^1"c | "V^2"B "II7"A "V"G2 |
 "I"G G G E | c "IV^2"c "I"c "I^1"c3/4 "V"d/4 | "I"e2 "V7"d "vi"c3/4 A/4 | "IV"A2 "I"G2 |]
 
 X:167
@@ -1372,7 +1372,7 @@ T:I Need Thee Every Hour
 M:3/4
 L:1/4
 K:Ab
-"vi"A | c3/2 "ii-7"B/ "vi^2"A/"iii"G/ | "vi"A2 A | ("ii"A3/2 "ii-7"B/) "ii"A/F/ | "vi"E2
+[Q:1/4=80] "vi"A | c3/2 "ii-7"B/ "vi^2"A/"iii"G/ | "vi"A2 A | ("ii"A3/2 "ii-7"B/) "ii"A/F/ | "vi"E2
 "iii"E | B3/2 "vi^2"c/ "iii"B/E/ | "vi"c2 A | ("iii^2"G3/2 "vii%7"A/) "iii^2"G/"vii%7"F/ | "iii"E2 ||
 "vi"c | c3/2 A/ "ii^2"d/"vi"c/ | "vi^2"c "iii"B2 | "III7"B3/2 "vi^2"A/ "III+"c/"III7"B/ | "VI~4"B "vi"A
 "vi^1"A | "ii"A3/2 B/ A/F/ | "vi"E "vi^1"A "ii"B | ("vi^2"c3/2 A/) "iii7"B | "vi"A2 |]
@@ -1382,7 +1382,7 @@ T:Jesus, King of Glory
 M:4/4
 L:1/4
 K:G
-"V"B B "ii7"A A | "V"G2 D2 | d d "I"e e | "ii"A4 | "I^1"c "IV"c "V"B B |
+[Q:1/4=120] "V"B B "ii7"A A | "V"G2 D2 | d d "I"e e | "ii"A4 | "I^1"c "IV"c "V"B B |
 "vi^1"A2 "I"E2 | "V^2"G "iii"G "vi^1"A "ii7"A | "V"G4 | "V^1"d d "vi7"c "IV^1"c | "bvi-7"B2 "v-7"E2 | "vi"c c "I"e "IM7"e |
 ("V^2"G2 "ii"F2) | "vi"c "vi7"c "ii"A "ii7^3"A | "V^1"d2 B2 | "vi^1"A A "ii"F F | "V"G4 | "V"B "V^1"B "ii"A "IV"A |
 "V"G2 "vii"D2 | "V"d d "IM7"e "I"e | "ii"A4 | "I^1"c "IV"c "V"B "V^1"B | "vi^1"A2 "III7^2"E2 | "V^2"G G "II~2"A "ii7"A | "V"G4 |]
@@ -1392,7 +1392,7 @@ T:Jesus Shall Reign
 M:2/2
 L:1/2
 K:Eb
-"iii"E G/2 "vii%7^2"A/2 | "iii^1"B ("vi"c/2 "vii%7^2"d/2) | "iii"e ("iv-7"d/2 "IVM7"c/2) | "vii"B2 | "iii"B B/2 "iii^1"B/2 |
+[Q:1/2=60]  "iii"E G/2 "vii%7^2"A/2 | "iii^1"B ("vi"c/2 "vii%7^2"d/2) | "iii"e ("iv-7"d/2 "IVM7"c/2) | "vii"B2 | "iii"B B/2 "iii^1"B/2 |
 "vi"c "iii^1"B | "IVM7"A "iii"G | "vii-"F2 | "iii"G G/2 "vii%7"F/2 | ("iii"E/2 G/2) ("iii^1"B/2 e/2) |
 ("vi"c/2 "iii^1"B/2) ("vii%7^2"A/2 "iii"G/2) | "vii-"F2 | "iii^1"B "vi"c/2 "vii%7^2"d/2 | "iii"e3/2 "IV^1"A/2 | "iii^2"G "vii-"F | "iii"E2 |]
 
@@ -1401,7 +1401,7 @@ T:Jesus, Thy Boundless Love To Me
 M:3/4
 L:1/4
 K:E
-"iii"E3/4"III~4"F// | "iii"G2 G3/4"III~4"A// | ("iii"B G) "iii^1"E | ("vi"F3/2 "iii^2"G/) "vii7"A | ("III~4"A "iii"G) E3/4G// | B2 "vi^2"c | "iii"B2 G |
+[Q:1/4=100] "iii"E3/4"III~4"F// | "iii"G2 G3/4"III~4"A// | ("iii"B G) "iii^1"E | ("vi"F3/2 "iii^2"G/) "vii7"A | ("III~4"A "iii"G) E3/4G// | B2 "vi^2"c | "iii"B2 G |
 "I"G2 "IV~4"F | "vii-"F2 "iii"E3/4"III~4"F// | "iii"G2 G3/4"III~4"A// | ("iii"B G) "iii^1"E | ("vi"F3/2 "iii^2"G/) "vii7"A | ("III~4"A "iii"G) E3/4G// |
 "iii"B2 "vi^2"c | "iii"B2 G | "I"G2 "IV~4"F | "vii-"F2 "iii"G | "vi^1"A2 "iii"B | "vi"c2 "iii"B |
 ("ii-7"B "iii"G) "I"E | ("iii^2"G "vii-"F) "vii"B | ("iii^1"e B) B/e/ | ("vi"e c) "IV^1"A | "iii^2"G2 "vii%7"F | "iii"E2 |]
@@ -1411,7 +1411,7 @@ T:Lord, Enthroned in Heavenly Splendor
 M:6/4
 L:1/4
 K:Bb
-"V"D D "V^1"G2 "II"A2 | "V"B B B2 "II"A2 | "V"B B "V^1"d2 ("I"c "IM7"B) | "II~4"A "II"A "V"G4 |
+[Q:1/4=150] "V"D D "V^1"G2 "II"A2 | "V"B B B2 "II"A2 | "V"B B "V^1"d2 ("I"c "IM7"B) | "II~4"A "II"A "V"G4 |
 "V"D D "V^1"G2 "II"A2 | "V"B B B2 "II"A2 | "V"B B "V^1"d2 ("I"c "IM7"B) | "II~4"A "II"A "V"G4 |
 "V"G "V~4"A "V"B2 G2 | "II^1"A "V"B "I"c2 "II"A2 | "V"B "IV"c "vii-"d2 ("vii"B "vii-"d) |
 "IM7"e/d/ "IV"c "vii"d/c/ "iii"B "vi"c/B/ "vi^1"A/"IM7"G/ | "II"d4 "V"B B | "V^1"d2 ("I"c "IM7"B) "II~4"A "II"A | "V"G6 |]
@@ -1421,7 +1421,7 @@ T:No, Not One!
 M:4/4
 L:1/8
 K:F
-"IV"A2 A3/2"iv-"G/ "IV"F2 "IV^1"F3/2"vi"E/ | "vii-"D2 "ii-7"F2 "iv-7"D"IV"C z2 | !>!A2 !>!A2 !>!"I"G2 z2 | !>!"IV"A2 !>!"IM7"G2 !>!"IV"F2 z2 |
+[Q:1/4=95] "IV"A2 A3/2"iv-"G/ "IV"F2 "IV^1"F3/2"vi"E/ | "vii-"D2 "ii-7"F2 "iv-7"D"IV"C z2 | !>!A2 !>!A2 !>!"I"G2 z2 | !>!"IV"A2 !>!"IM7"G2 !>!"IV"F2 z2 |
 "IV"A2 A3/2"iv-"G/ "IV"F2 "IV^1"F3/2"vi"E/ | "vii-"D2 "ii-7"F2 "iv-7"D"IV"C z2 | !>!A2 !>!A2 !>!"I"G2 z2 | !>!"vi^1"A2 !>!"IM7"G2 !>!"IV"F2 z2 ||
 "IV"A2 c2 c2 "iv-7"d3/2"IV"c/ | A2 A2 "IM7"G"IV"F z2 | A2 c2 c2 "iv-7"d3/2"IV"c/ | A2 A2 "I"G4 |
 "IV"A2 A3/2"iv-"G/ "IV"F2 "IV^1"F3/2"vi"E/ | "vii-"D2 "ii-7"F2 "iv-7"D"IV"C z2 | !>!A2 !>!A2 !>!"I"G2 z2 | !>!"vi^1"A2 !>!"IM7"G2 !>!"IV"F2 z2|]
@@ -1431,7 +1431,7 @@ T:None Other Lamb
 M:3/2
 L:1/4
 K:D
-"ii^1"A "iii7"G "vi7"G | "ii"F3 "ii^1"A "iii7"G "vi7"G | "ii"F3 F F "vi^1"A |
+[Q:1/4=110] "ii^1"A "iii7"G "vi7"G | "ii"F3 "ii^1"A "iii7"G "vi7"G | "ii"F3 F F "vi^1"A |
 "vii%7"d3/2 "vi"c/ "III7"B "vi^2"A "III7"F ^G | "VI~4"A3 c "V"B "V~4"A | "vii%7^2"B3/2 "ii^1"A/
 "ii^1"A "V"B "IV^1"A "vi7"G | "bVII~2"F6 | "V"E2 "ii^2"F2 "vi7"G2 | "ii"F3 |]
 
@@ -1440,7 +1440,7 @@ T:O Be Glad All Nations on Earth
 M:3/2
 L:1/4
 K:F
-"IV"A4 "ii-7"B2 |(3::2("I^1"c2"IV"B  A2) G2 | "ii"F4 "I"G2 |(3::2("IV"A2"IV~2"G)  "IV"A4 | ("vii-"B2 "vii%7"A2) "vii-"G2 |(3::2("IV^1"c2"ii-7"B  "ii"A2) "V^1"G2 | "IV^2"F4 "I"E2 | "IV"F6 |
+[Q:1/4=230] "IV"A4 "ii-7"B2 |(3::2("I^1"c2"IV"B  A2) G2 | "ii"F4 "I"G2 |(3::2("IV"A2"IV~2"G)  "IV"A4 | ("vii-"B2 "vii%7"A2) "vii-"G2 |(3::2("IV^1"c2"ii-7"B  "ii"A2) "V^1"G2 | "IV^2"F4 "I"E2 | "IV"F6 |
 "IV"A4 "ii-7"B2 |(3::2("I^1"c2"IV"B  A2) G2 | "ii"F4 "I"G2 | (3::2("IV"A2"IV~2"G)  "IV"A4 | ("vii-"B2 "vii%7"A2) "vii-"G2 |(3::2("IV^1"c2"ii-7"B  "ii"A2) "V^1"G2 | "IV^2"F4 "I"E2 | "IV"F6 |
 "IV^1"c4(3::2"IV"c2A  | "I^1"c4(3"IV"c"ii^1"d_e  |(3::2("vii-"d2c  B2) "vii%7"A2 | "IV^2"A2 "I"G4 | "vi"c4(3::2"IV"c2A  | "I"c4(3"IV"c"ii^1"d_e  |(3::2("vii-"d2"IV^1"c  "iii^1"B2) "IV"A2 | "I"G6 |
 "IV"A4 "ii-7"B2 |(3::2("I^1"c2"IV"B  A2) G2 | "ii"F4 "V^1"G2 | (3::2("ii^2"A2"VI7"G)  "VI"A4 | ("V"B2 "ii^2"A2) "V^1"G2 |(3::2("IV^1"c2"iv-"B  "IVM7"A2) "V^1"G2 | "IV^2"F4 "I"E2 | "IV"F6 |]
@@ -1450,7 +1450,7 @@ T:O For A Thousand Tongues
 M:3/2
 L:1/4
 K:Ab
-"III"E2 | "vi^1"A "vi"A "iii"B2 B2 | "vi"c "iii7"B "IV"A2 "iii"B2 | "vi"c c "V"d2 "vi"c2 | "iii"B4
+[Q:1/4=200] "III"E2 | "vi^1"A "vi"A "iii"B2 B2 | "vi"c "iii7"B "IV"A2 "iii"B2 | "vi"c c "V"d2 "vi"c2 | "iii"B4
 "iii"e2 | "vi"e c c2 "vi^1"A2 | "ii"A F F2 (A F) | "vi^2"E A A2 "iii7"B2 | "vi"A4 |]
 
 X:176
@@ -1458,7 +1458,7 @@ T:O The Deep, Deep Love of Jesus
 M:8/4
 L:1/4
 K:Ab
-"IV"F2(3"IV^1"F"vi7"G"vi^1"A  "I"G2 F2 | "vii-"G2(3"I"G"vi^1"A"IV"B  (A3/2 G/) F2 | "vi"c2(3"V+"Bc"ii^1"d  ("I^1"c3/2 "iii"B/) "IV"A2 | ("vii-"B3/2 "IV"A/) "IM7"G2 "IV"F4 |
+[Q:1/4=180] "IV"F2(3"IV^1"F"vi7"G"vi^1"A  "I"G2 F2 | "vii-"G2(3"I"G"vi^1"A"IV"B  (A3/2 G/) F2 | "vi"c2(3"V+"Bc"ii^1"d  ("I^1"c3/2 "iii"B/) "IV"A2 | ("vii-"B3/2 "IV"A/) "IM7"G2 "IV"F4 |
 "IV"F2(3"IV^1"F"vi7"G"vi^1"A  "I"G2 F2 | "vii-"G2(3"I"G"vi^1"A"IV"B  (A3/2 G/) F2 | "vi"c2(3"V+"Bc"ii^1"d  ("I^1"c3/2 "iii"B/) "IV"A2 | ("vii-"B3/2 "IV"A/) "IM7"G2 "IV"F4 |
 "vi"c2(3"vi^1"A"IM7"B"vi^2"c  "III~4"B2 B2 | "IV"A2(3"IV^1"F"vi7"G"IV^2"A  "I~4"G2 G2 | "IV"F2(3"IVM7^3"F"vi7^2"G"ii"A  B2 B2 | "IV"A2(3"ii-7"B"ii"A"IM7"B  "I"c4 |
 "ii"F2(3"IV^1"F"vi7"G"vi^1"A  "I"G2 F2 | "vii-"G2(3"I"G"vi^1"A"IV"B  (A3/2 G/) F2 | "vi"c2(3"iii"B"vi^2"c"VI~4"d  ("vi"c3/2 "V7^2"B/) "ii"A2 | ("vii-"B3/2 "IV"A/) "IM7"G2 "IV"F4 |]
@@ -1468,7 +1468,7 @@ T:One Thing's Needful
 M:4/4
 L:1/4
 K:Eb
-"iii"B "ii-7"B "I"c "vii-"d | "iii"e "I"e "V~4"d "V"d | "vi"c "I"c "ii-7"B "iii"G | "vi"A "vii-"F "iii"E2 |
+[Q:1/4=120] "iii"B "ii-7"B "I"c "vii-"d | "iii"e "I"e "V~4"d "V"d | "vi"c "I"c "ii-7"B "iii"G | "vi"A "vii-"F "iii"E2 |
 "iii"B "ii-7"B "I"c "vii-"d | "iii"e "I"e "V~4"d "V"d | "vi"c "I"c "ii-7"B "iii"G | "vi"A "vii-"F "iii"E2 |
 "iii"E/"ii"F/ "iii"G "V"G "iii"G | [M:3/4] "vii-"F "vi"F "vii-"F/"iii^2"G/ | "IV"A "vi^1"A "ii"A | "iii"G G G | "vi"c "I"c "IV"c |
 "ii-7"B3/2 "vii7"A/ "iii"G | "IV^1"A "iii^2"G "vii%7"F | "iii"E E E/"ii"F/ | "iii"G "V"G "iii"G | "vii-"F "vi"F "vii-"F/"iii^2"G/ |
@@ -1479,7 +1479,7 @@ T:Praise My Soul The King Of Heaven
 M:2/4
 L:1/4
 K:Eb
-"iii"B B | "vii%7^2"B B | "iii^1"e "V"d | "vi"c2 | "iii"B2 | "vi^1"A "iii"G | "vi"c "vii-"B | "I"G "IV"A | "vii-"F2 |
+[Q:1/4=120] "iii"B B | "vii%7^2"B B | "iii^1"e "V"d | "vi"c2 | "iii"B2 | "vi^1"A "iii"G | "vi"c "vii-"B | "I"G "IV"A | "vii-"F2 |
 "V^1"G "bVII"G | "I"G "ii"G | "I^1"c "III"B | "IVM7"B "#iv%7"=A | "V"B "IVM7"c | "vii-"d "iii^1"e | "I^1"G "IVM7"=A | "vii"B2 |
 "iii^1"e "V"d | "vi"c "vii7"B | "I"e "I~4"d | "ii7"c "II"B | "I^1"c "iv-7"B | "vi"A "IV^1"F | "iii^2"E "vii-"D | "iii"E2 |]
 
@@ -1488,7 +1488,7 @@ T:The Galilean Fishers Toil
 M:4/4
 L:1/4
 K:G
-"V"G | "IV^1"F "I"E "V^1"D "iii"G | "V^1"B "ii"A "V"G "V^1"G | "vi^1"A "V^1"B "vi"c "ii"A | "V"B3
+[Q:1/4=120] "V"G | "IV^1"F "I"E "V^1"D "iii"G | "V^1"B "ii"A "V"G "V^1"G | "vi^1"A "V^1"B "vi"c "ii"A | "V"B3
 "V"B | "ii"A "iii"G "ii"F "V"G | "VI~4"E "VI"E "ii"D "vii-"D | "iii"G "ii"A "V^1"B "ii"A | "V"G3
 "ii"D | "V^1"G "ii"A "V"B "iii"G | "I"c c "V"B "V^1"G | "IM7"E "VI+"F "V"G "ii"A | "V"G3
 "V"G | B "I^1"c "ii"d "V^1"d | "I"e e "V"d B | "ii^1"A "V"B "I"c "ii"A | "V"G3 |]
@@ -1498,7 +1498,7 @@ T:The Lily of the Valley
 M:6/8
 L:1/4
 K:F
-"IV"F/4A/4 | c c/ "iv-7"d "IV"c/ | c/ A2 "IV^1"F/ | "V^1"G "vii-"F/ F "ii-7"D/ | "IV"C3/2 F "IV~2"G/ | "IV"A A/ A A/ |
+[Q:1/4=100] "IV"F/4A/4 | c c/ "iv-7"d "IV"c/ | c/ A2 "IV^1"F/ | "V^1"G "vii-"F/ F "ii-7"D/ | "IV"C3/2 F "IV~2"G/ | "IV"A A/ A A/ |
 "vii-"d "IV^1"c/ "IV"A "IV^1"F/ | "I"G3- | G3/2 ("IV"F A/) | c c/ "iv-7"d "IV"c/ | c/A2 F/ | "V^1"G "vii-"F/ F "ii-7"D/ | "IV"C3/2
 "IV"F "IV~2"G/ | "IV"A A/ "IM7"G "ii"F/ | "V^1"G G/ "IV^2"F "I"E/ | "IV"F3- | F3/2 "IV7"z/ F | "vii-"F/ B B B/ | B/ d2
 "vii-"d/ | "iv-7"d/ "IV"c c A/ | c3/2 (A "IV~2"G/) | "IV"F "V7"F/ "IV^1"F "IV"F/ | "vii-"d "IV^1"c/ "IV"A "IV^1"F/ | "I"G3- | G3/2 "IV"F A/ | c/ c
@@ -1509,7 +1509,7 @@ T:We Know Thee Who Thou Art
 M:4/4
 L:1/4
 K:D
-"ii"A | "V"B "ii^1"A "I^1"c "ii"d | "I"G3 "ii"F | "V"E B "ii^1"A "V"B | "vi"E3
+[Q:1/4=120] "ii"A | "V"B "ii^1"A "I^1"c "ii"d | "I"G3 "ii"F | "V"E B "ii^1"A "V"B | "vi"E3
 "ii"F | "V7^2"F "iii7^3"E "ii"D d | "I^1"c "V"B "ii"A "ii^1"D | "iii7"G "ii"F "V"E "vi"E | "ii"D3 |]
 
 X:182
@@ -1517,7 +1517,7 @@ T:By Grace I'm Saved
 M:none
 L:1/4
 K:F
-"IV"z c "IV^1"A "I"c | "vii-"d "I"c "ii-7"B "IV"A | "I~4"G2 "IV"F2 | A "I"G "ii"F | "iii^1"G "IV"A "vii-"B "IV"A | "I"G2 |
+[Q:1/4=120] "IV"z c "IV^1"A "I"c | "vii-"d "I"c "ii-7"B "IV"A | "I~4"G2 "IV"F2 | A "I"G "ii"F | "iii^1"G "IV"A "vii-"B "IV"A | "I"G2 |
 "IV"c A "IV^1"c | "vii-"d "I"c "ii-7"B "IV"A | "I~4"G2 "IV"F2 | A "I"G "ii"F | "iii^1"G "IV"A "vii-"B "IV"A | "I"G2 |
 "I"G "V^2"G "I^1"G | "IV"A "I^1"c "IV"c "V"=B | "I"c2 "I^1"c | "IV"A "IV^1"F "vii-"d "V"B | "I"A2 "I~4"G2 | "IV"F4 |]
 
@@ -1526,7 +1526,7 @@ T:Christ My King On High
 M:4/4
 L:1/4
 K:Bb
-"vii-"F3 "iv-"F | "ii-7"B3 "II"A | "III~4"A3 "IM7"B | "iii"G4 | "vii-"F3 "V"D |
+[Q:1/4=150] "vii-"F3 "iv-"F | "ii-7"B3 "II"A | "III~4"A3 "IM7"B | "iii"G4 | "vii-"F3 "V"D |
 "V"D2 .("V~4"C "V"B,) | "iv-7"D3 "IVM7"E | "IV"C4 | "vii-"F3 "iv-"F | "ii-7"B3 "II"A |
 "III~4"A3 "IM7"B | "iii"G4 | "vii-"F3 "V"D | D2 .("V~4"C "V"B,) | "iv-7"D3 "IV"C | "vii-"B,4 |]
 
@@ -1535,7 +1535,7 @@ T:Dear Christians, One and All Rejoice
 M:4/4
 L:1/4
 K:G
-"V"z "iii"G "V~4"G "VII"B | "ii"A "iii"G "vi^1"A "ii"A | "V"B2 "iii"G2 | "V"B "I^1"c "ii^1"d "V"B | "II~4"A2 "V"G2 |
+[Q:1/4=110] "V"z "iii"G "V~4"G "VII"B | "ii"A "iii"G "vi^1"A "ii"A | "V"B2 "iii"G2 | "V"B "I^1"c "ii^1"d "V"B | "II~4"A2 "V"G2 |
 "V"z "iii"G "V~4"G "VII"B | "ii"A "iii"G "vi^1"A "ii"A | "V"B2 "iii"G2 | "V"B "I^1"c "ii^1"d "V"B | "II~4"A2 "V"G2 |
 "V"z "iii"B "VI+"B "IV"A | "I"G "ii"F "iii"G "I"E | "V"D2 z D | G "I"G "V"G "ii"F |
 "iii"G "vi^1"A "VII"B2 | "iii"G2 "V"B "vi"c | "ii^1"d "V"B "ii"A2 | "V"G4 |]
@@ -1545,7 +1545,7 @@ T:Dear Christians, One and All Rejoice
 M:4/4
 L:1/4
 K:G
-"V"G2 G "ii^1"D | "iii"G "I"c "V^2"B "ii"A | "V"G2 z G | "ii"A "vi"c "V^1"B "ii"A | ("vi^1"E "ii"F) "V"G2 |
+[Q:1/4=140] "V"G2 G "ii^1"D | "iii"G "I"c "V^2"B "ii"A | "V"G2 z G | "ii"A "vi"c "V^1"B "ii"A | ("vi^1"E "ii"F) "V"G2 |
 "V"G2 G "ii^1"D | "iii"G "I"c "V^2"B "ii"A | "V"G2 z G | "ii"A "vi"c "V^1"B "ii"A | ("vi^1"E "ii"F) "V"G2 |
 "V"z "IM7"G "V~4"c "V"B | "I^1"c "ii^1"d "V"d "VI"^c | "ii"d2 "V"z d | "I"e "IV"c "ii-7"d3/2 "I^1"c/ |
 "V"B "ii"A "V"G2 | z "V^2"B "vii%7"A "V"D | "I"G "vi"A ("V"B "ii"A) | "V"G4 |]
@@ -1555,7 +1555,7 @@ T:My Neighbor
 M:4/4
 L:1/4
 K:G
-"V"G | "II~4"G "ii"F "iii"G "V^1"G | "I"A "ii"A "V"B "VII+"G | "vi"c "IV^1"c "V"B B | "vi7^3"A "IV"A "V"G
+[Q:1/4=100] "V"G | "II~4"G "ii"F "iii"G "V^1"G | "I"A "ii"A "V"B "VII+"G | "vi"c "IV^1"c "V"B B | "vi7^3"A "IV"A "V"G
 "V"d | "vi"c "ii^1"A "V"B B | "vi^1"A "ii"A "V"G "V^1"D | "vi^1"E "ii"F "iii"G "vii"B | "vi^1"A "ii"A "V"G |]
 
 X:187
@@ -1563,7 +1563,7 @@ T:O Love, How Deep, How Broad, How High
 M:3/4
 L:1/4
 K:E
-"I"c | c2 "iii"B   | "vi"c2   "V"B  | "iii^1"B    "vi"A2          | "I^1"G2 "vi"c | (c "iii^1"B) "iii"G |
+[Q:1/4=140] "I"c | c2 "iii"B   | "vi"c2   "V"B  | "iii^1"B    "vi"A2          | "I^1"G2 "vi"c | (c "iii^1"B) "iii"G |
 ("IV"F "I^1"G) "IV^1"F/"vi"C/ | "I^1"E "V~4"D2 | "I"C2 G | "V"B2 "iii"B | ("vi"c "iii^1"B) "IV"A |
 "iii^1"G "vii-"F2 | "iii"E2 "vi^2"E | "iii"G2 "I"G | "IV"F2 "I"E | "vi"E "II7"D2 | "I"C2 |]
 
@@ -1572,7 +1572,7 @@ T:Rock of Ages
 M:6/4
 L:1/4
 K:Bb
-"vii-"F3/2 "iii^2"G/ | "vii-"F2 D2 B3/2 "iii^2"G/ | "vii-"F4 "ii-7"B3/2 "iii"c/ | "iv-7"d3 "IVM7"c "iv-7"B "IV"A | "vii-"B4
+[Q:1/4=170] "vii-"F3/2 "iii^2"G/ | "vii-"F2 D2 B3/2 "iii^2"G/ | "vii-"F4 "ii-7"B3/2 "iii"c/ | "iv-7"d3 "IVM7"c "iv-7"B "IV"A | "vii-"B4
 "IV"A3/2 "iv-7"B/ | "IVM7"c3 c A F | "vii-"B4 "IV"A3/2 "iv-7"B/ | "IVM7"c3 c A F | "vii-"B4
 "vii-"F3/2 "iii^2"G/ | "vii-"F2 D2 B3/2 "iii^2"G/ | "vii-"F4 "ii-7"B3/2 "iii"c/ | "iv-7"d3 "IVM7"c "iv-7"B "IV"A | "vii-"B4 |]
 
@@ -1581,7 +1581,7 @@ T:Salvation Unto Us Has Come
 M:4/4
 L:1/4
 K:Eb
-"iii"B/ | B "ii-7"B "iii"B "vii-"_d | "vi"c "iii"B "vi"A3/2 "iii"B/ | G "vi"E "iii"G "vi^1"A | ("vii-"B "IV"c) "vii"B3/2
+[Q:1/4=100] "iii"B/ | B "ii-7"B "iii"B "vii-"_d | "vi"c "iii"B "vi"A3/2 "iii"B/ | G "vi"E "iii"G "vi^1"A | ("vii-"B "IV"c) "vii"B3/2
 "iii"B/ | B "ii-7"B "iii"B "vii-"_d | "vi"c "iii"B "vi"A3/2 "iii"B/ | G "vi"E "iii"G "vi^1"A | ("vii-"B "IV"c) "vii"B3/2
 "iii"B/ | "I"e3/2 "bII+"_d/ "vi"c "iii"B | "vi^1"e "vi"c "iii"B3/2 "ii-7"B/ | "I"e3/2 "iii"B/ "vii-"B "vi"E |
 "iii"G "ii-7"B "iii"G3/2 "vi"E/ | "bII+"F "vi^1"A "iii"G "IV^1"F | ("iii^2"E "vii-"F) "iii"E3/2 |]
@@ -1591,7 +1591,7 @@ T:Today Thy Mercy Calls Me
 M:4/4
 L:1/4
 K:A
-"vi"E | "vi^1"A "iii"G "IV"A "iii"B | "vi"c2 A "vi^1"A | "ii"F "vii%7"d "vi^2"c "iii"B | "vi"A3
+[Q:1/4=140] "vi"E | "vi^1"A "iii"G "IV"A "iii"B | "vi"c2 A "vi^1"A | "ii"F "vii%7"d "vi^2"c "iii"B | "vi"A3
 "vi"E | "vi^1"A "iii"G "IV"A "iii"B | "vi"c2 A "vi^1"A | "ii"F "vii%7"d "vi^2"c "iii"B | "vi"A3
 "vi"c | "VII"B "I"G "IV^1"A "VII"F | "iii"G2 E E | "bIII+"F "iii7^3"G "vi^1"A "iii"B | "vi"c3
 "vi"E | "IV"A "I"G "ii"F "vi"E | "iii^1"B2 "iii"B "vi"c | "ii"d "ii-7"B "vi^2"A "iii"G | "vi"A3 |]
@@ -1601,7 +1601,7 @@ T:Abide With Me
 M:4/4
 L:1/4
 K:Eb
-"iii"G2 "V^1"G "vii%7"F | "I"E2 "iii^1"B2 | "vi"c "vii"B "IM7"B "ii"A | "iii"G4 | G2 "vi^1"A "iii^2"B |
+[Q:1/4=100] "iii"G2 "V^1"G "vii%7"F | "I"E2 "iii^1"B2 | "vi"c "vii"B "IM7"B "ii"A | "iii"G4 | G2 "vi^1"A "iii^2"B |
 "vi"c2 "iii"B2 | "IVM7"A "ii-7"F "iii"G "vi^1"=A | "vii-"B4 | "iii"G2 "V^1"G "vii%7"F | "I"E2 "iii^1"B2 |
 "vi"B A "vi^1"A "IM7"G | "IV"F4 | "vii%7^3"F2 "iii^1"G "vii%7^2"A | "iii"G "vii%7"F "I"E "IV^1"A | "iii^2"G2 "vii-"F2 | "iii"E4 |]
 
@@ -1610,7 +1610,7 @@ T:Amazing Grace
 M:3/4
 L:1/4
 K:G
-"V"D | G2 B/"V^1"G/ | "V^2"B2 "ii7"A | "iii"G2 "I"E | "V"D2 D |
+[Q:1/4=100]  "V"D | G2 B/"V^1"G/ | "V^2"B2 "ii7"A | "iii"G2 "I"E | "V"D2 D |
 "V"G2 B/"V^1"G/ | "V^2"B2 "ii7^3"A | "V^1"d3- | d2 "V"B | (d3/2 B/) d/B/ | "V^1"G2 D |
 ("I"E3/2 "V^1"G/) "I"G/E/ | "V"D2 "V^1"D | "iii"G2 "V^2"B/G/ | B2 "ii7"A | "V"G3- | G2 |]
 
@@ -1619,7 +1619,7 @@ T:Be Still My Soul
 M:4/4
 L:1/4
 K:F
-"IV"A "iii"G "IV"A | "iv-7"B3 "IV"A | "iii"G "IV"A "iv-7"F3/2 "I"G/ | (G "IV"A3- | A) A "iii"G "IV"A | "iv-7"B3
+[Q:1/4=100] "IV"A "iii"G "IV"A | "iv-7"B3 "IV"A | "iii"G "IV"A "iv-7"F3/2 "I"G/ | (G "IV"A3- | A) A "iii"G "IV"A | "iv-7"B3
 "IV"A | "iii"G "IV"A "iv-7"F3/2 "I"G/ | "IV"A4- | A c c "IVM7^3"c | "ii"d3 A | A "IV^1"c c3/2 "I"G/ | (G "V"B3- | B)
 "V"B "vi-7"A "V^1"G | "IV^1"A3 F | "vii-"F G G3/2 "vii%7"A/ | "VI"A4- | A "IV"c c "IVM7^3"c | "ii"d3 A | A
 "IV^1"c c3/2 "I"G/ | (G "V"B3- | B) B "vi-7"A "V^1"G | "IV^2"A3 F | "I~4"F G "IM7"G3/2 "vii-"F/ | "IV"F4- | F |]
@@ -1629,7 +1629,7 @@ T:Beneath The Cross Of Jesus
 M:4/4
 L:1/4
 K:Db
-"ii"A | A3/2 A/ "iii7^3"=G B | "ii"A2 F "ii^1"D | "vi7^3"E3/2 "ii^1"F/ "iii7"G "vi7"G | "ii"F3
+[Q:1/4=100] "ii"A | A3/2 A/ "iii7^3"=G B | "ii"A2 F "ii^1"D | "vi7^3"E3/2 "ii^1"F/ "iii7"G "vi7"G | "ii"F3
 "IVM7^2"F | "vii"d3/2 d/ d "vi^1"c | "ii-7"B "ii"A "iii"G "iv-"F | "V"E3/2 E/ =E "iii^1"E | "IV"F3
 "ii-"F | "ii"F3/2 "I"E/ "ii"D "II~4"E | "ii"F "V^2"G "II"A "IV"A | "V"B3/2 B/ "iv-7"B "vii-"F | "iii"G3
 "iii"G/.-G/ | "vi7"c3/2 "V"B/ "vi7"A G | "ii"F F "vii%7^2"A "V"G/.-G/ | "ii^2"F3/2 D/ "IV^1"F "vi7"E | "ii"D3 |]
@@ -1639,7 +1639,7 @@ T:Blessed Assurance
 M:9/8
 L:1/4
 K:D
-"ii"F/ "II~4"E/ "ii"D/ | A3/2 A3/2 "V^2"G/ "ii"A/ "V^2"B/ | "ii"A3 A/ F/ A/ | d3/2 "vi^2"c c/ "III7"B/ "vi^2"A/ "III"^G/ | "vi"A3
+[Q:1/4=100] "ii"F/ "II~4"E/ "ii"D/ | A3/2 A3/2 "V^2"G/ "ii"A/ "V^2"B/ | "ii"A3 A/ F/ A/ | d3/2 "vi^2"c c/ "III7"B/ "vi^2"A/ "III"^G/ | "vi"A3
 "ii"F/ "II~4"E/ "ii"D/ | A3/2 A3/2 "V^2"G/ "ii"A/ "V^2"B/ | "ii"A3 D/ "II~4"E/ "ii"F/ | "iii^1"G3/2 E3/2 "ii^2"D/ "vi7"E/ C/ | "ii"D3
 "ii"A/ A/ A/ | d3/2 A3/2 "V"B/ B/ B/ | "ii"A3 A/ A/ A/ | "V"B3/2 "ii^1"d3/2 "vi^2"c/ c/ "III"B/ | "vi"c3
 "vi7"c/ "V"d/ "vi7"e/ | "ii"d3/2 A3/2 "V^2"B/ "ii"A/ "V^2"B/ | "ii"A3 "ii^1"D/ "vi^2"E/ "ii"F/ | "iii^1"G3/2 E3/2 "ii^2"D3/4 "vi7"E// "vi"C/ | "ii"D3 |]
@@ -1649,7 +1649,7 @@ T:Blind Bartimaeus
 M:3/4
 L:1/4
 K:F
-"IV"F | (A3/2 "iv-"G/) "IV"F | "IM7"G2 "vi^1"A | "IM7"G2 "ii"F | "I"G2 "IV"A | c2 c | (c "iv-7"d) "IV"c |
+[Q:1/4=100] "IV"F | (A3/2 "iv-"G/) "IV"F | "IM7"G2 "vi^1"A | "IM7"G2 "ii"F | "I"G2 "IV"A | c2 c | (c "iv-7"d) "IV"c |
 "IV^2"A2 "IM7"G | "IV"F2 c | "vii-"d2 d | (d3/2 e/) f | "IV"c2 c | A2
 "IV"c | "vii-"d2 d | (d3/2 e/) f | "IV"c2 c | (A "I"G) "IV"F | (A3/2 "iv-"G/) "IV"F | "IM7"G2
 "vi^1"A | "IM7"G2 "ii"F | "I"G2 "IV"A | c2 c | (c "iv-7"d) "IV"c | "IV^2"A2 "IM7"G | "IV"F2 |]
@@ -1659,7 +1659,7 @@ T:Come, Ye Disconsolate
 M:4/4
 L:1/4
 K:C
-"I"G2 E C | "IV^2"A3/2 "I"G/ G2 | ("IV^2"F3/2 "I"G/) "IV^2"A "vii-"B | "I"c2 G z |
+[Q:1/4=120] "I"G2 E C | "IV^2"A3/2 "I"G/ G2 | ("IV^2"F3/2 "I"G/) "IV^2"A "vii-"B | "I"c2 G z |
 "I"E2 E "I7^3"E | "IV^1"F3/2 F/ "IV"A2 | "V^2"G2 "ii7"=F =F | "V"G2 z2 |
 "I"c2 "vii-"B "ii7^3"A | "I"G3/2 "IV^2"F/ "I"E2 | c2 "ii^1"d/"IV"c/ "IV^1"B/A/ | "I"G2 E z |
 ("I"G e) "I^1"e c | "IV"c A2 "ii^1"F | "I^2"E2 "V7"D3/2 "I"C/ | C4 |]
@@ -1669,7 +1669,7 @@ T:It Is Well With My Soul
 M:4/4
 L:1/4
 K:Db
-"ii"A | A2 "II~4"G "ii"F | "ii^2"F2 "vi7^3"E "ii^1"F | ("vi7^2"G "III~4"B) "vi"A "vi7"G | "ii"F3 A | "vii-"d2 "vi^1"c
+[Q:1/4=100] "ii"A | A2 "II~4"G "ii"F | "ii^2"F2 "vi7^3"E "ii^1"F | ("vi7^2"G "III~4"B) "vi"A "vi7"G | "ii"F3 A | "vii-"d2 "vi^1"c
 "ii-7"B | B2 "vi^2"A "iii"=G | "vi"A3 "vi7"A | "ii"d2 d "IV"c | "V"B2 B "vii%7^2"B | "iii"e2 e "iii7"d |
 "vi"c2 "VI~4"B "vi"A | "ii^1"d2 d "V"d | "ii^2"d2 "vi"c3/2 "ii^2"d/ | "ii"d2  A A |
 A4- | "vi"A2 A A | A4- | "ii"A2 F A | "V"B2 B d | "ii^2"d2 "vi"c3/2 "ii^2"d/ | "ii"d3 |]
@@ -1679,7 +1679,7 @@ T:My Song Shall Be Of Jesus
 M:4/4
 L:1/4
 K:G
-"II"D/ | "V"G/"VI"A/ "VII"B/"I"c/ "VII"B "VI"A | ("V"G "III"E) "II"D z/ D/ | "V"G/"vi"A/ "vii"B/ ("VII~4"B "VI"A/) "v-7"G/"vii"B/- | B3 z/
+[Q:1/4=96] "II"D/ | "V"G/"VI"A/ "VII"B/"I"c/ "VII"B "VI"A | ("V"G "III"E) "II"D z/ D/ | "V"G/"vi"A/ "vii"B/ ("VII~4"B "VI"A/) "v-7"G/"vii"B/- | B3 z/
 "II"D/ | "V"G/"V~2"A/ "V"B/"V~4"c/ "iv-7"d "V^2"B/"ii"A/ | ("III"B "V^1"G) "VI"E z/ "II~4"G/ | "I~2"G "ii"F/ "IM7"B "ii"A "V"G/- | G3 z/
 "V^1"G/ | "I"c "ii7"c "VII+"B/"vii%7"A/ "iii^2"G/("V^2"B/- | B3/2 "ii"A/) A "vii"z/ "iv-"B/ | "I"c "vi"c "vii"B/"III~4^2"A/ "V"G/"V^2"d/- | d3 z/
 "II"D/ | "V"G/"V~2"A/ "V"B/"V~4"c/ "iii"B "VII7"A | ("I"G "III"E) "II"D "I"z/ G/ | "vi7"G "vii-"F/ "IM7"B "ii"A "V"G/- | G2 z3/2 |]
@@ -1689,7 +1689,7 @@ T:Nearer, My God, To Thee
 M:6/4
 L:1/4
 K:G
-"V"B3 "ii7"A2 "iii"G | "I"G2 E E3 | "V"D3 "V^1"G2 "V"B | "ii"A3- A2 z |
+[Q:1/4=160] "V"B3 "ii7"A2 "iii"G | "I"G2 E E3 | "V"D3 "V^1"G2 "V"B | "ii"A3- A2 z |
 "V"B3 "ii7"A2 "iii"G | "I"G2 E E3 | ("V^2"D2 G) "ii"F2 "II7"A | "V"G3- G2 z |
 "V"d3 "I^2"e2 "V"d | d2 B d3 | d3 "I"e2 "V"d | "ii^1"d2 "V"B "ii"A3 |
 "V"B3 "ii7"A2 "iii"G | "I"G2 "I^1"E "I"E3 | ("V^2"D2 G) "ii"F2 "II7"A | "V"G3- G2 z |]
@@ -1699,7 +1699,7 @@ T:Rejoice, My Heart, Be Glad and Sing
 M:4/4
 L:1/4
 K:Bb
-"vii-"F | F "IV"F "ii-7"F "V"B | "I^1"c "IV"A "vii-"B "IV^1"c | "I"G "IV"A "vii-"G "I"G | "IV"F3
+[Q:1/4=110] "vii-"F | F "IV"F "ii-7"F "V"B | "I^1"c "IV"A "vii-"B "IV^1"c | "I"G "IV"A "vii-"G "I"G | "IV"F3
 "IV"F | "V"B "IV"c "vii-"d "iii"B | "I"e "ii-7"d "IV"c "V"B | "IV"c "ii-7"d "iii"c "IV"c | "vii"B3 |]
 
 X:202
@@ -1707,7 +1707,7 @@ T:The Old Rugged Cross
 M:6/4
 L:1/4
 K:Bb
-"vii-"D/ E/ | F3/2 "VII~4"=E/ "VII+"G "vii-"F2 F/ F/ | "iii"G3/2 "III~4"^F/ "vi^2"A "iii"G2 .("I"G/ G/) | .("IVM7"A3/2 G/)
+[Q:1/4=140] "vii-"D/ E/ | F3/2 "VII~4"=E/ "VII+"G "vii-"F2 F/ F/ | "iii"G3/2 "III~4"^F/ "vi^2"A "iii"G2 .("I"G/ G/) | .("IVM7"A3/2 G/)
 "iv-7"F "IVM7"E "IV"F "IVM7"E | "vii-"D3- D2 D/ E/ | F3/2 "VII~4"=E/ "VII+"G "vii-"F2 F/ F/ | "iii"G3/2 "III~4"^F/
 "vi^2"A "iii"G2 .("I"G/ G/) | "IVM7"A3/2 "iii"G/ "IVM7"F e "iv-7"d "IVM7"c | "vii"B3- B2 "IV"A/ "iv-7"B/ |
 "IVM7"c3/2 c/ c c B A | "vii-"B3- "vii-"B2 "ii-7"B/ "ii"A/ | "iii"G3/2 G/ G B "III~4"A "iii"G | "vii-"F3- F2
@@ -1718,7 +1718,7 @@ T:Christ Returneth
 M:none
 L:1/4
 K:D
-"ii"D | F "II~4"E "ii"D | A2 "V^2"B3/4 "ii"A/4 | F "II~4"E "ii"D | "ii^2"F "vi"E z "VI"E | "ii"F F "vi^1"A |
+[Q:1/4=120] "ii"D | F "II~4"E "ii"D | A2 "V^2"B3/4 "ii"A/4 | F "II~4"E "ii"D | "ii^2"F "vi"E z "VI"E | "ii"F F "vi^1"A |
 "vii-"d3/2 "I"e/ "ii"d | "vi^2"c "III7"d "iii7"B | "VI~4"B "vi"A z "vi7"A | "ii^2"A "V"B "vi7^2"c | "ii"d2 "vi^2"c3/4 "ii"d/4 |
 "vi7"e3/2 "ii^2"d/ "vi7"e | "ii"f d "ii^1"d3/4.- d/4 | "V"d3/2 "V~4"c/ "V"B | ("ii^2"A d) "vi7"c | "ii"d3 ||
 "ii"A2 F | F "vi7^2"G "ii^1"A | "V"B2 B | d2 d3/4 d/4 | d "V~4"c "V"B | "ii"A2 "vi"c3/4 c/4 |
@@ -1729,7 +1729,7 @@ T:Day of Wrath, O Day of Mourning
 M:4/4
 L:1/4
 K:F
-"ii"F3/2 "II~4"E/ "ii"D "II~4"E | "ii"F "V^2"G "ii^1"A D | "V"B "iii^1"B "ii^1"A D |
+[Q:1/4=100] "ii"F3/2 "II~4"E/ "ii"D "II~4"E | "ii"F "V^2"G "ii^1"A D | "V"B "iii^1"B "ii^1"A D |
 "iii7"G "ii^1"F "VI"E "II"^F | "V"G "v-7"G "VI7"G "ii^2"F | "VI"E "ii^1"F "VI~4"E "ii"D |
 "ii"F3/2 "vii"B/ "IV7"B3/2 A/ | "iv%7"G "IV7"A "VII"B "vii-"F | "iv-7"F B "IV7"B3/2 A/ |
 "iv%7"G "IV7"A "vii"B "vii-"F | d "V"d "ii^1"d3/2 D/ | "V"E G ("ii^2"F2- | "VI+"F "VI7"E) "ii"D2 |]
@@ -1739,7 +1739,7 @@ T:The Apostle Looked and Heard a Voice
 M:4/4
 L:1/4
 K:G
-"V"G | B B "ii^1"A "ii"d | "V~4"c/"V"B/ A/G/ "ii"A "I~4"D | "V^1"G/"vii7"A/ "V"B "ii^1"A "II~4"G/"ii"F/ | "iii"G "VI+"F/"VI"E/ "ii"F
+[Q:1/4=100] "V"G | B B "ii^1"A "ii"d | "V~4"c/"V"B/ A/G/ "ii"A "I~4"D | "V^1"G/"vii7"A/ "V"B "ii^1"A "II~4"G/"ii"F/ | "iii"G "VI+"F/"VI"E/ "ii"F
 "ii^1"A | "V"B "I^1"e "IV"A "ii-7"d | "iii"G "VI"A/"VI7"G/ "ii"F "ii^1"A | "V"B "iii-7"^c "ii^1"d "iii^1"G | "ii^2"F "VI"E "ii"D
 "V"D | "ii^1"A "VI7^2"A "ii"F "IVM7^2"E/"ii7^3"D/ | "V^1"G "ii"A "V"B B |"ii^1"d "ii"d "I^2"c/"V"B/ "vii%7^2"A/"V7^3"G/ | "I^1"c "V"d "I"e
 "V"d | "I"e "ii7^2"d/"IV^1"c/ "vii-"d "iii"G | "vi"c "ii-7"B/"ii"A/ "V"B "V^1"G | "vi^1"A "V^1"G "ii7^2"F
@@ -1750,7 +1750,7 @@ T:The Bridegroom Soon Will Call Us
 M:3/4
 L:1/4
 K:G
-"V"D | "V^1"G2 "iii"G | "ii"A2 "vi"c | ("III"B3/2 "III~4"A/ "III"B) | "VI"A2 "ii"A | "V^1"G2 "I"G | "vi"c2 "V"B | "ii"A2
+[Q:1/4=160] "V"D | "V^1"G2 "iii"G | "ii"A2 "vi"c | ("III"B3/2 "III~4"A/ "III"B) | "VI"A2 "ii"A | "V^1"G2 "I"G | "vi"c2 "V"B | "ii"A2
 "vii-"B | "iii"E2 "ii"F | "I"G2 "vi"A | ("ii"F3/2 "iii7"E/ "ii"F) | "bVII"D2 "V"B | B2 "bVII"d | "vi"c2 "IV"c | "V"B2
 "V"B | B2 "ii"d | A2 "V"B | ("I"c3/2 "I~2"d/ "I"c) | "V"B2 B | B2 "ii"d | "I^1"c2 "V"B | "ii"A2
 "V"B | "ii"A2 "iii"G | "vi"A2 "ii"F | ("V^1"G3/2 "ii^2"F/ "iii^1"G) | "ii"A2 "V"B | "ii^1"d2 "V"B | "I"c "ii"A2 | "V"G2 |]
@@ -1760,7 +1760,7 @@ T:The Day is Surely Drawing Near
 M:4/4
 L:1/4
 K:G
-"V"z "V^1"G "V"G B | "ii"A "iii"G "vi"A "ii"A | "V"B2 "I"G2 | "V"B "I^1"c "ii^1"d "V"B | "II~4"A2 "V"G2 |
+[Q:1/4=140] "V"z "V^1"G "V"G B | "ii"A "iii"G "vi"A "ii"A | "V"B2 "I"G2 | "V"B "I^1"c "ii^1"d "V"B | "II~4"A2 "V"G2 |
 "V"z "V^1"G "V"G B | "ii"A "iii"G "vi"A "ii"A | "V"B2 "I"G2 | "V"B "I^1"c "ii^1"d "V"B | "II~4"A2 "V"G2 |
 "V"z B "ii-7"B "II"A | "iii"G "VII"F "iii^1"G "VI"E | "ii"D3 D | "V^1"G "I"G "V"G "ii"F |
 "iii"G "ii"A "V"B2 | "I"G2 "V"B "I^1"c | "ii"d "V"B "II~4"A2 | "V"G4 |]
@@ -1770,7 +1770,7 @@ T:There's a Great Day Coming
 M:4/4
 L:1/8
 K:G
-"V"D D | G2 G2 G/2 G3/2 z G | B2 B2 "V~4"A/2 "V"G3/2  "I^2"E "V"D | G2 G2
+[Q:1/4=80] "V"D D | G2 G2 G/2 G3/2 z G | B2 B2 "V~4"A/2 "V"G3/2  "I^2"E "V"D | G2 G2
 "V^1"G/2 G3/2 "ii^2"A "V"B | "ii"A6 "V^1"G "ii"A | "V"B2 B B B D' D' B | "vi^1"A "I"G G E "V"D2
 "V"D D | "V^1"G/2 G3/2 G G "ii7"A2 A2 | "V"G6 z2 ||  D'3 D' "I^2"E' "V"D' z2 |
 "V"B3 B "I^2"C' "V"B z2 | "V^1"G3 G "V"G G "V^1"G G | "VI7"B2 "vi"A2 "ii"A4 |
@@ -1781,7 +1781,7 @@ T:Wake, Awake, for Night Is Flying
 M:none
 L:1/4
 K:C
-"I"C2 "vi"E2 "V"G3 G "iii"G "I"G ("vi"A "V^1"G "I"A2) "V"G2 | "I"z/ G c "V"G "I^1"c e "V^1"d "I"e "II~4"d2 "V"G2 |
+[Q:1/4=160] "I"C2 "vi"E2 "V"G3 G "iii"G "I"G ("vi"A "V^1"G "I"A2) "V"G2 | "I"z/ G c "V"G "I^1"c e "V^1"d "I"e "II~4"d2 "V"G2 |
 "I"z/ G "vi"c "iii"G "IV"A "I"E "ii"F "V"D "I"C4 | C2 "vi"E2 "V"G3 G "iii"G "I"G ("vi"A "V^1"G "I"A2) "V"G2 |
 "I"z/ G c "V"G "I^1"c e "V^1"d "I"e "II~4"d2 "V"G2 | "I"z/ G "vi"c "iii"G "IV"A "I"E "ii"F "V"D "I"C2 |
 "vii"z/ "V^1"G G3 "ii^1"F "I^2"E "V"D "I"C2 | z/ G "v"G3 "IV^1"F "I"E "V"D "I"C2 | "V"D "I"E "ii7"F2 "I"E2 |
@@ -1792,7 +1792,7 @@ T:Glorious Things of Thee are Spoken
 M:4/4
 L:1/4
 K:F
-"IV"F3/2 "IV~2"G/ "IV"A "I"G | "iii"B "IV"A "IM7"G/E/ "IV"F | "iv-7"d "IV"c "iii"B    "IV"A | "V^1"G "vii%7"A/"vii-"F/ "I"c2 |
+[Q:1/4=100] "IV"F3/2 "IV~2"G/ "IV"A "I"G | "iii"B "IV"A "IM7"G/E/ "IV"F | "iv-7"d "IV"c "iii"B    "IV"A | "V^1"G "vii%7"A/"vii-"F/ "I"c2 |
 "ii"F3/2 "V7^2"G/ "IV^2"A "I"G | "iii"B "IV"A "IM7"G/E/ "IV"F |  "vii-"d "IV"c "V"B    "IV"A | "V^1"G "vii%7"A/"vii-"F/ "I"c2 |
 "I"G "IV^2"A "I"G/E/ C | "vii-"B    "IV^2"A "I"G/E/ C | "vi"c "V"B    "ii"A3/2 A/ | "V7"=B B/"I^2"c/ "I"c2 |
 "IV^1"f3/2 "vi"e/ "vii-"d "IV"c |  "vii-"d3/2 "IV^2"c/ "ii7"c/"iii"B/ "IV"A | "IM7^3"G "vi"A/"VII~4"B/ "IV^1"c/"ii^2"d/ "vii-"B/"V^1"G/ | "IV^2"F "IM7"A/G/ "IV"F2 |]
@@ -1802,7 +1802,7 @@ T:Hark, Hark, My Soul!
 M:4/4
 L:1/4
 K:F
-"IV"A "iii"G "IV"A | "iv-7"B3 "IV"A | "iii"G "IV"A "iv-7"F3/2 "I"G/ | (G "IV"A3- | A) A "iii"G "IV"A | "iv-7"B3
+[Q:1/4=100] "IV"A "iii"G "IV"A | "iv-7"B3 "IV"A | "iii"G "IV"A "iv-7"F3/2 "I"G/ | (G "IV"A3- | A) A "iii"G "IV"A | "iv-7"B3
 "IV"A | "iii"G "IV"A "iv-7"F3/2 "I"G/ | "IV"A4- | A c c "IVM7^3"c | "ii"d3 A | A "IV^1"c c3/2 "I"G/ | (G "V"B3- | B)
 "V"B "vi-7"A "V^1"G | "IV^1"A3 F | "vii-"F G G3/2 "vii%7"A/ | "VI"A4- | A "IV"c c "IVM7^3"c | "ii"d3 A | A
 "IV^1"c c3/2 "I"G/ | (G "V"B3- | B) B "vi-7"A "V^1"G | "IV^2"A3 F | "I~4"F G "IM7"G3/2 "vii-"F/ | "IV"F4- | F |]
@@ -1812,7 +1812,7 @@ T:Jerusalem the Golden
 M:4/4
 L:1/4
 K:C
-"I"C | "I~4"D "I"C "IV^2"F "I"E | "V~4"D2 "I"C E | "V^1"G "I"c "III"B "III7"^G | "vi"A3
+[Q:1/4=110] "I"C | "I~4"D "I"C "IV^2"F "I"E | "V~4"D2 "I"C E | "V^1"G "I"c "III"B "III7"^G | "vi"A3
 "IV"A | "I"G E "III"E "bvi-"D | "vi"C2 "V"D "I"E | E "I^1"E "ii^1"D "vi"C | "V"D3
 "V"D | "IV"F "I"E "IV"A "III"B | "vi"c2 "V"d G | "I"e3/2 e/ "ii^1"d "IV^1"c | "V"B3
 "vii%7^2"A | "I^1"G "I"E "III"E "bvi-"D | "vi"C2 "V"D "I"E | E "I^1"E "V7"D3/2 "I"C/ | C3 |]
@@ -1822,7 +1822,7 @@ T:I'm But A Stranger Here
 M:4/4
 L:1/4
 K:G
-"V"G2 "vi7"G "V^1"G | "II~4"G "ii7"F A2 | "IV"D2 "ii7"D E | "V"D4 |
+[Q:1/4=120] "V"G2 "vi7"G "V^1"G | "II~4"G "ii7"F A2 | "IV"D2 "ii7"D E | "V"D4 |
 "V"D2 B "bii%7^2"B | "iv-7"B "ii^1"A "III7^2"d2 | "VI+"A2 "ii^2"F "VI7"E | "ii"D4 |
 "ii7"A2 "II~2"B "ii7"A | "II~4"A "V^2"G D2 | "ii7"c2 "iii7"B "IV"A | "V"A "I^2"G "V"D2 |
 "V7^3"B2 "III"e "iii7"d | "VI~4"d "vi"c ("III^2"B "vi^1"A) | "V^2"G2 "II7"A "ii7"F | "V"G4 |]
@@ -1832,7 +1832,7 @@ T:Blest Be The Tie That Binds
 M:3/4
 L:1/4
 K:C
-"I"G | E/ "I~4"F/ "I"G "IV"A | "I"G2 c | "vi"c/ "V^1"B/ "I"A "ii"A | "V"G2
+[Q:1/4=90] "I"G | E/ "I~4"F/ "I"G "IV"A | "I"G2 c | "vi"c/ "V^1"B/ "I"A "ii"A | "V"G2
 "I"G | E/ "V7^2"F/ "I^1"G "I"G | "IV"A/ "V7^2"B/ "I"c "V7^2"B |  "I^1"c/ "IV"A/ "V"G "V7"G | "I"G2 |]
 
 X:215
@@ -1840,7 +1840,7 @@ T:Behold, A Host, Arrayed in White
 M:6/4
 L:1/4
 K:Eb
-"iii"E/G/ | B2 B "#iv%7^3"c2 "iii"B | ("bii%7"G3/2 "bii7"E/) "bii%7"G/"bii7"B/ "IVM7^2"F2 F/"I"G/ | "III^2"A2 "IV^1"F ("I^2"E3/2 F/) "IM7"G/A/ |
+[Q:1/4=120] "iii"E/G/ | B2 B "#iv%7^3"c2 "iii"B | ("bii%7"G3/2 "bii7"E/) "bii%7"G/"bii7"B/ "IVM7^2"F2 F/"I"G/ | "III^2"A2 "IV^1"F ("I^2"E3/2 F/) "IM7"G/A/ |
 "IVM7"B2 "vii7"D "iii"E2 "I"G/"vi^1"A/ | ("vii-"B3/2 "V^1"G/) "vi"c/"VI~2"B/ "vii-"B2 "vi"c | ("vii-"B3/2 F/) "IV"A "V"G2 "I"E/"IVM7^2"F/ | ("iii^2"G3/2 "VII7"A/) "VII+"G ("vii-7"F3/2 "VII+"G/) "vii%7"F |
 "III~4"E3- "iii"E2 E/G/ | B2 B "#iv%7^3"c2 "iii"B | ("bii%7"G3/2 "bii7"E/) "bii%7"G/"bii7"B/ "IVM7^2"F2 F/"I"G/ | "III^2"A2 "IV^1"F ("I^2"E3/2 F/) "IM7"G/A/ | "IVM7"B2 "vii7"D "iii"E2
 "I"G/"vi^1"A/ | ("vii-"B3/2 "V^1"G/) "vi"c/"VI~2"B/ "vii-"B2 "vi"c | ("vii-"B3/2 F/) "IV"A "V"G2 "I"E/"IVM7^2"F/ | ("iii^2"G3/2 "VII7"A/) "VII+"G ("vii-7"F3/2 "VII+"G/) "vii%7"F | "III~4"E3- "iii"E2
@@ -1852,7 +1852,7 @@ T:Blest Be The Tie That Binds
 M:3/4
 L:1/4
 K:G
-"V"B | (B G) B | ("ii"A F) "ii7^3"A | "V^1"G2 "ii"G | ("I"G E) "I^1"G | ("V"G D) "V^1"G | "ii"F2
+[Q:1/4=110] "V"B | (B G) B | ("ii"A F) "ii7^3"A | "V^1"G2 "ii"G | ("I"G E) "I^1"G | ("V"G D) "V^1"G | "ii"F2
 "ii"A | (A F) "IV"A | ("V"G B) "V^1"d | ("ii"d A) "IV"c | ("V"B "V^1"d) "I"e | ("V^1"d "V"B) "vi7"c | ("V^2"B "II~4"G) "ii7"A | "V"G2 |]
 
 X:217
@@ -1860,7 +1860,7 @@ T:Built on the Rock
 M:3/4
 L:1/4
 K:F
-"ii"D "ii-7"D "VI^1"A | "ii"F2 "I~2"D | "vii-"F2 "V^1"G | "VI"A3 | "ii^1"A "III7"=B "vi"c | "IV^1"A "vii-"F "V"G | "VI~4"E3 |
+[Q:1/4=140] "ii"D "ii-7"D "VI^1"A | "ii"F2 "I~2"D | "vii-"F2 "V^1"G | "VI"A3 | "ii^1"A "III7"=B "vi"c | "IV^1"A "vii-"F "V"G | "VI~4"E3 |
 "ii"D3 | "vii-"D "V"D "ii^1"A | "IV^1"F2 "vii-"D | "ii"F2 "I"G | "IV"A3 | A "V7^3"=B "I^1"c | "IV"A "ii"F
 "V^1"G | "V"E3 | "ii"D3 | d "vi^2"c "III"=B | "vi"c2 "IV"A | "IV^2"A2 "IM7"G | "IV"F3 | "VI7^3"A "ii^1"d "ii-7"f | "vi^1"e2
 "ii-7"d | "vi^2"c2 "III7"=B | "vi"A3 | "VI7^3"A "ii^1"A "VI7^2"G | "ii"F "V^1"G "V7"F | "VI~4"E3 | "ii"D3 |]
@@ -1870,7 +1870,7 @@ T:For All The Saints
 M:4/4
 L:1/4
 K:G
-z "V"d "IM7"B "II7"A | "iii"G3 "V"D | "I"E "V^1"G "vi7"A "II"D | "V"B3.- "V"B |
+[Q:1/4=130] z "V"d "IM7"B "II7"A | "iii"G3 "V"D | "I"E "V^1"G "vi7"A "II"D | "V"B3.- "V"B |
 "VI"A2.- "III~4"A "bii-"G | "ii"F2 "bVII"F2 | "V"G "IV"A "V7"F "VI7"E | "bVII"D3.- "II7"D |
 "V^1"G2 "V^1"G.- "vi7"G | "V"d3 "V7^3"d | "iii7"c "ii^1"d "V~4"c/"V"B/ "VII+"A/G/ | "II"A2
 ("V^1"d2 | "I"e) "VI~4"d/"vi7"c/ "V^1"d2 | "iii"G3 ("vii7"A/"V^1"B/ | "vi7"c) "V"B "II7"A2 | "V"G4 |]
@@ -1884,7 +1884,7 @@ T:Faith of Our Fathers
 M:3/4
 L:1/4
 K:G
-"V"B "V~4"A "V"G | (G "ii7^2"F) "V"G | ("vi^1"A E) "ii7"F | "V"G3 | "I"G "I~4"F "I^1"E | "V"D2 G |
+[Q:1/4=120] "V"B "V~4"A "V"G | (G "ii7^2"F) "V"G | ("vi^1"A E) "ii7"F | "V"G3 | "I"G "I~4"F "I^1"E | "V"D2 G |
 ("VI7"G "VI"F) "VI7"G | "ii"A3 | "V"B "V~4"A "V"G | ("V^2"G "ii7"F) "iii"G | ("vi^1"A "I"E) "ii7"F | "iii"G3 |
 "I"G "I~4"F "I"E | "V^2"D2 B | ("II~2"A B) "ii7"A | "V"G3 | "I"c c c |
 "V"B2 B | "ii"A2 A | "V"B3 | B "vi7"A "V^1"G | "I"E2 "iii"G | "II~4"A2 "ii7"A | "V"G3 |]
@@ -1894,7 +1894,7 @@ T:The Church's One Foundation
 M:4/4
 L:1/4
 K:D
-"ii"F | F F "V^2"G "ii"F | "ii^2"F2 "vi7^3"E "ii^1"D | "V"D B "ii^2"A "vi7"G | "ii"F3
+[Q:1/4=130] "ii"F | F F "V^2"G "ii"F | "ii^2"F2 "vi7^3"E "ii^1"D | "V"D B "ii^2"A "vi7"G | "ii"F3
 "vi7^2"G | "ii^1"A d "bVII^2"d "IVM7"c | "I7^2"c2 "V"B "IV^1"A | "V^1"G "vi^1"A "ii"F "vii-7"D | "vi"E3
 "vi"E | "ii"F "vi7^2"G "ii^1"A "V"B | B2 "ii^1"A "vii-"d | "iv-7"d3/2 "IV~4"c/ "ii-7"B "bIII+"F | "iii"G3
 "vi^1"E | "ii"F F "V^2"G "ii"F | "V7"F2 "iii^1"E "V"D | "iii7"D "iii"E "VI~4"D "vi7"C | "ii"D3 |]
@@ -1904,7 +1904,7 @@ T:Through the Night of Doubt and Sorrow
 M:4/4
 L:1/4
 K:A
-"vi"A "iii^1"E "IV"A "iii"B | "vi^1"c3/2 "VI~4"d/ "vi^2"c "iii"B | "vi^1"e "IV"A "ii"B "IV^2"c/"vii%7"d/ | "vi^2"c "iii"B "vi"c2 |
+[Q:1/4=120] "vi"A "iii^1"E "IV"A "iii"B | "vi^1"c3/2 "VI~4"d/ "vi^2"c "iii"B | "vi^1"e "IV"A "ii"B "IV^2"c/"vii%7"d/ | "vi^2"c "iii"B "vi"c2 |
 "vi"c "iii"B "vi"c "iii^1"e | "IV"A "iii^1"G "iii^2"G "vii-"F | "biii-"B "VII+"B "I"e "iii^2"G | "vii-"F "VII"F "iii"E2 |
 "iii"E3/2 "III~4"F/ "iii"G "vii-"B | "vi^1"A "iii"G "ii^1"F "vi"E | "IV"A "iii"B "vi"c/"VI~4"d/ "I"e | "iii7^2"d "vi"c "iii"B2 |
 "vi^1"A "iii"E "vi^1"A "iii^2"B | "vi"c3/2 "vii%7^2"d/ "vi^2"c "iii"B | "vi^1"e "IV"A "ii"d "vi"c | "III~4"B "iii"B "vi"A2 |]
@@ -1914,7 +1914,7 @@ T:When The Roll Is Called Up Yonder
 M:4/4
 L:1/4
 K:Ab
-"vi"A3/4 "VI~4"B/4 | "vi"c3/4 c/4 c3/4 c/4 c3/4 "iii^2"B/4 "vi^1"A3/4 A/4 | "ii-7"B3/4 "ii"A/4 A3/4 F/4 "vi"E
+[Q:1/4=100] "vi"A3/4 "VI~4"B/4 | "vi"c3/4 c/4 c3/4 c/4 c3/4 "iii^2"B/4 "vi^1"A3/4 A/4 | "ii-7"B3/4 "ii"A/4 A3/4 F/4 "vi"E
 "vi"A3/4 "VI~4"B/4 | "vi"c3/4 c/4 c3/4 c/4 c3/4 c/4 "iii^1"B3/4 "vii%7^2"A/4 | "iii"B3 "vi"A3/4 "VI~4"B/4 | "vi"c3/4 c/4 c3/4
 "vi"c/4 c3/4 "iii^2"B/4 "vi^1"A3/4 A/4 | "ii-7"B3/4 "ii"A/4 A3/4 F/4 "vi"E A3/4 "VI~4"B/4 | "vi^2"c3/4 c/4 c3/4 A/4 "iii7"B3/4 B/4 B3/4 G/4 | "vi"A3
 "IV"c3/4 "V"d/4 | "vi"e2- e3/4 "VI~4"d/4 "vi"c3/4 "III7"d/4 | "vi"e2 c "IV"c3/4 c/4 | "III7"d2- d3/4
@@ -1926,7 +1926,7 @@ T:Be Thou My Vision
 M:3/4
 L:1/4
 K:Eb
-"iii^1"E E "iv-7"F/"iii^1"E/ | "vi^2"C "ii-7"B, B,/"vi^2"C/ | "iii^1"E E "iv-7"F | "iii"G3 |
+[Q:1/4=100] "iii^1"E E "iv-7"F/"iii^1"E/ | "vi^2"C "ii-7"B, B,/"vi^2"C/ | "iii^1"E E "iv-7"F | "iii"G3 |
 "vii-"F F F | F "V"G "iii"B | "vi"c "vii-"B "I"G | "iii^1"B3 |
 "vi^1"c "vi"c/"ii^1"d/"vi"e/"vii"d/ | "vi"c "vii-"B "iii^1"G | B "iii"E "vii-"D | ("vi"C2 "V"B,) |
 "iii^2"E G "V"B | "vi"c/"V"B/ "iii^2"G "iii^1"E/G/ | "iv-7"F "III"E "VII~4"E | "iii^1"E3 |]
@@ -1936,7 +1936,7 @@ T:Come Thou Fount Of Every Blessing
 M:3/4
 L:1/4
 K:Eb
-"iii"G/ "ii"F/ | "iii"E E G/ "iii^1"B/ | "vii-"F F "iii"G/ B/ | "vi"c "iii"B "iii^2"G/ "vii%7"F/ | "iii"E2
+[Q:1/4=90] "iii"G/ "ii"F/ | "iii"E E G/ "iii^1"B/ | "vii-"F F "iii"G/ B/ | "vi"c "iii"B "iii^2"G/ "vii%7"F/ | "iii"E2
 "iii"G/ "ii"F/ | "iii"E E G/ "iii^1"B/ | "vii-"F F "iii"G/ B/ | "vi"c "iii"B "iii^2"G/ "vii%7"F/ | "iii"E2
 "iii^1"B/ "IV"c//"ii^1"d// | "iii"e "iii7"d "vi^2"c/ "iii"B/ | "vi"c/"iii^1"B/ "iii"G B/ "ii7"c//"ii"d// | "I"e "V"d "vi"c/ "vii-"B/ | "iii"e2
 "iii"G/ "ii"F/ | "iii"E E G/ "iii^1"B/ | "vii-"F F "iii"G/ B/ | "vi"c "iii"B "iii^2"G/ "vii%7"F/ | "iii"E2 |]
@@ -1946,7 +1946,7 @@ T:Guide Me, O Thou Great Jehovah
 M:4/4
 L:1/4
 K:G
-"V"D "I"E "V^1"D3/2 "V"G/ | G/"ii^2"F/ "V^1"G/"I"A/ "V^2"B "ii"A | "V"B "I^1"G "I"E "vi7"c |
+[Q:1/4=120] "V"D "I"E "V^1"D3/2 "V"G/ | G/"ii^2"F/ "V^1"G/"I"A/ "V^2"B "ii"A | "V"B "I^1"G "I"E "vi7"c |
 "V^2"B "ii7"A "V"G2 | D "I"E "V^1"D3/2 "V"G/ | G/"ii^2"F/ "V^1"G/"I"A/ "V^2"B "ii"A | "V"B "I^1"c "V^1"d "I"c/"vi^1"A/ |
 "V^2"G "ii"F "V"G2 | "ii7"A3/2 "V^2"B/ "II7"c "ii^1"A | "V"B3/2 "II7"c/ .("V"d "V^1"B) | d3/2 d/
 "ii7^2"d/"V"d/ "ii^1"d/"iii7"d/ | "ii"d4 | "V^1"d3/2 "ii7^2"c/ "V"B/d/ "vi^1"c/A/ | "V^2"G "ii"F "V"G2 |]
@@ -1956,7 +1956,7 @@ T:He Leadeth Me
 M:4/4
 L:1/4
 K:D
-"ii"A | F3/2 "II~4"E/ "ii"D A | "V"B G G B | "ii"A3/2 F/ F "II~4"E/"ii"D/ | "ii^2"F F "vi"E
+[Q:1/4=100] "ii"A | F3/2 "II~4"E/ "ii"D A | "V"B G G B | "ii"A3/2 F/ F "II~4"E/"ii"D/ | "ii^2"F F "vi"E
 "vi"A | "ii"F3/2 "II~4"E/ "ii"D A | "V"B G d "V~4"c/"V"B/ | "ii"A F "vii-"F/"VII~4"E/ "vii-"D/E/ | "ii^2"F3/2 "vi7"E/ "ii"D
 "ii"A | A "ii^1"d "vi"c "V~4"d | "ii^1"d "V~4"c/"V"B/ "ii"A "V^2"B | "ii"A F "vii-"F/"VII~4"E/ "vii-"D/E/ | "ii^2"F F "vi"E
 "vi7"A | "ii"A "ii^1"d "vi"c "vi7^3"e | "ii^1"d "V~4"c/"V"B/ "ii"A "V^2"B | "ii"A F "vii-"F/"VII~4"E/ "vii-"D/E/ | "ii^2"F3/2 "vi7"E/ "ii"D |]
@@ -1966,7 +1966,7 @@ T:Lord, Thee I Love with All My Heart
 M:4/4
 L:1/4
 K:Bb
-"vii-"B2 "IV"A "iii^1"G | "IV^1"F "vii-"E/D/ "iii"G G | "vii-"F2 "V"B2 | "ii"A "iii"G "IV"F "vii-"E/D/ | "iii"G "I^1"G "ii"F
+[Q:1/4=120] "vii-"B2 "IV"A "iii^1"G | "IV^1"F "vii-"E/D/ "iii"G G | "vii-"F2 "V"B2 | "ii"A "iii"G "IV"F "vii-"E/D/ | "iii"G "I^1"G "ii"F
 "vii-"F | "iii"G "vi^1"A ("ii-7"B "vii-"d) | "IV"c ("V"B2 "IV"A) | "vii-"B4 | B2 "IV"A "iii^1"G | "IV^1"F "vii-"E/D/ "iii"G G | "vii-"F2 "V"B2 |
 "ii"A "iii"G "IV"F "vii-"E/D/ | "iii"G "I^1"G "ii"F "vii-"F | "iii"G "vi^1"A ("ii-7"B "vii-"d) | "IV"c ("V"B2 "IV"A) | "vii-"B3 "vii"B | "vii-"B "IV^1"c
 "vii-"B "iii"G | "V"B "iii^1"B "IV"A A | "vii-"B "IV^1"c "vii-"B "iii"G | "ii-7"B "iii"B "IV"A2 | "ii-7"B "vii-"d/ d/
@@ -1978,7 +1978,7 @@ T:More Love to Thee
 M:4/4
 L:1/4
 K:Ab
-"vi"E2 "ii^2"F "vi"E | "vi^1"A3/2 "iii"B/ "vi"c2 | c2 "iii^1"B "vii%7^2"A | "iii"B3 z | "vi"E2 "ii^2"F "vi"E |
+[Q:1/4=75] "vi"E2 "ii^2"F "vi"E | "vi^1"A3/2 "iii"B/ "vi"c2 | c2 "iii^1"B "vii%7^2"A | "iii"B3 z | "vi"E2 "ii^2"F "vi"E |
 "vi^1"A3/2 "iii"B/ "vi"c2 | "ii-7"B2 "vi^2"A "iii7"G | "vi"A3 z | "ii^2"d2 d d | d3/2 "vi"c/ c2 |
 "iii7"B2 "III7"B B | B3/2 "vi"A/ A2 | "ii"F2 F F | "vi^1"A3 z | "vii-"B2 "vi^2"A "iii"G | "vi"A3 z |]
 
@@ -1987,7 +1987,7 @@ T:My Faith Looks Up To Thee
 M:4/4
 L:1/4
 K:D
-"ii"D2 F A | "vi^1"A3/2 "I"G/ "ii"F2 | "vi"E2 E "VI7"G | "I"G3/2 "ii"F/ "vi"E2 |
+[Q:1/4=100] "ii"D2 F A | "vi^1"A3/2 "I"G/ "ii"F2 | "vi"E2 E "VI7"G | "I"G3/2 "ii"F/ "vi"E2 |
 "ii"F2 "vi^2"E "III7"B | "vi7"A4 | "ii"A2 F "II~4"G | "ii"A3/2 "V^2"B/ "ii"A2 | A2 F "II~4"G |
 "ii"A3/2 "V^2"B/ "ii"A2 | "vii"d2 "vi^1"c "IM7"B | "ii"A3/2 "I^1"G/ "ii^1"F D | "V"E2 "vi"A2 | "ii"D4 |]
 
@@ -1996,7 +1996,7 @@ T:Not Worthy, Lord, to Gather Up the Crumbs
 M:4/4
 L:1/4
 K:Eb
-"iii"G2 "V^1"G "vii%7"F | "I"E2 "iii^1"B2 | "vi"c "vii"B "IM7"B "ii"A | "iii"G4 | G2 "vi^1"A "iii^2"B |
+[Q:1/4=100] "iii"G2 "V^1"G "vii%7"F | "I"E2 "iii^1"B2 | "vi"c "vii"B "IM7"B "ii"A | "iii"G4 | G2 "vi^1"A "iii^2"B |
 "vi"c2 "iii"B2 | "IVM7"A "ii-7"F "iii"G "vi^1"=A | "vii-"B4 | "iii"G2 "V^1"G "vii%7"F | "I"E2 "iii^1"B2 |
 "vi"B A "vi^1"A "IM7"G | "IV"F4 | "vii%7^3"F2 "iii^1"G "vii%7^2"A | "iii"G "vii%7"F "I"E "IV^1"A | "iii^2"G2 "vii-"F2 | "iii"E4 |]
 
@@ -2005,7 +2005,7 @@ T:O That The Lord Would Guide My Ways
 M:3/2
 L:1/4
 K:Ab
-"vi"E2 | E A c2 "iii7"B2 | "IV"A "ii"F "vi"E2 E2 | E A "IV"c2 A2 | "iii"B4
+[Q:1/4=130] "vi"E2 | E A c2 "iii7"B2 | "IV"A "ii"F "vi"E2 E2 | E A "IV"c2 A2 | "iii"B4
 "III7"d2 | "vi"c "iii"B "IV"A2 "iii"B2 | "vi"c "vi^1"A "ii"F2 "iii"E2 | "vi"E "IV"A "vi^2"c2 "iii7"B2 | "vi"A4 |]
 
 X:232
@@ -2013,7 +2013,7 @@ T:Pass Me Not, O Gentle Savior
 M:4/4
 L:1/4
 K:Ab
-"vi"c3/2 "IM7"B/ "ii"A3/4 "II~4"G/4 "ii"A3/4 F/4 | "vi"E2 A2 | "III7"B3/2 B/ "vi^2"A "iii"B | "vi"c3 z |
+[Q:1/4=100] "vi"c3/2 "IM7"B/ "ii"A3/4 "II~4"G/4 "ii"A3/4 F/4 | "vi"E2 A2 | "III7"B3/2 B/ "vi^2"A "iii"B | "vi"c3 z |
 "vi"c3/2 "IM7"B/ "ii"A3/4 "II~4"G/4 "ii"A3/4 F/4 | "vi"E2 A2 | "III7"B3/2 "vi^2"A/ c "iii7"B | "vi"A3 z |
 "vi"e2 c2 | ("ii-7"B3/2 "ii"A/) F2 | "vi"E A c "vi^1"A | "iii"B3 z |
 "vi"c3/2 "IM7"B/ "ii"A3/4 "II~4"G/4 "ii"A3/4 F/4 | "vi"E2 A2 | "III7"B3/2 "vi^2"A/ c "iii7"B | "vi"A3 z |]
@@ -2023,7 +2023,7 @@ T:Savior, Like A Shepherd Lead Us
 M:4/4
 L:1/4
 K:Eb
-"iii"G G G/ "vii%7^3"F/ "iii^1"G/ "IV"A/ | ("iii"B e) (B G) | "vii-"F "iii^2"G "vii%7"A/ "VII7"c/ "VII+"B/ "vii%7"A/ | "iii"G3 z |
+[Q:1/4=100] "iii"G G G/ "vii%7^3"F/ "iii^1"G/ "IV"A/ | ("iii"B e) (B G) | "vii-"F "iii^2"G "vii%7"A/ "VII7"c/ "VII+"B/ "vii%7"A/ | "iii"G3 z |
 "iii"G G G/ "vii%7^3"F/ "iii^1"G/ "IV"A/ | ("iii"B e) (B G) | "vii-"F "iii^2"G "vii%7"A/ "VII7"c/ "VII+"B/ "vii%7"A/ | "iii"G3
 "iii"B/ B/ | "vi"c e2 "VI~4"d/ "vi"c/ | "iii"B G2 G/ G/ | "vii-"F "VII7"c "VII+"B "vii%7"A | "iii"G3
 "iii"B/ B/ | "vi"c e2 "VI~4"d/ "vi"c/ | "iii"B e2 E/ "III~4"F/ | "iii"G B "vii%7"A3/2 F/ | "iii"E3 |]
@@ -2033,7 +2033,7 @@ T:Take My Life And Let It Be
 M:3/4
 L:1/4
 K:G
-"V"G2 "V"G | "ii"F2 D | "ii7"c2 "ii7"c | "V"B3 | "V^1"d2 "V"B | ("VI~4"d "vi"c) "ii^1"A | "V"G2 B/"V~2"A/ | "ii"A3 |
+[Q:1/4=140] "V"G2 "V"G | "ii"F2 D | "ii7"c2 "ii7"c | "V"B3 | "V^1"d2 "V"B | ("VI~4"d "vi"c) "ii^1"A | "V"G2 B/"V~2"A/ | "ii"A3 |
 "V"G2 "V"G | ("IV^1"F3/2 "iii^1"E/) "ii^1"D | "ii7"c2 "vi"c | "V"B3 | d2 "bvi-7"B | ("vi"A c) "vi^1"e | "V^2"G2 "ii7"F | "V"G3 |]
 
 X:235
@@ -2041,7 +2041,7 @@ T:Take Thou My Hand and Lead Me
 M:4/4
 L:1/4
 K:F
-"IV"c | "vii-"d "IV^1"c "V"B "IV"A | "IV^2"A2 "I"G "IV"A | "ii-7"B2 "I"c2 | "IV"A3
+[Q:1/4=120] "IV"c | "vii-"d "IV^1"c "V"B "IV"A | "IV^2"A2 "I"G "IV"A | "ii-7"B2 "I"c2 | "IV"A3
 "IV"c | "vii-"d "IV^1"c "V"B "IV"A | "IV^2"A2 "I"G "IV"A | "ii-7"B2 "I"c2 | "IV"A3
 "IV"A | "iii"G "I"c "V"=B "V7^3"d | ("I^1"c3/2 "V^2"d/) "I"e "ii^1"f | "I^2"e2 "V"d2 | "I"c3
 "IM7^3"c | "IV^1"f "vii-"e/d/ "IV"c "IV^1"c | "vii-"d2 "IV"c "V^1"B | ("IV^2"A "I~4"B2) "I"G | "IV"F3 |]
@@ -2051,7 +2051,7 @@ T:Whiter Than Snow
 M:3/4
 L:1/8
 K:A
-"vi"E2 | E2 "vi^1"A2 "iii"B2 | "vi"c6/2 "VI~4"B "vi"A2 | "iii7"B2 "I^1"c2 "iii7"B2 | "vi"A4 E2 | E2 "vi^1"A2 "iii"B2 |
+[Q:1/4=80] "vi"E2 | E2 "vi^1"A2 "iii"B2 | "vi"c6/2 "VI~4"B "vi"A2 | "iii7"B2 "I^1"c2 "iii7"B2 | "vi"A4 E2 | E2 "vi^1"A2 "iii"B2 |
 "vi"c6/2 "VI~4"B "vi"A2 | "iii7"B2 "I^1"c2 "iii7"B2 | "vi"A4 c2 | e2 c2 "vi^1"A2 | "ii"FA A2 A2 |
 "ii"d2 d2 d2 | "vi"c4 E2 | E2 "vi^1"A2 "vi"c2 | "vi^2"c6/2 "iii7"B "vi^2"A2 | "iii"B6/2 "III~4"A "iii7"B2 | "vi"A6 ||
 "iii7"B2 B2 B2 | B4 "IV"A2 | c2 A2 "ii"F2 | "vi"E4
@@ -2062,7 +2062,7 @@ T:Yet Before We See Your Plans
 M:4/4
 L:1/4
 K:F
-"IV"C "vi^2"C/"VI~4^2"D/ "ii"F "ii7^3"F | "V^1"G "V"G/"V7"F/ "vi^1"A/"I"G/ "ii7"F/"II7"D/ | "I^1"C "IV"C/"ii^1"D/ "V7"F "IV^1"F | "vii%7"A "I"G "IV"F2 |
+[Q:1/4=95] "IV"C "vi^2"C/"VI~4^2"D/ "ii"F "ii7^3"F | "V^1"G "V"G/"V7"F/ "vi^1"A/"I"G/ "ii7"F/"II7"D/ | "I^1"C "IV"C/"ii^1"D/ "V7"F "IV^1"F | "vii%7"A "I"G "IV"F2 |
 "IV"C "vi^2"C/"VI~4^2"D/ "ii"F "ii7^3"F | "V^1"G "V"G/"V7"F/ "vi^1"A/"I"G/ "ii7"F/"II7"D/ | "I^1"C "IV"C/"ii^1"D/ "V7"F "IV^1"F | "vii%7"A "I"G "IV"F2 |
 "IV"A "vi7^2"c "ii7"c "vi^1"c | "vii%7"A "V"A/"V~2"F/ "IM7"G "ii"F | "IVM7"A "vi7^2"c "ii7"c "vi^1"c | "vii%7"A "V"A/"V~2"F/ "IM7"G2 |
 "IV"C "vi^2"C/"VI~4^2"D/ "ii"F "ii7^3"F | "V^1"G "V"G/"V7"F/ "vi^1"A/"I"G/ "ii7"F/"II7"D/ | "I^1"C "IV"C/"ii^1"D/ "V7"F "IV^1"F | "vii%7"A "I"G "IV"F2 |]
@@ -2072,7 +2072,7 @@ T:Happy the Man Who Feareth God
 M:4/4
 L:1/4
 K:D
-"II"D2 "vi"A "ii"A | F A ("V"B/ "V^1"d) "vi"c/ | "ii"d2 "II"z "bVII"d | "V"B "ii"A "V"B "vi"A |
+[Q:1/4=100] "II"D2 "vi"A "ii"A | F A ("V"B/ "V^1"d) "vi"c/ | "ii"d2 "II"z "bVII"d | "V"B "ii"A "V"B "vi"A |
 "I"G/"ii"F/ "VI~4"E "II"D2 | "ii"z A "VI~4^2"A "V"G | ("vii-"F "iii"E/) B "ii^1"A/ "iii7"G |
 "ii"F2 "V"z/ "II"B/ "ii"d- | "VI~4"d/ "vi"c/ "iii"B "v-7"e ("vii-"d/"iii"e/- | "I"e/"ii"d//"ii7"c//"III~4"B/) "III"B/ "vi"A2 |]
 
@@ -2081,7 +2081,7 @@ T:Happy the Man Who Feareth God
 M:4/4
 L:1/4
 K:Eb
-"iii"E2 B "ii-7"B | "iii"G "vii-"F "iii"G "vi^1"=A | "vii-"B3/2 "iii"B/ G "vii-"B | "IV"A "ii-7"B "iii"G "vii-"F | "iii"E3/2
+[Q:1/4=100] "iii"E2 B "ii-7"B | "iii"G "vii-"F "iii"G "vi^1"=A | "vii-"B3/2 "iii"B/ G "vii-"B | "IV"A "ii-7"B "iii"G "vii-"F | "iii"E3/2
 "iii"B/ "vi"c "vi^1"c | "iii"G "vii-"B "IV"A A | "I"G3/2 "i"_e/ "V"d "vi"c | "iii"B "I"c "IV"A/G/ "vii-"F | "iii"E4 |]
 
 X:240
@@ -2089,7 +2089,7 @@ T:He Who Would Valiant Be
 M:4/4
 L:1/4
 K:D
-("ii"D3/2 "II~4"E/) | "ii"F D "vii-"F/"V^1"G/ "vi"A | "V"B2 "V~4"A2 | "ii^1"A D "vi7^2"C "ii"D- | D2
+[Q:1/4=120] ("ii"D3/2 "II~4"E/) | "ii"F D "vii-"F/"V^1"G/ "vi"A | "V"B2 "V~4"A2 | "ii^1"A D "vi7^2"C "ii"D- | D2
 ("ii"D3/2 "II~4"E/) | "ii"F D "vii-"F/"V^1"G/ "vi"A | "V"B2 "V~4"A2 | "ii^1"A D "vi7^2"C "ii"D- | D2
 "ii"A2 | "vii-"d "ii-7"B "iii"c "bVII^2"d/"IV~4"c/ | "V"B3 "vi^1"A | "ii"F/"II~2"E/ "ii^1"D "ii"F "V^1"G | "vi"A3
 "ii^1"d | "vi7^2"A3/2 A/ "V"B/"V~2"A/ "iii7"G/"III7"F/ | "vi"E "V"B "ii^1"A "iii7"D | "vi7"C "ii"D2 |]
@@ -2099,7 +2099,7 @@ T:Jesus Wants All Of His Children
 M:4/4
 L:1/4
 K:D
-"VI~4"[DF] [DF] "V~4"[CF] [CE] | "iv-7"D [DF] .(,.("V"[DB] "iv-7"[DA])) & "V"D x3 | "VI+"[Fd] [Fd] [FA] "VI~4"[DF] | ["V~4"C3"VI"E3]
+[Q:1/4=100] "VI~4"[DF] [DF] "V~4"[CF] [CE] | "iv-7"D [DF] .(,.("V"[DB] "iv-7"[DA])) & "V"D x3 | "VI+"[Fd] [Fd] [FA] "VI~4"[DF] | ["V~4"C3"VI"E3]
 z | "V~4"[CE] "iv-7"[DF] "III+"[CG] "iv-7"[DA] | "V"[DB] "III"[Ec] "IV"[Fd] "vii"[DF] | "V"[B,E] "III"[B,G] "VI~4"[DF] "vi"[CE] | ["II"A,3"iv-7"D3] z |]
 
 X:242
@@ -2107,7 +2107,7 @@ T:My Jesus, As Thou Wilt
 M:4/4
 L:1/4
 K:Eb
-"iii"B2 G E/G/ | "vii-"F3/2 "vii%7"A//"iii^2"G// "vii-"F2 | "iii"G2 E G/B/ | "iii^2"B3/2 "vii%7"A/ "iii"G2 |
+[Q:1/4=100]  "iii"B2 G E/G/ | "vii-"F3/2 "vii%7"A//"iii^2"G// "vii-"F2 | "iii"G2 E G/B/ | "iii^2"B3/2 "vii%7"A/ "iii"G2 |
 "vi^2"e2 c A/c/ | "iii"B3/2 B/ G E/G/ | "VII+"B/"vii%7"A/ "vii-"F "III~4"A/"iii"G/ "iii^1"E | ("vii-"F2 "vii"B) z |
 "iii"B2 G E/G/ | "vii-"F3/2 "vii%7"A//"iii^2"G// "vii-"F2 | "iii"G2 E G/"III"B/ | "bii%7^2"B3/2 "V"=B/ "vi"c2 |
 "vi"e2 c A/c/ | "iii"B3/2 B/ G E/G/ | "iii^2"B3/4 E// G2 "vii%7"F | "iii"E4 |]
@@ -2117,7 +2117,7 @@ T:Where He Leads Me
 M:4/4
 L:1/4
 K:F
-"IV"C3/4 F/4 | A3/2 A/ "iv-7"B3/2 "IV"A/ | "IV^2"A/ "I"G2 z/ "IM7"C3/4 "III"E/4 | "IM7"G3/2 "IV^2"F/ A3/2 "IM7"G/ | "IV~2"G/ "IV"F2 z/
+[Q:1/4=100] "IV"C3/4 F/4 | A3/2 A/ "iv-7"B3/2 "IV"A/ | "IV^2"A/ "I"G2 z/ "IM7"C3/4 "III"E/4 | "IM7"G3/2 "IV^2"F/ A3/2 "IM7"G/ | "IV~2"G/ "IV"F2 z/
 "IV"F3/4 A/4 | c3/2 c/ "iv-7"d3/2 "IV7"c/ | "vii"c/ "vii-"B2 "vii"z/ "vii-"F/ "I~4"G/ | "IV^2"A/4 "i-7"C3/4 "IV^2"A/4 "i-7"C3/4 "IM7"G3/2 "IV"F/ | F3
 "IV"C3/4 F/4 | A3/2 A/ "iv-7"B3/2 "IV"A/ | "IV^2"A/ "I"G2 z/ "IM7"C3/4 "III"E/4 | "IM7"G3/2 "IV^2"F/ A3/2 "IM7"G/ | "IV~2"G/ "IV"F2 z/
 "IV"F3/4 A/4 | c3/2 c/ "iv-7"d3/2 "IV7"c/ | "vii"c/ "vii-"B2 "vii"z/ "vii-"F/ "I~4"G/ | "IV^2"A/4 "i-7"C3/4 "IV^2"A/4 "i-7"C3/4 "IM7"G3/2 "IV"F/ | F3 |]
@@ -2127,7 +2127,7 @@ T:Did You Think To Pray?
 M:4/4
 L:1/4
 K:F
-["IV"F3/2"i-7"A3/2] ["IV"F/"i-7"A/] ["IV"F/"ii-7"B/]["IV"F/"i-7"A/] ["IV"C/"VII+"G/]["IV"C/"VI+"F/] | "IV"C2 ["vi"C2"IV"F2] | ["I"E3/2G3/2] [E/G/] "iii"[GB] "IV"[FA] | ["I"E4G4] |
+[Q:1/4=120] ["IV"F3/2"i-7"A3/2] ["IV"F/"i-7"A/] ["IV"F/"ii-7"B/]["IV"F/"i-7"A/] ["IV"C/"VII+"G/]["IV"C/"VI+"F/] | "IV"C2 ["vi"C2"IV"F2] | ["I"E3/2G3/2] [E/G/] "iii"[GB] "IV"[FA] | ["I"E4G4] |
 ["I"E3/2G3/2] [E/G/] [E/G/][E/G/] "VI+"F/["I"E/G/] | ["IV"F2"i-7"A2] ["IV"F2"vi"c2] | ["IV"F3/2"i-7"A3/2] ["IV"F/"i-7"A/] ["IV"F/"ii-7"B/]["IV"F/"i-7"A/] ["IV"C/"VII+"G/]["IV"C/"VI+"F/] | "vii"D2 [D2"vii-"F2] |
 ["I"C3/2"v-7"E3/2] ["I"C/"VI+"F/] ["I"E3/2"VII+"G3/2] ["I"E/"i-7"A/] | "IV"F4 | [A3/2"I"c3/2] ["IV"A/c/] ["iv-"B/"iv-7"d/]["IV"A/c/] ["iv"^G/"iv-"=B/]["IV"A/c/] | [A2"I~4"f2] ["IV"A2c2] | [F3/2"i-7"A3/2] ["IV"A/c/]
 ["iv-"B/"iv-7"d/]["IV"A/c/] ["IV~2"G/"IM7"B/]["IV"F/"i-7"A/] | ["I"E4G4] | ["IV"F3/2"i-7"A3/2] ["IV"F/"i-7"A/] ["IV"F/"ii-7"B/]["IV"F/"i-7"A/] ["IV"C/"VII+"G/]["IV"C/"VI+"F/] | "vii"D2 [D2"vii-"F2] | ["I"C3/2"v-7"E3/2] ["I"C/"VI+"F/] ["I"E3/2"VII+"G3/2] ["I~4"F/"i-7"A/] | "IV"F4 |]
@@ -2137,7 +2137,7 @@ T:O Lord, My God, I Thirst For You
 M:4/4
 L:1/4
 K:G
-"iii"G/"III~4"F/ | "iii"E E "I"E "ii7^3"D | "V^1"G "iii"G "ii"A "V^1"G/"IV^1"A/ | "V"B B "vi"A/"vi7"G/ "I"E | "II~4"D3
+[Q:1/4=100] "iii"G/"III~4"F/ | "iii"E E "I"E "ii7^3"D | "V^1"G "iii"G "ii"A "V^1"G/"IV^1"A/ | "V"B B "vi"A/"vi7"G/ "I"E | "II~4"D3
 "V^1"G/"vii-"F/ | "I"E E "vi7"E "ii"D | "V^1"G "iii-7"G "ii"A "V^1"G/"IV^1"A/ | "V"B "V^1"B "vi^1"A/"I"G/ "vi"E | "iii"E3
 "iii"B/"I^1"c/ | "vii-"d B "iii7"B/"IV"A/ "V"G | "vi^1"A "ii"A "V"B2 | B B/"IV^1"A/ "V^1"G "I"E | "II~4"D3
 "V^1"G/"vii-"F/ | "I"E E "vi"E/D/ E/"IV^1"F/ | "V"G "iii7"G "ii"A "V^1"G/"IV^1"A/ | "V"B "vii-"B "vi^1"A/"I"G/ "vi"E | "iii"E3 |]
@@ -2147,7 +2147,7 @@ T:Our Father Thou in Heaven Above
 M:4/4
 L:1/4
 K:Bb
-"I"G2 "iii"G "I"E | "vii-"F "V"G "I"E "V"D | "I"C2 "i"G2 | "V"G "ii"F "vii-"B "iii"G | "bVI+"E "iv^1"F "V"G2 |
+[Q:1/4=140] "I"G2 "iii"G "I"E | "vii-"F "V"G "I"E "V"D | "I"C2 "i"G2 | "V"G "ii"F "vii-"B "iii"G | "bVI+"E "iv^1"F "V"G2 |
 "I"G2 "V"B "IV"c | "iii"e "vii-"d "I"c "V"=B | "I"c2 "IV"c2 | "vii-"d "IV^1"c "vii-"B "IV"A | "V"G "II"^F "V"G2 |
 "IV"c2 "vii-"B "IV"A | "V"B "iii"G "iii^1"G "vii-"F | "iii"E2 "I"G2 | "iv"_A "V"G "bVI+"E "iv"F | "I"E "V"D "I"C2 |]
 
@@ -2156,7 +2156,7 @@ T:The Lord's Prayer (new)
 M:4/4
 L:1/4
 K:Bb
-"V"G2 "iii"B "I"c | "vii"d2 "vi7"c2 | "V^1"B "vi^1"A "V^2"G "II"^F | "V"G2
+[Q:1/4=110] "V"G2 "iii"B "I"c | "vii"d2 "vi7"c2 | "V^1"B "vi^1"A "V^2"G "II"^F | "V"G2
 "II"A2 | "V"B "iii"G "II"A2 | "V^1"d2 "I"c "vi7"c | "V^1"B2 "II"A2 | "V"G4 |
 "II"A2 "V"B "IV"c | "vii-"d2 "IV"c2 | "ii-7"B "iii"G "I"c "V"B | "II"A2
 "vii"D2 | "V"G "II"^F "iii"G2 | "vi7"c2 "V^1"B "vi^1"A | "V^2"G2 "II"^F2 | "V"G4 |]
@@ -2166,7 +2166,7 @@ T:We Now Implore God the Holy Ghost
 M:4/4
 L:1/4
 K:F
-"IV"F2 | "I^1"G "I"G "IV^1"F2 | "vii-"D2 "IV"C2 | "vii-"D2 "iii^1"E2 | "IV"F4 | A2 "IV^1"c2 |
+[Q:1/4=140] "IV"F2 | "I^1"G "I"G "IV^1"F2 | "vii-"D2 "IV"C2 | "vii-"D2 "iii^1"E2 | "IV"F4 | A2 "IV^1"c2 |
 "vii-"d2 "I"c2 | "ii"A2 "IV^1"F2 | "vii-"D2 "iii^1"E2 | "IV"F4 | A3/2 A/ "IV^1"A "I"G |
 "IV"A2 F "ii"F | "I"G "V^1"G "VI"A2 | "ii"F2 "V"G "I"G | "IV"A2 "IV^1"F2 |
 "vii-"D "ii"F "IV^1"F "I"G | ("ii"F2 "V"D2) | "I"C4 | "vii-"D3/2 "iii^1"E/ "IV"F2 | "IV"F4 |]
@@ -2176,7 +2176,7 @@ T:What A Friend We Have In Jesus
 M:4/4
 L:1/4
 K:F
-"IV"c3/2 c/ "iv-7"d/"IV"c/ A/F/ | "vii-"F2 D2 | "IV"C3/2 F/ A/F/ c/A/ | "I"G3 z |
+[Q:1/4=100]  "IV"c3/2 c/ "iv-7"d/"IV"c/ A/F/ | "vii-"F2 D2 | "IV"C3/2 F/ A/F/ c/A/ | "I"G3 z |
 "IV"c3/2 c/ "iv-7"d/"IV"c/ A/F/ | "vii-"F2 D2 | "IV^2"C3/2 F/ A/"IM7"G/ "IV^2"F/"I"E/ | "IV"F3 z |
 "I"G3/2 "i-"^F/ "I"G/"IV^2"A/ "IM7"B/"I"G/ | "IV"A2 c2 | "vii-"d3/2 d/ "IV^1"c/"IV"A/ "iii"B/"IV"A/ | "I"G3 z |
 "IV"c3/2 c/ "iv-7"d/"IV"c/ A/F/ | "vii-"F2 D2 | "IV^2"C3/2 F/ A/"IM7"G/ "IV^2"F/"I"E/ | "IV"F3 z |]
@@ -2186,7 +2186,7 @@ T:All Creatures of Our God and King
 M:6/4
 L:1/4
 K:D
-"ii"D2 | D "II~4"E "ii"F D "vii-"F "iii7"G | ["VI~4"E4"ii^1"A4] D2 | "ii^1"D "I^1"E "ii"F "I~2"D "vii-"F "iii7"G | ["VI~4"E4A4]
+[Q:1/4=160] "ii"D2 | D "II~4"E "ii"F D "vii-"F "iii7"G | ["VI~4"E4"ii^1"A4] D2 | "ii^1"D "I^1"E "ii"F "I~2"D "vii-"F "iii7"G | ["VI~4"E4A4]
 ("ii^1"d "IV"c) | "V"B2 "ii"A2 "vii-"d "vi^1"c | "ii"B2 "vi"A2 "ii^1"d2 | "ii"d "ii7^3"A "vii%7"A "I"G "ii"F "V^1"G | ["VI~4"E4A4]
 ["ii^1"A2d2] | "ii^1"[Ad] "vi7^2"[GA] "ii"[FA] "V^1"G "ii7^2"F "V"G | "ii^1"A4 ("V^1"G "vii%7^3"F) | "V"E2 "ii^1"D2
 ("iii7"G "ii^1"F) | "V"E2 "vii-"D2 d "vi^1"c | "ii"B2 "vi"A2 "vii-"d "I~4"c | "ii-7"B2 "vi^1"A2 "iii"G "IV"F | "V"E6 | "ii"D4 |]
@@ -2196,7 +2196,7 @@ T:Alleluia, Alleluia! Hearts to Heaven and Voices Raise
 M:4/4
 L:1/4
 K:G
-"V"B B "V~4"c "V"d | "ii-7"d "II~2"c "V^2"B "ii7^3"A | "V^1"G G "IV^1"A "V"B | "V^2"B3/2 "ii"A/ A2 |
+[Q:1/4=115] "V"B B "V~4"c "V"d | "ii-7"d "II~2"c "V^2"B "ii7^3"A | "V^1"G G "IV^1"A "V"B | "V^2"B3/2 "ii"A/ A2 |
 "V"B B "I^2"c "V7"d | "I~4"d "vi^1"c "I~2"B "vi^1"A | "V^2"G G "ii7"A "V^2"B | "ii7"A3/2 "V"G/ G2 |
 "ii"A A "V^2"B G | "ii7"A "V^2"B/"ii7"c/ "V^2"B G | "ii7"A "ii-7"B/"ii7"c/ "bIII+"B "VII7"A | "iii"G "VI"A "ii"D2 |
 "V"B B "I^2"c "V7"d | "I~4"d "vi^1"c "I~2"B "vi^1"A | "V^2"G G "ii7"A "V^2"B | "ii7"A3/2 "V"G/ G2 |]
@@ -2206,7 +2206,7 @@ T:Angel Voices, Ever Singing
 M:4/4
 L:1/4
 K:C
-"I"E G "IV^2"A "I~4"G | "IV^2"c A "V^1"G "iii^1"E | "vi"C "ii7^2"D "I^2"E "IV"F | "V~4"D4 |
+[Q:1/4=100] "I"E G "IV^2"A "I~4"G | "IV^2"c A "V^1"G "iii^1"E | "vi"C "ii7^2"D "I^2"E "IV"F | "V~4"D4 |
 "I"E "I^1"G "vi"c "VI"A | "II^1"d3/2 "II7"c/ "V"B "V^1"G | "i-7"A "vi^1"E "vi7"G "II"^F | "V~4"G4 |
 "iii"G "VM7^2"G "bii%7"G "vi^1"A | "ii"F "IVM7^2"F "vii%7"F "V^1"G | "I"E "I^1"G "IV"A "vi"c | "V~4"d3 B | "I"c4 |]
 
@@ -2215,7 +2215,7 @@ T:I Sing the Mighty Power of God
 M:4/4
 L:1/4
 K:Bb
-"IV"F | "VII"B "VI"A/"V"G/ "IV"F "ii-7"B | "V"D "IM7^2"E "IV"F "vii-"F | "iii"G/"III~4"A/ "ii-7"B "iii"c "IV"c | "vii-"d3
+[Q:1/4=130] "IV"F | "VII"B "VI"A/"V"G/ "IV"F "ii-7"B | "V"D "IM7^2"E "IV"F "vii-"F | "iii"G/"III~4"A/ "ii-7"B "iii"c "IV"c | "vii-"d3
 "IV"F | "VII"B "VI"A/"V"G/ "IV"F "ii-7"B | "V"D "IM7^2"E "IV"F "vii-"F | "iii"G/"III~4"A/ "V"B "IV"B A | "vii-"B3
 "vii"B/"VII~4"c/ | "vii-"d "IV^1"c "vii-"d "iii"e | "IV"c A/"iv-"B/ "IV"c "vii"B/"VII~4"c/ | "vii-"d "IV^1"c "vii-"d "iii"e | "IV"c3
 "IV"F | "VII"B "VI"A/"V"G/ "IV"F "ii-7"B | "V"D "IM7^2"E "IV"F "vii-"F | "iii"G/"III~4"A/ "V"B "IV"B A | "vii-"B3 |]
@@ -2225,7 +2225,7 @@ T:Immortal, Invisible, God Only Wise
 M:3/4
 L:1/4
 K:G
-"V"G | "I"E C "vi"A | "ii"F D "iii"G | "V^2"B "V^1"B "ii"A | "V"G2
+[Q:1/4=120] "V"G | "I"E C "vi"A | "ii"F D "iii"G | "V^2"B "V^1"B "ii"A | "V"G2
 "V^1"G | "I"E C "vi"A | "ii"F D "iii"G | "V^2"B "V^1"B "ii"A | "V"G2
 "V"G | "iii"B B "ii^1"d | "V"B "V^1"G "iii"G | "vii-"B "V"B "vii"d | "II~4"A2
 "V"B | "I"G E "vi"A | "ii"F D "iii"G | "V^2"B "V^1"B "ii"A | "V"G2 |]
@@ -2235,7 +2235,7 @@ T:Joyful, Joyful, We Adore Thee
 M:4/4
 L:1/4
 K:G
-"V"B B "V~4"c "V"d | "ii-7"d "II~2"c "V^2"B "ii7^3"A | "V^1"G G "IV^1"A "V"B | "V^2"B3/2 "ii"A/ A2 |
+[Q:1/4=115] "V"B B "V~4"c "V"d | "ii-7"d "II~2"c "V^2"B "ii7^3"A | "V^1"G G "IV^1"A "V"B | "V^2"B3/2 "ii"A/ A2 |
 "V"B B "I^2"c "V7"d | "I~4"d "vi^1"c "I~2"B "vi^1"A | "V^2"G G "ii7"A "V^2"B | "ii7"A3/2 "V"G/ G2 |
 "ii"A A "V^2"B G | "ii7"A "V^2"B/"ii7"c/ "V^2"B G | "ii7"A "ii-7"B/"ii7"c/ "bIII+"B "VII7"A | "iii"G "VI"A "ii"D2 |
 "V"B B "I^2"c "V7"d | "I~4"d "vi^1"c "I~2"B "vi^1"A | "V^2"G G "ii7"A "V^2"B | "ii7"A3/2 "V"G/ G2 |]
@@ -2245,7 +2245,7 @@ T:My Soul, Now Praise Thy Maker
 M:3/4
 L:1/4
 K:G
-"III"E | "iii"G2 "vii-"F | "I"E2 "ii-7"D | ("iii"G2 "vi^1"A) | "IIIM7"B2 "iii^2"B | "iii"B2 "vii%7^3"B | "iii^2"B2 "II~2"A | "V"G2 "ii"F | "V"G2
+[Q:1/4=140] "III"E | "iii"G2 "vii-"F | "I"E2 "ii-7"D | ("iii"G2 "vi^1"A) | "IIIM7"B2 "iii^2"B | "iii"B2 "vii%7^3"B | "iii^2"B2 "II~2"A | "V"G2 "ii"F | "V"G2
 "III"E | "iii"G2 "vii-"F | "I"E2 "ii-7"D | ("iii"G2 "vi^1"A) | "IIIM7"B2 "iii^2"B | "iii"B2 "vii%7^3"B | "iii^2"B2 "II~2"A | "V"G2 "ii"F | "V"G2
 "V"G | "I"G2 "V"B | "ii"A2 "vii-"B | ("iii"G "vii-"F2) | "III"E2 "iii"E | "VI^1"A2 "vi^1"A | ("ii"F "V"G) "VI"E | "ii"D2
 "ii"D | "V^1"G2 "iii"G | "I"A2 "ii"A | "V"B3 | "I"G2 "V^1"G | "vi"c2 c | "III~4"B2 "III"B | "VI"A2
@@ -2257,7 +2257,7 @@ T:Lord of Life, All Praise Excelling
 M:3/4
 L:1/4
 K:F
-"IV"F2 "I"G | ("IV"F3/2 "iv-"G/) "IV"A | "V7^3"B2 "IV"A | ("I"G "ii"F) "I"G | "IV^1"c2 "V"B | "IV"A2 "IV^1"A | ("V^1"G "ii"F) "I"G | "IV"F3 |
+[Q:1/4=130] "IV"F2 "I"G | ("IV"F3/2 "iv-"G/) "IV"A | "V7^3"B2 "IV"A | ("I"G "ii"F) "I"G | "IV^1"c2 "V"B | "IV"A2 "IV^1"A | ("V^1"G "ii"F) "I"G | "IV"F3 |
 "IV"F2 "I"G | ("IV"F3/2 "iv-"G/) "IV"A | "V7^3"B2 "IV"A | ("I"G "ii"F) "I"G | "IV^1"c2 "V"B | "IV"A2 "IV^1"A | ("V^1"G "ii"F) "I"G | "IV"F3 |
 "vi"c2 c | ("ii7"c "V7^2"B) "ii"A | "V7"B2 "V"B | ("IM7"B "ii7"A) "iii"G | "IV"A2 "IVM7^3"A | ("ii"A "V^2"B) "vi"c | ("V~4"c "V"B) "vii%7"A | "I~4"G3 |
 ("IV^1"c A) "IV"c | ("V7^3"B "iii7"G) "iii"B | ("IV"A "IVM7^3"F) "ii"A | ("I^1"G/"vi^1"A/ "ii-7"B/"ii"A/) "iii"G | "IV"c2 "vi-"c | ("vii"d "IV^1"c) "vii-"B | "IV^2"A2 "IM7"G | "IV"F3 |]
@@ -2267,7 +2267,7 @@ T:Praise God From Whom All Blessings Flow
 M:none
 L:1/4
 K:G
-"V"G2 G "ii"F "iii"E "vii-"D | "iii"G2 "ii"A2 "V"B3 | B2 B B "ii7"A "iii"G | "I"c2 "V"B2 "ii"A3 |
+[Q:1/4=120] "V"G2 G "ii"F "iii"E "vii-"D | "iii"G2 "ii"A2 "V"B3 | B2 B B "ii7"A "iii"G | "I"c2 "V"B2 "ii"A3 |
 "iii"G2 "ii"A "V"B "ii"A "V^1"G | "I"E2 "ii"F2 "V"G3 | d2 B "iii"G "ii"A "vi"c | "V^1"B2 "ii"A2 "V"G3 |]
 
 X:259
@@ -2275,7 +2275,7 @@ T:O Lord We Praise Thee
 M:4/4
 L:1/4
 K:D
-"vi"A2 "ii"A "IV"A | "III"B2 "vi^1"A2 | "vii-"d3/2 "vi^1"e/ "ii"d "vi"c | "III"B2 "vi"A2 | "iii"B2 "vii-"d2 | "vi^1"A2 "III7"F2 |
+[Q:1/4=160] "vi"A2 "ii"A "IV"A | "III"B2 "vi^1"A2 | "vii-"d3/2 "vi^1"e/ "ii"d "vi"c | "III"B2 "vi"A2 | "iii"B2 "vii-"d2 | "vi^1"A2 "III7"F2 |
 "iii7"G2 "vii-"F2 | ("I"E2 G2) | "IVM7"A4 | "vi"A2 "ii"A "IV"A | "III"B2 "vi^1"A2 | "vii-"d3/2 "vi^1"e/ "ii"d "vi"c | "III"B2 "vi"A2 |
 "iii"B2 "vii-"d2 | "vi^1"A2 "III7"F2 | "iii7"G2 "vii-"F2 | ("I"E2 G2) | "IVM7"A4 | "ii"A2 A "vi^1"A | ("vii-"B3/2 "IV"A/ "III"^G2) | "vi"A4 |
 "vi"A2 "IV"A2 | "III"B2 "vi"c2 | "ii"d2 A "vi"A | "iii"B2 "vi"A2 | c2 "ii^1"d2 | "III"e2 "vi^1"e2 |
@@ -2287,7 +2287,7 @@ T:Praise The Lord, Ye Heavens Adore Him
 M:4/4
 L:1/4
 K:F
-"IV"F3/2 "IV~2"G/ "IV"A "I"G | "iii"B "IV"A "IM7"G/E/ "IV"F | "iv-7"d "IV"c "iii"B    "IV"A | "V^1"G "vii%7"A/"vii-"F/ "I"c2 |
+[Q:1/4=100] "IV"F3/2 "IV~2"G/ "IV"A "I"G | "iii"B "IV"A "IM7"G/E/ "IV"F | "iv-7"d "IV"c "iii"B    "IV"A | "V^1"G "vii%7"A/"vii-"F/ "I"c2 |
 "ii"F3/2 "V7^2"G/ "IV^2"A "I"G | "iii"B "IV"A "IM7"G/E/ "IV"F |  "vii-"d "IV"c "V"B    "IV"A | "V^1"G "vii%7"A/"vii-"F/ "I"c2 |
 "I"G "IV^2"A "I"G/E/ C | "vii-"B    "IV^2"A "I"G/E/ C | "vi"c "V"B    "ii"A3/2 A/ | "V7"=B B/"I^2"c/ "I"c2 |
 "IV^1"f3/2 "vi"e/ "vii-"d "IV"c |  "vii-"d3/2 "IV^2"c/ "ii7"c/"iii"B/ "IV"A | "IM7^3"G "vi"A/"VII~4"B/ "IV^1"c/"ii^2"d/ "vii-"B/"V^1"G/ | "IV^2"F "IM7"A/G/ "IV"F2 |]
@@ -2297,7 +2297,7 @@ T:Praise To The Lord, The Almighty
 M:3/4
 L:1/4
 K:G
-"V"G "iii"G "ii^1"d | "V"B3/2 "ii7"A/ "iii"G | "vii-"F "I"E "V"D | "iii"E "ii"F "V"G | "II~4"A3 | "V"G3 |
+[Q:1/4=120] "V"G "iii"G "ii^1"d | "V"B3/2 "ii7"A/ "iii"G | "vii-"F "I"E "V"D | "iii"E "ii"F "V"G | "II~4"A3 | "V"G3 |
 "V"G "iii"G "ii^1"d | "V"B3/2 "ii7"A/ "iii"G | "vii-"F "I"E "V"D | "iii"E "ii"F "V"G | "II~4"A3 | "V"G3 |
 "V"d "ii^1"d "V"d | "I"e3 | "V"B3/2 "I^1"c/ "ii"d | "V"d3/2 "vi"c/ "V^1"B | "ii"A3 |
 "ii"D "I"E "IV^1"F | "V^1"G "ii"A "V"B | "I"A3 | "V"G3 |]
@@ -2307,7 +2307,7 @@ T:The God of Abraham Praise
 M:4/4
 L:1/4
 K:Ab
-"I"C | "IV"F "I"G "IV"A "ii-7"B | "I"c3 "IV"A | "ii-7"B "vi^1"c "vii%7"d "iii"e | "vi"c3
+[Q:1/4=120] "I"C | "IV"F "I"G "IV"A "ii-7"B | "I"c3 "IV"A | "ii-7"B "vi^1"c "vii%7"d "iii"e | "vi"c3
 "iii"G | "vi^1"A "V^1"B "vi"c "ii"d | "vi^1"e "iii7"G "IV"A "vii%7"d | "vi^2"c2 "iii"B2 | "vi"A3
 "vi"A | c c "vi^1"c "ii7"c | "iii"B3 "vi^1"A/"I"G/ | "ii"F/"II~4"G/ "ii"A/"ii-7"B/ "vi"c "vii%7"F | ("I~4"F "I"=E2)
 "I"C | "IV^1"F "I"G "IV"A "bIII+"B | "vi"c "ii"B/"ii7"c/ "vii-"d c/B/ | "IV^2"A2 "I"G2 | "IV"F3 |]
@@ -2317,7 +2317,7 @@ T:Rejoice, O Pilgrim Throng
 M:4/4
 L:1/4
 K:F
-"IV"F | "I^1"c "vi^1"A/"IM7"G/ "ii"F "I"G | "IV"A3 "vi7^2"A | "ii"A "ii^1"F/"iii"G/ "ii"A "V7^2"=B | "I"c3
+[Q:1/4=130] "IV"F | "I^1"c "vi^1"A/"IM7"G/ "ii"F "I"G | "IV"A3 "vi7^2"A | "ii"A "ii^1"F/"iii"G/ "ii"A "V7^2"=B | "I"c3
 "IV7"c | "vii"d "vii7"c/"V^1"B/ "II~4"A "ii"A | "iii7"A/G/ "IV^1"=F/"vi7"G/ "ii"A "I~4"D | "V^1"G "VI~4"A "V7"B "IV^1"A | "I"G3
 "I"c | c3 "I"c | "II7"c3 "IV"c | "ii-7"B "IV^2"A/"vii-"G/ "IV^2"A "IM7"G | "IV"F3 |]
 
@@ -2326,7 +2326,7 @@ T:To God Be The Glory
 M:3/4
 L:1/4
 K:Ab
-"vi"E | E2 "iii7"F/ G/  | "vi"A E "vi^1"A | "iii"B "iii7"E "iii"B | "vi"c2 c | "ii"d F
+[Q:1/4=120] "vi"E | E2 "iii7"F/ G/  | "vi"A E "vi^1"A | "iii"B "iii7"E "iii"B | "vi"c2 c | "ii"d F
 "II~2"d | "vi"c "vi^1"A "vi"c | "vii-"c B F | "iii"B2 "iii-7"E | "vi"E2 "iii7"F/ G/ | "vi"A E "vi^1"A |
 "iii"B E B | "vi"c2 "vi-7"c | "ii"e "ii-7"d B | "vi^2"A "iii"G "vi^2"A | c c "iii7"B | "vi"A2
 "vi"c3/4 "VI~4"d/4 | "vi"e2 c3/4 "V"d/4 | "vi"e2 e3/4 c/4 | "vi^1"A "iii^2"B "vi"c | "iii"B2 B3/4 "vi^2"c/4 | "III7"d2
@@ -2338,7 +2338,7 @@ T:The Love of God
 M:3/4
 L:1/8
 K:Db
-"ii"D D3/2 "II~4"E/ | "ii"F3 A "V^2"B3/2 "ii"A/ | (A2 F) A A3/2 F/ | "VI"E3 "VI7"G "ii^2"F3/2 "vi"E/ | "ii"F3
+[Q:1/4=90] "ii"D D3/2 "II~4"E/ | "ii"F3 A "V^2"B3/2 "ii"A/ | (A2 F) A A3/2 F/ | "VI"E3 "VI7"G "ii^2"F3/2 "vi"E/ | "ii"F3
 "ii"D D3/2 "II~4"E/ | "ii"F3 A "V^2"B3/2 "ii"A/ | (A2 F) A A3/2 F/ | "vi7"E3 "V"G "ii^2"F3/2 "vi7"E/ | "ii"D3
 "ii"d "iii7"d3/2 "ii^1"d/ | "V"B3 d d3/2 "V^1"d/ | ("ii"A2 F) A A3/2 "ii-7"B/ | ("vi^2"A2 E2) "I"G2 | "ii"F3
 "ii"d "iii7"d3/2 "ii^1"d/ | "V"B3 d d3/2 "V^1"d/ | ("ii"A2 F) A A3/2 "ii-7"B/ | ("vi"A2 "vi7"E2) "IV^1"F2 | "ii"D3
@@ -2350,7 +2350,7 @@ T:And Can It Be
 M:3/4
 L:1/4
 K:F
-"IV"F | (A3/2 "iv-"G/) "IV"F | "IM7"G2 "vi^1"A | "IM7"G2 "ii"F | "I"G2 "IV"A | c2 c | (c "iv-7"d) "IV"c |
+[Q:1/4=100] "IV"F | (A3/2 "iv-"G/) "IV"F | "IM7"G2 "vi^1"A | "IM7"G2 "ii"F | "I"G2 "IV"A | c2 c | (c "iv-7"d) "IV"c |
 "IV^2"A2 "IM7"G | "IV"F2 c | "vii-"d2 d | (d3/2 e/) f | "IV"c2 c | A2
 "IV"c | "vii-"d2 d | (d3/2 e/) f | "IV"c2 c | (A "I"G) "IV"F | (A3/2 "iv-"G/) "IV"F | "IM7"G2
 "vi^1"A | "IM7"G2 "ii"F | "I"G2 "IV"A | c2 c | (c "iv-7"d) "IV"c | "IV^2"A2 "IM7"G | "IV"F2 |]
@@ -2360,7 +2360,7 @@ T:For The Beauty Of The Earth
 M:4/4
 L:1/4
 K:G
-"V"G "ii7^2"F/"V"G/ "ii^1"A "V"G | "I^1"c "IV"c "V"B2 | "I"E "ii7^3"F "V^1"G "I"E | "V^2"D "ii"D "V"D2 |
+[Q:1/4=100] "V"G "ii7^2"F/"V"G/ "ii^1"A "V"G | "I^1"c "IV"c "V"B2 | "I"E "ii7^3"F "V^1"G "I"E | "V^2"D "ii"D "V"D2 |
 "V"G "ii7^2"F/"V"G/ "ii^1"A "V"G | "I^1"c "IV"c "V"B2 | "I"E "ii7^3"F "V^1"G "I"E | "V^2"D "ii"D "V"D2 |
 "V"B "ii^1"A "V"G B | "ii^1"d3/2 "ii7"c/ "V"B2 | "I"E "ii7^3"F "V^1"G "I^1"c | "V^2"B "ii"A "V"G2 |]
 
@@ -2369,7 +2369,7 @@ T:His Gifts
 M:4/4
 L:1/4
 K:G
-"ii"D/ D/ | "V^2"G "VII+"G/ "ii^2"A/ "V^1"B/ "I"G/ "V^2"B/ "I"c/       | "ii"d d/ d/ "V^1"B "ii"A/ "I"G/    | "ii"A
+[Q:1/4=100] "ii"D/ D/ | "V^2"G "VII+"G/ "ii^2"A/ "V^1"B/ "I"G/ "V^2"B/ "I"c/       | "ii"d d/ d/ "V^1"B "ii"A/ "I"G/    | "ii"A
 "ii"A "VI~4"A "ii^2"A      | "ii"A/ "V^2"B/ "ii"A/ "iv-7"F/ "ii"D "V^2"D | "I^1"G/ "ii^1"F/ "I"G/ "ii"A/ "V^2"B "ii"A/ A/ |
 "V^2"B "I"c "ii"d "I"c/ "V^1"B/ | "ii^2"A "VI+"A/"vii-"B/ "ii"A "I"G/ "V^1"G/ | "ii^2"A "I"G/ "ii"F/ "V^1"G2 |
 "ii^2"d2 "V^1"B3/2 "ii^2"A/       | "V^1"B/ "I"c/ "V^1"B/ "ii"A/ "I"G3/2 "ii"A/         | "V^1"B B/ "I"c/ "ii"d "I"c/ "V^2"B/ | "ii"A "ii^1"A/ "V"B/ "ii^1"A
@@ -2380,7 +2380,7 @@ T:Now Thank We All Our God
 M:none
 L:1/4
 K:F
-["IV"F2"vi"c2] | ["IV"F3/2"vi"c3/2] ["IV"F/"vi"c/] "vii-"[Fd] [Fd] | ["IV"F3"vi"c3] "IV"[FA] | "ii"[FB] "IV"[FA] "V"[DG] "vi"[CF] | ["I"C2"v-7"E2] ["IV"C2"VI+"F2] |
+[Q:1/4=120] ["IV"F2"vi"c2] | ["IV"F3/2"vi"c3/2] ["IV"F/"vi"c/] "vii-"[Fd] [Fd] | ["IV"F3"vi"c3] "IV"[FA] | "ii"[FB] "IV"[FA] "V"[DG] "vi"[CF] | ["I"C2"v-7"E2] ["IV"C2"VI+"F2] |
 ["IV"F2"vi"c2] | ["IV"F3/2"vi"c3/2] ["IV"F/"vi"c/] "vii-"[Fd] [Fd] | ["IV"F3"vi"c3] "IV"[FA] | "vii-"[FB] "IV"[FA] "V"[DG] "vi"[CF] | ["I"C2"v-7"E2] ["IV"C2"VI+"F2] |
 ["I"E2G2] | [E3/2G3/2] [E/G/] "IV"[FA] [FA] | ["I"E3G3] [EG] | "IV"[FA] "iii"[Gc] "IV"[Fc] "V"[D=B] | ["I"E3"V~4"c3]
 "IV"[Fc] | "vii-"[Fd] "VI+"[Fc] "vii-"[FB] "IV"[FA] | ["vii-"F2"ii-7"B2] ["IV"F2"i-7"A2] | "V"[DG] "vi"[CF] "vii"[DF] "I"[CE] | ["IV"C4"VI+"F4] |]
@@ -2390,7 +2390,7 @@ T:O Day of Rest And Gladness
 M:4/4
 L:1/4
 K:G
-"V"G | "iii"G "ii^1"d "V"B "V^1"G | ("ii"F3/2 "II~4"G/) "ii"A "V^1"D | "I"E "vi7"G "II~4"G "ii"F | "V~4"G3
+[Q:1/4=125] "V"G | "iii"G "ii^1"d "V"B "V^1"G | ("ii"F3/2 "II~4"G/) "ii"A "V^1"D | "I"E "vi7"G "II~4"G "ii"F | "V~4"G3
 "V"G | "iii"G "ii^1"d "V"B "V^1"G | ("ii"F3/2 "II~4"G/) "ii"A "V^1"D | "I"E "vi7"G "II~4"G "ii"F | "V"G3
 "V"B | G "ii^1"d "iii7"d/"I^1"c/ "iii"B | "VI~4"A2 "ii"A "I"c | "V"B "ii"A "vii-"B "iii"G | "VI"A3
 "V^1"d | "I"c "V"B "vi"A "V^1"G | ("ii"F3/2 "II~4"G/) "ii"A "V^1"D | "I"E "vi7"G "II~4"G "ii"F | "V"G3 |]
@@ -2400,7 +2400,7 @@ T:O Lord of Heav'n and Earth and Sea
 M:4/4
 L:1/4
 K:D
-"ii"A | "ii^1"d "I^1"c/"iii"B/ "ii^1"A "V"B/"vi"A/ | "V^1"G/"V7"F/ "vi"E "ii"D
+[Q:1/4=100] "ii"A | "ii^1"d "I^1"c/"iii"B/ "ii^1"A "V"B/"vi"A/ | "V^1"G/"V7"F/ "vi"E "ii"D
 "ii"F/"iii7"G/ | "ii^1"A "ii^1"A "V"B "I^1"c | "ii^1"d "bvi-"d/"III^1"e/ "vi"c "ii^1"d/"IV"c/ |
 "V"B "ii^1"A "iii"G "vi^1"E | "ii"F3/2 "V^1"G/ "ii^1"A "vii-"D/"iii7^2"E/ | "ii^2"F2 "VI~4"E2 | "ii"D3 |]
 
@@ -2409,7 +2409,7 @@ T:All Depends On Our Possessing
 M:4/4
 L:1/4
 K:F
-"IV"F F "I^1"c "IV"c | "ii-7"B "I^1"c "IV"A F | A A "I"G "vi7"G | "ii"F "V^1"G "I"E C |
+[Q:1/4=100] "IV"F F "I^1"c "IV"c | "ii-7"B "I^1"c "IV"A F | A A "I"G "vi7"G | "ii"F "V^1"G "I"E C |
 "V"G "II~4"G "IV"F "I"E | "ii^1"D D "I^1"C2 | "I"G G "I^1"c "ii^1"A | "V"B "I^1"c "IV"A F |
 "IV"A A "I^1"G G | "ii"F "V^1"G "I"E C | "IV^1"F F "ii-7"B "IV"A | "I~4"G "I"G "IV"F2 |]
 
@@ -2418,7 +2418,7 @@ T:Fear Not, O Little Flock
 M:4/4
 L:1/4
 K:F
-"V"G2 G "i"G | "vii-"d3 "IV"c | "ii"d "V"B "II"A2 | "V"z "bIII+"G "IM7"B "IV"A | "vii-"B3
+[Q:1/4=160] "V"G2 G "i"G | "vii-"d3 "IV"c | "ii"d "V"B "II"A2 | "V"z "bIII+"G "IM7"B "IV"A | "vii-"B3
 "vii-"d | "IV"c "V"B "II"A2 | z "IV7^2"A "i"c2- | c "ii-7"B "IV"A "vii-"B | ("I~4"G2 "IV"F2) |
 "ii"z "V~2"F "iv-"B "IV"A | "vii-"B3 d | "IV"c "V"B "II"A2 | "V"z "bIII+"G "IM7"B "IV"A | "vii-"B3 d |
 "IV"c "V"B "II"A2 | "bIII+"z "V^1"G "vii-"d2- | d "IV"c "V"B "i"c | ("II"A2 "V"G2) |]
@@ -2428,7 +2428,7 @@ T:God Will Take Care of You
 M:6/8
 L:1/4
 K:Bb
-"vii-"D/ E/ =E/ F/B/ "IV7"c/ | "vii-"d "IVM7"c/ "vii-"B3/2 | "IVM7"F/ A/ "iii"G/ "IVM7"E G/ | ("vii-"F3/2 D3/2) |
+[Q:1/4=90] "vii-"D/ E/ =E/ F/B/ "IV7"c/ | "vii-"d "IVM7"c/ "vii-"B3/2 | "IVM7"F/ A/ "iii"G/ "IVM7"E G/ | ("vii-"F3/2 D3/2) |
 "vii-"D/ E/ =E/ F/B/ "IV7"c/ | "vii-"d "IVM7"c/ "vii-"B3/2 | "IVM7"F/ A/ "iii"G/ "IVM7"F c/ | "vii"B3 |
 "iii"B3/2 "III~4"A "iii"G/ | "iii^2"G "vii-"F/ F3/2 | "iv-7"F/ "IV"A/ "IV~2"G/ "IVM7"E3/2 | E/ G/ "iv-7"F/ "vii-"D3/2 |
 "vii-"F3/2 "ii-7"B B/ | "I^1"c/"iii"B/ "I^1"c/ "II"d3/2 | "I^1"c/ "iii"B/ G/ "iv-7"F/B/ "IV"A/ | "vii-"B3 |]
@@ -2438,7 +2438,7 @@ T:How Firm A Foundation
 M:2/2
 L:1/4
 K:Ab
-("VI"E "ii^2"F) | "vi"A2 "ii"F "ii^1"A | "vi"E2 A "VI~4"B | "vi"c2 "iii^2"B "VII"c | "iii"E2 "III7"E2 | "vi"A2 "ii"F A |
+[Q:1/4=125] ("VI"E "ii^2"F) | "vi"A2 "ii"F "ii^1"A | "vi"E2 A "VI~4"B | "vi"c2 "iii^2"B "VII"c | "iii"E2 "III7"E2 | "vi"A2 "ii"F A |
 "vi^1"E2 "IV"A "vii%7^2"B | "vi^2"c2 "iii7"B B | "vi"A2 c2 | e2 c "iii^1"e | "IV"A2 "vi^1"A "iii^2"B |
 "vi"c2 "iii^2"B "VII"c | "iii"E2 "III7"E2 | "i-7"A2 "ii"F A | "vi^1"E2 "IV"A "vii%7^2"B | "vi^2"c2 "iii7"B B | "vi"A2 |]
 
@@ -2447,7 +2447,7 @@ T:How Shall We Answer Terror's Cry?
 M:4/4
 L:1/4
 K:C
-"I"C | E3/2 E/ G G | "IV"A "IV^1"A "I"G "V^1"G | "vi7"c "II~4"d "V"B "V^1"G |
+[Q:1/4=100] "I"C | E3/2 E/ G G | "IV"A "IV^1"A "I"G "V^1"G | "vi7"c "II~4"d "V"B "V^1"G |
 "II~4"G "II"^F "V"G D | "vii-"F3/2 F/ "I"E E | "bii-"G3/2 "I"G/ "II"^F "VII^1"B |
 "iii"G "#iv7"^F "iii^1"E "vi"A | "iii^2"G "VII"^F "iii"E E | "I7"E3/2 "IM7"E/ "IV"F F |
 "II7"^F3/2 "ii7"F/ "V"G "vii-"G | "I"G "#iv-"A "I^2"G E | "V7"D3/2 "I"C/ C |]
@@ -2457,7 +2457,7 @@ T:I Am Jesus' Little Lamb
 M:4/4
 L:1/4
 K:C
-"I"G "I^1"c | "IV"A A "I^2"G "V~4"F | "I"E2 G "I^1"c | "IV"A "#iv-7"A "I^2"G "V7"=F | "I"E2
+[Q:1/4=112] "I"G "I^1"c | "IV"A A "I^2"G "V~4"F | "I"E2 G "I^1"c | "IV"A "#iv-7"A "I^2"G "V7"=F | "I"E2
 "I"G "I^1"c | "IV"A "VI7^2"A "II"A "II^1"d/"#iv-"=c/ | "V"B/"V~4"A/ "V"G "I"G "I^1"c | "IV"A "VI7^2"A "II"A "II^1"d/"vii7^2"_c/ | "V"B/"V~4"A/ "V"G
 "I^1"c "I"G | "IV"A "I"G "ii7"F "I^1"E | "V"D2 "I^1"G "I"c | "IV"A "ii"d "I^2"c "V"B | "I"c2 |]
 
@@ -2466,7 +2466,7 @@ T:I Know Whom I Have Believed
 M:4/4
 L:1/4
 K:Eb
-"iii"E | G3/2 G/ "vi^2"A/"iii"G/ "III~4"F/"iii"E/ | "vi^2"c "iii"B B G | B3/2 B/ "vi^2"c/"iii"B/ "ii"A/"iii"G/ | "vii-"F3
+[Q:1/4=100] "iii"E | G3/2 G/ "vi^2"A/"iii"G/ "III~4"F/"iii"E/ | "vi^2"c "iii"B B G | B3/2 B/ "vi^2"c/"iii"B/ "ii"A/"iii"G/ | "vii-"F3
 "vii%7"A | "iii"G3/2 G/ "vi^2"A/"iii"G/ "III~4"F/"iii"E/ | "vi^2"c "iii"B B G | "vii"B3/2 "vii-"B/ c/B/ "vii%7"A/F/ | "iii"E3
 "III"E/ E/ | "vi"e e3/2 e/ "VI~4"d/ "vi"c/ | "vi^2"c "iii"B3/2 B/ "vi^2"c/ "iii"B/ | "V^1"B "vii%7"A3/2 A/ "V^1"B/ "vii%7"A/ | "III~4"A "iii"G2
 "III"E | "vi"e e3/2 e/ "VI~4"d/ "vi"c/ | "vi^2"c "iii"B2 B/ B/ | "vii-"d3/2 "VII7"c/ "vii7"d "II"B | "iii"e3 |]
@@ -2476,7 +2476,7 @@ T:If God Himself Be For Me
 M:4/4
 L:1/4
 K:G
-"V"G | "iii"G "ii^1"d "V"B "V^1"G | ("ii"F3/2 "II~4"G/) "ii"A "V^1"D | "I"E "vi7"G "II~4"G "ii"F | "V~4"G3
+[Q:1/4=130] "V"G | "iii"G "ii^1"d "V"B "V^1"G | ("ii"F3/2 "II~4"G/) "ii"A "V^1"D | "I"E "vi7"G "II~4"G "ii"F | "V~4"G3
 "V"G | "iii"G "ii^1"d "V"B "V^1"G | ("ii"F3/2 "II~4"G/) "ii"A "V^1"D | "I"E "vi7"G "II~4"G "ii"F | "V"G3
 "V"B | G "ii^1"d "iii7"d/"I^1"c/ "iii"B | "VI~4"A2 "ii"A "I"c | "V"B "ii"A "vii-"B "iii"G | "VI"A3
 "V^1"d | "I"c "V"B "vi"A "V^1"G | ("ii"F3/2 "II~4"G/) "ii"A "V^1"D | "I"E "vi7"G "II~4"G "ii"F | "V"G3 |]
@@ -2486,7 +2486,7 @@ T:I Place My Trust In God
 M:2/2
 L:1/4
 K:Bb
-"vii-"F | "iii^2"G "IVM7"A "vii-"B B | B3/2 "iii^2"G/ "vii-"F "ii-7"F/"I"G/ | "vii-"B B d d | B3/2 "iii^2"G/ "vii-"F
+[Q:1/4=120] "vii-"F | "iii^2"G "IVM7"A "vii-"B B | B3/2 "iii^2"G/ "vii-"F "ii-7"F/"I"G/ | "vii-"B B d d | B3/2 "iii^2"G/ "vii-"F
 "ii-7"F | "I"G G G "iv-7"d | "vii-"B3/2 B/ B F | "iii"G G "vi^1"A A | "IVM7"c3/2 "I"c/ "vii-"B
 "ii-7"F/"I~4"G/ | "vii-"B B B d | B3/2 "iii^2"G/ "vii-"F  "ii-7"F/"I"G/ | "vii-"B B d d | "IV"c3/2 "iv-7"d/ "IV"c
 "ii-7"d/"I"c/ | "vii-"B B B "IV"c | "I^1"c3/2 "ii-7"d/ "I"e "iii"e | "vii-"d d d "vii"B | "vi^1"c "IVM7"A "vii-"B |]
@@ -2496,7 +2496,7 @@ T:In These Our Days So Perilous
 M:4/4
 L:1/4
 K:F
-"V"G2 G "V^1"G | "ii"F "I"G "vii-"B "II~4"A | "V"G2 B2 | "IV"c "vi"c "V"B "i^1"c | "V^2"d2 "II"d2 |
+[Q:1/4=110] "V"G2 G "V^1"G | "ii"F "I"G "vii-"B "II~4"A | "V"G2 B2 | "IV"c "vi"c "V"B "i^1"c | "V^2"d2 "II"d2 |
 "ii"d "vii-"d "IV"c "ii"d | "iii"B "i"c ("V^2"B "II"A) | "V"G2 G "ii"=F | "V"G ("bIII+"B "i"c) "i^1"G | ("II"^F "V"G) G2 |
 "IV"c2 ("vii-"d "IV"c) | "V"B G "V"B "i-7"A/"i"G/ | ("V"B2 "bIII+"G2) | "V"G4 |]
 
@@ -2505,7 +2505,7 @@ T:My Hope Is Built
 M:4/4
 L:1/4
 K:C
-"I"C | E3/2 E/ G G | "IV"A "IV^1"A "I"G "V^1"G | "vi7"c "II~4"d "V"B "V^1"G |
+[Q:1/4=100] "I"C | E3/2 E/ G G | "IV"A "IV^1"A "I"G "V^1"G | "vi7"c "II~4"d "V"B "V^1"G |
 "II~4"G "II"^F "V"G D | "vii-"F3/2 F/ "I"E E | "bii-"G3/2 "I"G/ "II"^F "VII^1"B |
 "iii"G "#iv7"^F "iii^1"E "vi"A | "iii^2"G "VII"^F "iii"E E | "I7"E3/2 "IM7"E/ "IV"F F |
 "II7"^F3/2 "ii7"F/ "V"G "vii-"G | "I"G "#iv-"A "I^2"G E | "V7"D3/2 "I"C/ C |]
@@ -2515,7 +2515,7 @@ T:Our God, Our Help In Ages Past
 M:4/4
 L:1/4
 K:C
-"I"G | E "IV"A "I^1"G "vi"c | "IV"c "V"B "I"c G | "vi"c "iii"G "vi^1"A "II"^F | "V"G3
+[Q:1/4=100] "I"G | E "IV"A "I^1"G "vi"c | "IV"c "V"B "I"c G | "vi"c "iii"G "vi^1"A "II"^F | "V"G3
 "V"B | "I"c "IV"A "ii"d "V"B | "I"c "IVM7"A "III"B "I^1"G | "ii"A "I"c "ii^1"d "V"B | "I"c3 |]
 
 X:284
@@ -2523,7 +2523,7 @@ T:Souls of Men! Why Will Ye Scatter
 M:4/4
 L:1/4
 K:G
-"V"G "IV^1"F/"vi"E/ "V^1"D "iii"G | "I"A "II~4"G/"ii"A/ "V"B "V^1"G | "vi7"c "ii-7"B/"ii"A/ "V^1"B "III~4"A/"iii"G/ | "IV^1"F/"V^1"G/ "vi^1"A/"ii7"F/ "V"G2 |
+[Q:1/4=100] "V"G "IV^1"F/"vi"E/ "V^1"D "iii"G | "I"A "II~4"G/"ii"A/ "V"B "V^1"G | "vi7"c "ii-7"B/"ii"A/ "V^1"B "III~4"A/"iii"G/ | "IV^1"F/"V^1"G/ "vi^1"A/"ii7"F/ "V"G2 |
 "V"G "IV^1"F/"vi"E/ "V^1"D "iii"G | "I"A "II~4"G/"ii"A/ "V"B "V^1"G | "vi7"c "ii-7"B/"ii"A/ "V^1"B "III~4"A/"iii"G/ | "IV^1"F/"V^1"G/ "vi^1"A/"ii7"F/ "V"G2 |
 "iii"G "ii"A/"ii-7"B/ "I"c "ii-7"B | "vi^2"A "III"^G "vi"A A | "II"A "vii-"B/"I~4"c/ "V^1"d "iii"G | "ii^1"A "V"G/"V7"F/ ("VI7"E "ii7"D) |
 "V"G "IV^1"F/"vi"E/ "V^1"D "iii"G | "I"A "II~4"G/"ii"A/ "V"B "V^1"G | "vi7"c "ii-7"B/"ii"A/ "V^1"B "III~4"A/"iii"G/ | "IV^1"F/"V^1"G/ "vi^1"A/"ii7"F/ "V"G2 |]
@@ -2533,7 +2533,7 @@ T:The Lord's My Shepherd
 M:3/2
 L:1/4
 K:D
-"ii"D2 | F A d2 A2 | "V"B "V^1"d "ii"A2 "vi7^2"G2 | "ii"F "V"D "ii^2"D2 "vi7"C2 | "ii"D4
+[Q:1/2=70] "ii"D2 | F A d2 A2 | "V"B "V^1"d "ii"A2 "vi7^2"G2 | "ii"F "V"D "ii^2"D2 "vi7"C2 | "ii"D4
 "ii"D2 | F A d2 A2 | "V"B "V^1"d "ii"A2 "vi7^2"G2 | "ii"F "V"D "ii^2"D2 "vi7"C2 | "ii"D4
 "vi"E2 | "ii"F "V"D "ii"D2 "vi"E2 | "ii"F "V"D "ii"D2 "vi"E2 | "ii"F "V~4"A "ii^1"d2 "V"d2 | "ii"d4
 "ii"D2 | F A d2 A2 | "V"B "V^1"d "ii"A2 "vi7^2"G2 | "ii"F "V"D "ii^2"D2 "vi7"C2 | "ii"D6 |]
@@ -2543,7 +2543,7 @@ T:The Winds and Billows Loudly Roar
 M:4/4
 L:1/4
 K:Ab
-"I"C | "IV^1"F "V"G "IV"A "vii-"B/"vii%7"A/ | "I"G "I~4"F/"I"E/ "IV"C "I^1"C | "ii-7"F "I"G "IV"A "iii"B | "vi"c3
+[Q:1/4=100] "I"C | "IV^1"F "V"G "IV"A "vii-"B/"vii%7"A/ | "I"G "I~4"F/"I"E/ "IV"C "I^1"C | "ii-7"F "I"G "IV"A "iii"B | "vi"c3
 "vi^1"A/"III~4^2"B/ | "vi"c "vii-"d/"I~4"c/ "ii-7"B "vii%7"A | "iii"G "I~4"F/"I"E/ "IV"C C | "IV^1"F "iii"G "vi"A/"IV^1"F/ "I"G | "IV"F3 |]
 
 X:287
@@ -2551,7 +2551,7 @@ T:Thine Arm, O Lord, in Days of Old
 M:4/4
 L:1/4
 K:G
-"iii"G/"III~4"F/ | "iii"E E "I"E "ii7^3"D | "V^1"G "iii"G "ii"A "V^1"G/"IV^1"A/ | "V"B B "vi"A/"vi7"G/ "I"E | "II~4"D3
+[Q:1/4=100] "iii"G/"III~4"F/ | "iii"E E "I"E "ii7^3"D | "V^1"G "iii"G "ii"A "V^1"G/"IV^1"A/ | "V"B B "vi"A/"vi7"G/ "I"E | "II~4"D3
 "V^1"G/"vii-"F/ | "I"E E "vi7"E "ii"D | "V^1"G "iii-7"G "ii"A "V^1"G/"IV^1"A/ | "V"B "V^1"B "vi^1"A/"I"G/ "vi"E | "iii"E3
 "iii"B/"I^1"c/ | "vii-"d B "iii7"B/"IV"A/ "V"G | "vi^1"A "ii"A "V"B "V^1"G/"ii^2"A/ | "V"B B/"IV^1"A/ "V^1"G "I"E | "II~4"D3
 "V^1"G/"vii-"F/ | "I"E E "vi"E/D/ E/"IV^1"F/ | "V"G "iii7"G "ii"A "V^1"G/"IV^1"A/ | "V"B "vii-"B "vi^1"A/"I"G/ "vi"E | "iii"E3 |]
@@ -2561,7 +2561,7 @@ T:Under His Wings
 M:6/4
 L:1/4
 K:Db
-"ii"F "II~4"G "iii7^3"=G "ii"A2 A/ A/ | A "V^2"B "ii"F "vi^2"A "vi7^2"G2 | "vi"E "ii^2"F
+[Q:1/4=110] "ii"F "II~4"G "iii7^3"=G "ii"A2 A/ A/ | A "V^2"B "ii"F "vi^2"A "vi7^2"G2 | "vi"E "ii^2"F
 "VI7"G "VI~2"B "VI+"A A | A "vi"E =E "ii"F3 | F "II~4"G "iii7^3"=G "ii"A A "ii^1"d |
 "V"e d B "V^2"B "ii"A2 | "V"B "V~4"c "V7"d "ii"d A F | "VI+"A "VI7"G "vi7"E "ii"D3 |
 "ii"A F A d3 | "vi7"c "VI~2"B "vi7"c "ii"d3 | d A F ("V^2"B "ii"A) "ii^1"F | "ii^2"F "vi"E4 z |
@@ -2572,7 +2572,7 @@ T:Despair Not, O Heart
 M:2/4
 L:1/4
 K:F
-"IV"F | "ii-7"B "vii-"G/ "I"G/ | "IV"A "iii^1"G/ "IV^1"F/ | "V^1"G2 | "IV"F  "ii"F | "iii^1"G "IV"A/ "ii"A/ |
+[Q:1/4=100] "IV"F | "ii-7"B "vii-"G/ "I"G/ | "IV"A "iii^1"G/ "IV^1"F/ | "V^1"G2 | "IV"F  "ii"F | "iii^1"G "IV"A/ "ii"A/ |
 "I"c "IM7"B/ "ii"A/ | "V^1"G2 | "VI"A "ii"F | "IV"A "V7^3"G/ "I^1"G/ | "V7^2"F "I"E/ C/ |
 "V7"D2 | "I"C  "IV^1"c | "vii-"d "V"B/ "V7^3"B/ | "I^1"c "IM7"B/ "ii"A/ | "V^1"G2 | "IV"F |]
 
@@ -2581,7 +2581,7 @@ T:Though in the Midst of Life We Be
 M:4/4
 L:1/4
 K:C
-"iii"G "I"G "IV"A "ii-7"B | "I"c "vi-7"c ("V"B "II"A) | "V"B "I^1"c "ii"d "IV"A | ("I"G/E/ "ii"F) "VI"E2 | "iii"G "I"G "IV"A "ii-7"B |
+[Q:1/4=110] "iii"G "I"G "IV"A "ii-7"B | "I"c "vi-7"c ("V"B "II"A) | "V"B "I^1"c "ii"d "IV"A | ("I"G/E/ "ii"F) "VI"E2 | "iii"G "I"G "IV"A "ii-7"B |
 "I"c "vi-7"c ("V"B "II"A) | "V"B "I^1"c "ii"d "IV"A | ("I"G/E/ "ii"F) "VI"E "II"z/ "bVII"D/ | "I"E "vi"E "V"G "IV^1"F | ("I"E "V"D) "I"C
 "I"z/ C/ | G "I^1"G "IV"A "V"B | "vi"c c ("iii7"B "IV"A) | "V"B "I^1"c "ii"d "IV"A | "I"G/E/ "ii"F "III"E2 |
 "vi"A2 "V^1"G "I"E | "ii"F "v"G "VI"E2 | "vi7"G2 "V^1"G "I"E | "ii"F "v"G "VI"E2 | "vi"A2 "iii"G "IV"A | "iii"B2 "iii7^3"B2 | "V"B "vi"A
@@ -2593,7 +2593,7 @@ T:God, Whose Almighty Word
 M:3/4
 L:1/4
 K:G
-"V"d B "V^1"G | ("vi^1"A "V^2"G) "ii"F | "V"G3 | G "ii^1"A "V"B | ("ii7^2"c/"ii^2"d/ "IV"c) "V"B | "ii"A3 |
+[Q:1/4=120] "V"d B "V^1"G | ("vi^1"A "V^2"G) "ii"F | "V"G3 | G "ii^1"A "V"B | ("ii7^2"c/"ii^2"d/ "IV"c) "V"B | "ii"A3 |
 "II"d "VII"B "V"G | "II"D3 | "ii"A "V^2"B "II7"c | "V"B3/2 "IV"A/ "V"G | "ii"A "V^2"B "II7"c |
 "V"B3/2 "IV"A/ "V"G | G "VII"B "II"d | "V"d3/2 "I^2"e/ "V"d | "vi^1"c "V^2"B "ii7"A | "V"G3 |]
 
@@ -2602,7 +2602,7 @@ T:Hark, the Voice of Jesus Calling
 M:4/4
 L:1/4
 K:G
-"V"B "ii^1"A "V"B "V^1"d | "I"c "vi^1"A "V^2"G "ii"F | "iii"G "I"E "ii^1"D "V"B | "VI7^2"A "vi7"G "ii"A2 |
+[Q:1/4=100] "V"B "ii^1"A "V"B "V^1"d | "I"c "vi^1"A "V^2"G "ii"F | "iii"G "I"E "ii^1"D "V"B | "VI7^2"A "vi7"G "ii"A2 |
 "V"B "ii"A "V"B "V^1"d | "I"c "vi^1"A "V^2"G "ii7"F | "iii"G "I"E "IV"D "V"B | "II~4"A3/2 G/ "V"G2 |
 "VI7^2"A3/2 B/ "V^1"B "bii-"A | "ii"A "ii^1"d "v-7"^c "V"B | "VI"A3/2 "bii%7"B/ "ii"A "vii-7"d | "ii^2"d "VI7"e "ii"d2 |
 "V"B "ii"A "V"B "iii7^2"d | "I"c "vi^1"A "V^2"G "IV7^3"F | "iii"G "bii-"E "V^2"D B | "II~4"A3/2 "V"G/ G2 |]
@@ -2612,7 +2612,7 @@ T:He Was Not Willing
 M:6/8
 L:1/4
 K:Eb
-"iii"G3/4 G// G/ G/ G/ G/ | "vi^2"A3/4 A// A/ "iii"G E/ | B3/4 B// B/ B/ B/ B/ |
+[Q:1/4=80] "iii"G3/4 G// G/ G/ G/ G/ | "vi^2"A3/4 A// A/ "iii"G E/ | B3/4 B// B/ B/ B/ B/ |
 "vi^2"c/ "iii"B/ G/ "vii-"F3/2 | "iii"G3/4 G// G/ G/ G/ G/ | "vi^2"A3/4 A// A/ "iii"G E/ | B3/4 B//
 "iii"B/ "vi^2"c/ "iii"B/ G/ | "iii^1"E/ "iii^2"G/ "vii%7"F/ "iii"E3/2 | G3/4 G// G/ G/ G/ G/ | "vi^2"A3/4 A// A/ "iii"G E/ |
 "iii"B3/4 B// B/ "vi^2"c/ "iii"B/ G/ | "iii^1"E/ "iii^2"G/ "vii%7"F/ "iii"E3/2 | "I"c3/4 c// c/ c/ c/ c/ |
@@ -2623,7 +2623,7 @@ T:Lift High The Cross
 M:4/4
 L:1/4
 K:C
-"I"G2 "I"c3/2 G/ | "ii7"F3 "V^1"G | "I"E3/2 "IV^1"F/ "I^2"G "#iv-"A | "V~4"D3
+[Q:1/4=120]  "I"G2 "I"c3/2 G/ | "ii7"F3 "V^1"G | "I"E3/2 "IV^1"F/ "I^2"G "#iv-"A | "V~4"D3
 "vii-"D | "I"E "V7^2"G "I^1"c2- | "IM7^2"c "IV^1"A "V^1"G2- | "iii^1"G "ii^1"A "ii7"F/"I"E/ "V7"D | "I~4"C4 |]
 "iii"G2 "vi-7"^F3/2 "vi"E/ | "II"^F2 "V^1"D2 | "I"E3/2 "VII"^F/ "iii"G "vi^1"A | "VII"B2
 "iii"G2 | "vi"c2 ("vii^1"B "II7^3"A) | "V^1"d2 "V^1"D2 | "I"E3/2 G/ "II~4"G "II"^F |  "V"G4{=F4 D4 E4} ||
@@ -2633,7 +2633,7 @@ T:May God Bestow on Us His Grace
 M:4/4
 L:1/4
 K:C
-"III"z2 B2 | "vi"c "iii^1"B "IV"A "iii"B | ("ii"d3/2 "I"e/ "V"d) "vi"c | "III"B2 "V^1"d2 | "I"c "V"B "vi"c "IV"A | ("I"G "V^1"D "IV^1"F "V"G) | "vi"E4 |
+[Q:1/4=120] "III"z2 B2 | "vi"c "iii^1"B "IV"A "iii"B | ("ii"d3/2 "I"e/ "V"d) "vi"c | "III"B2 "V^1"d2 | "I"c "V"B "vi"c "IV"A | ("I"G "V^1"D "IV^1"F "V"G) | "vi"E4 |
 "III"z2 B2 | "vi"c "iii^1"B "IV"A "iii"B | ("ii"d3/2 "I"e/ "V"d) "vi"c | "III"B2 "V^1"d2 | "I"c "V"B "vi"c "IV"A | ("I"G "V^1"D "IV^1"F "V"G) | "vi"E4 |
 "I"G2 "IV"F "I"E | "V"D "iii"E "IV"C "ii-7"D | "I"E2 "V"B2 | "I"c "IV"A "iii"G "ii"A | "I"c2 "V"B2 | "I"e2 "V^1"d "iii"B |
 "ii"d "IV"A "I"G "ii"F | "VI"E2 "iii"G2 | "IV"A "I"G "vi"c "ii"d | "III~4"B2 "vi"A2 | "VI"z "vi^2"c "IV~2"B "IV"A | "I"G "V^1"D ("IV^1"F "V"G) | "I"E4 |]
@@ -2643,7 +2643,7 @@ T:'Take Up Thy Cross', the Savior Said
 M:4/4
 L:1/4
 K:G
-"V"G2 "ii"A "iii"G | "ii"F "V^1"G "vi"A "V"B | "I"G3 "iii"G | "ii^1"A "V"B "I"c "V"B | "iii"G "ii"A "V"B2 |
+[Q:1/4=120] "V"G2 "ii"A "iii"G | "ii"F "V^1"G "vi"A "V"B | "I"G3 "iii"G | "ii^1"A "V"B "I"c "V"B | "iii"G "ii"A "V"B2 |
 "V"G2 "ii^1"A "ii"A | "V"B "IV^1"A "iii^2"G "VII"F | "I"E3 "ii"A | "V"B "vi"A "V^1"G "I"E | "iii"G "II~4"A "V"G2 |]
 
 X:297
@@ -2651,7 +2651,7 @@ T:Lord of Glory, Who Hast Bought Us
 M:3/4
 L:1/4
 K:F
-"IV"F2 "I"G | ("IV"F3/2 "iv-"G/) "IV"A | "V7^3"B2 "IV"A | ("I"G "ii"F) "I"G | "IV^1"c2 "V"B | "IV"A2 "IV^1"A | ("V^1"G "ii"F) "I"G | "IV"F3 |
+[Q:1/4=130] "IV"F2 "I"G | ("IV"F3/2 "iv-"G/) "IV"A | "V7^3"B2 "IV"A | ("I"G "ii"F) "I"G | "IV^1"c2 "V"B | "IV"A2 "IV^1"A | ("V^1"G "ii"F) "I"G | "IV"F3 |
 "IV"F2 "I"G | ("IV"F3/2 "iv-"G/) "IV"A | "V7^3"B2 "IV"A | ("I"G "ii"F) "I"G | "IV^1"c2 "V"B | "IV"A2 "IV^1"A | ("V^1"G "ii"F) "I"G | "IV"F3 |
 "vi"c2 c | ("ii7"c "V7^2"B) "ii"A | "V7"B2 "V"B | ("IM7"B "ii7"A) "iii"G | "IV"A2 "IVM7^3"A | ("ii"A "V^2"B) "vi"c | ("V~4"c "V"B) "vii%7"A | "I~4"G3 |
 ("IV^1"c A) "IV"c | ("V7^3"B "iii7"G) "iii"B | ("IV"A "IVM7^3"F) "ii"A | ("I^1"G/"vi^1"A/ "ii-7"B/"ii"A/) "iii"G | "IV"c2 "vi-"c | ("vii"d "IV^1"c) "vii-"B | "IV^2"A2 "IM7"G | "IV"F3 |]
@@ -2661,7 +2661,7 @@ T:We Give Thee But Thine Own
 M:4/4
 L:1/4
 K:G
-"V"d | "IV^1"c "V^1"B "I"A "ii-7"B/"ii7"c/ | "V"B3 B | "ii"A "vii-"D "V"E "VI"E | "ii"D3
+[Q:1/4=120] "V"d | "IV^1"c "V^1"B "I"A "ii-7"B/"ii7"c/ | "V"B3 B | "ii"A "vii-"D "V"E "VI"E | "ii"D3
 "ii"D | "I"E "IV^1"F "V^1"G "V"B | "I"A "vi^1"A "VII"B "V"B | "vi"c "V^1"B "I"A "ii"A | "V"G3 |]
 
 X:299
@@ -2669,7 +2669,7 @@ T:Let Children Hear The Mighty Deeds
 M:4/4
 L:1/4
 K:A
-"vi"E | c "vi^1"A "ii"F "vi^1"E | "IV"A "iii"B "vi"c "iii^1"e | "vi"c "IVM7"A "vii-"F "VII"F | "iii"E3
+[Q:1/4=100] "vi"E | c "vi^1"A "ii"F "vi^1"E | "IV"A "iii"B "vi"c "iii^1"e | "vi"c "IVM7"A "vii-"F "VII"F | "iii"E3
 "iii"B/"I^1"c/ | "ii^1"d "V"d "vi"c "vi^1"A | "ii"F "ii-7"B "iii"G "iii^1"e/"V"d/ | "vi"c "IV"c "ii-7"B "iii"G | "vi"A3 |]
 
 X:300
@@ -2677,7 +2677,7 @@ T:Lord, Who at Cana's Wedding Feast
 M:4/4
 L:1/4
 K:G
-"V"B | d3/2 "IV^1"c/ "V^1"B "I"G | "II7"B "vi^2"A "V"G D | "I"E "iii"G "V^1"G3/2 "vi^1"A/ | "ii"F3
+[Q:1/4=110] "V"B | d3/2 "IV^1"c/ "V^1"B "I"G | "II7"B "vi^2"A "V"G D | "I"E "iii"G "V^1"G3/2 "vi^1"A/ | "ii"F3
 "ii7^3"A | "V^1"d3/2 "ii7^2"c/ "V"B "I"e/"iii7^2"d/ | "vi"c3/2 "III^2"B/ "vi^1"A "VII"B | "iii"G B "iv-7"d3/2 "bvii^2"^c/ | "vii"B3
 "vii-"d | "V"d3/2 d/ "I^2"e "V"d | "ii^1"d3/2 "IV"c/ "V"B B | "I"G3/2 G/ "vi"c "I^2"e | "ii^1"A3
 "vi^1"A | "V^1"d3/2 d/ "I"e "III7"d | "vi"c "ii^1"d "V"B "ii7"A | "iii"G3/2 "I"G/ "V^2"G "ii"F | "V"G3 |]
@@ -2687,7 +2687,7 @@ T:O Father, All Creating
 M:4/4
 L:1/4
 K:D
-"ii"F | F F "V^2"G "ii"F | "ii^2"F2 "vi7^3"E "ii^1"D | "V"D B "ii^2"A "vi7"G | "ii"F3
+[Q:1/4=130] "ii"F | F F "V^2"G "ii"F | "ii^2"F2 "vi7^3"E "ii^1"D | "V"D B "ii^2"A "vi7"G | "ii"F3
 "vi7^2"G | "ii^1"A d "bVII^2"d "IVM7"c | "I7^2"c2 "V"B "IV^1"A | "V^1"G "vi^1"A "ii"F "vii-7"D | "vi"E3
 "vi"E | "ii"F "vi7^2"G "ii^1"A "V"B | B2 "ii^1"A "vii-"d | "iv-7"d3/2 "IV~4"c/ "ii-7"B "bIII+"F | "iii"G3
 "vi^1"E | "ii"F F "V^2"G "ii"F | "V7"F2 "iii^1"E "V"D | "iii7"D "iii"E "VI~4"D "vi7"C | "ii"D3 |]
@@ -2697,7 +2697,7 @@ T:Oh, Blest the House
 M:4/4
 L:1/4
 K:Eb
-"iii"E2 B "ii-7"B | "iii"G "vii-"F "iii"G "vi^1"=A | "vii-"B3/2 "iii"B/ G "vii-"B | "IV"A "ii-7"B "iii"G "vii-"F | "iii"E3/2
+[Q:1/4=100] "iii"E2 B "ii-7"B | "iii"G "vii-"F "iii"G "vi^1"=A | "vii-"B3/2 "iii"B/ G "vii-"B | "IV"A "ii-7"B "iii"G "vii-"F | "iii"E3/2
 "iii"B/ "vi"c "vi^1"c | "iii"G "vii-"B "IV"A A | "I"G3/2 "i"_e/ "V"d "vi"c | "iii"B "I"c "IV"A/G/ "vii-"F | "iii"E4 |]
 
 X:303
@@ -2705,7 +2705,7 @@ T:Savior, Who Thy Flock Art Feeding
 M:none
 L:1/4
 K:F
-"IV"F "I^1"G "IV"A "iii^1"G | "IV"A "ii-7"B "I"c2 "IV"A2 | "vii-"d "IV"c "V"B "IV^1"A | "V^1"G G "VI"A4 |
+[Q:1/4=130] "IV"F "I^1"G "IV"A "iii^1"G | "IV"A "ii-7"B "I"c2 "IV"A2 | "vii-"d "IV"c "V"B "IV^1"A | "V^1"G G "VI"A4 |
 "vi"c "IM7^2"c "IV"c A/"iv-"B/ | "IV"c "I^1"c/"iii"B/ "IV"A2 "I"G2 | "ii"F "I"G "IV"A "vii-"B | "IV^2"A "IM7"G "IV"F4 |]
 
 X:304
@@ -2713,7 +2713,7 @@ T:You Parents Hear What Jesus Taught
 M:3/2
 L:1/4
 K:F
-["IV"C2"VI+"F2] | ["IV"F2"i-7"A2] "iii"[Gc] ["IV"F2"i-7"A2] "I"[EG] | "IV"[FA] "ii"[F=B] ["I"E2"V~4"c2] ["vii-"F2"vii"d2] | ["IV"F2"vi"c2] "IV"[FA]
+[Q:1/4=125]  ["IV"C2"VI+"F2] | ["IV"F2"i-7"A2] "iii"[Gc] ["IV"F2"i-7"A2] "I"[EG] | "IV"[FA] "ii"[F=B] ["I"E2"V~4"c2] ["vii-"F2"vii"d2] | ["IV"F2"vi"c2] "IV"[FA]
 ["I"E2G2] "vi"[CF] | "vii"[DF] "I"[CE] ["IV"C2"VI+"F2] ["I"E2G2] | ["IV"F2"i-7"A2] "IV"[FA] ["I"E2G2] [Ec] |
 "V"[Dc] [D=B] ["I"E2"V~4"c2]  ["IV"C2A2] | ["vii"D2"iv-"B2] "IV"[CA] ["I"C2"iii"G2] "II"[A,F] | "vii"[DF] "I"[CE] ["IV"C2"VI+"F2] |]
 
@@ -2722,7 +2722,7 @@ T:Awake My Soul, An Offering Bring
 M:4/4
 L:1/4
 K:F
-"V"G | B "V~4"c "V"d3/2 "ii-7"B/ | "IV"A "V"G "II"^F A | "V"B3/2 "V~4"c/
+[Q:1/4=120] "V"G | B "V~4"c "V"d3/2 "ii-7"B/ | "IV"A "V"G "II"^F A | "V"B3/2 "V~4"c/
 "V"d "vii"B | "IV"B A "vii-"B2 | B3/2 B/ "IV"A c | "V"B B "II"A A |
 "vii-"d3/2 B/ "IV"A "V"G | "V^2"G "II"^F "V"G2 | "vii-"B3/2 B/ "IV"A c |
 "V"B B "II"A A | "vii-"d B "IV"A "V"G | "V^2"G "II"^F "V"G2 |]
@@ -2732,7 +2732,7 @@ T:Awake, My Soul, And With The Sun
 M:none
 L:1/4
 K:G
-"V"G2 G "ii"F "iii"E "vii-"D | "iii"G2 "ii"A2 "V"B3 | B2 B B "ii7"A "iii"G | "I"c2 "V"B2 "ii"A3 |
+[Q:1/4=120] "V"G2 G "ii"F "iii"E "vii-"D | "iii"G2 "ii"A2 "V"B3 | B2 B B "ii7"A "iii"G | "I"c2 "V"B2 "ii"A3 |
 "iii"G2 "ii"A "V"B "ii"A "V^1"G | "I"E2 "ii"F2 "V"G3 | d2 B "iii"G "ii"A "vi"c | "V^1"B2 "ii"A2 "V"G3 |]
 
 X:307
@@ -2740,7 +2740,7 @@ T:Every Morning Mercies New
 M:4/4
 L:1/4
 K:Bb
-"vii-"B "iii^2"B "vii-"B "iii^2"e | "iv-7"d3/2 "IVM7"c/ "vii"B2 | "ii-7"B "iii"G "vii-"F "ii-7"B | "V"d3/2 c/ "IV"c2 |
+[Q:1/4=120] "vii-"B "iii^2"B "vii-"B "iii^2"e | "iv-7"d3/2 "IVM7"c/ "vii"B2 | "ii-7"B "iii"G "vii-"F "ii-7"B | "V"d3/2 c/ "IV"c2 |
 "ii-7"B B "iii"B "iii^1"e | "II^1"d3/2 "IV"c/ "V"B2 | "I"G "vi"A/"VII~4"B/ "ii^2"d3/2 c/ | "V^1"B "IM7"G "IV"F2 |
 "vi"e e "vii-"d "V"B | "II"d3/2 "ii7"c/ "V"B2 | "III~4"A3/2 "iii"G/ "iv-7"F B | "IV~2"G3/2 "IVM7"A/ "vii"B2 |]
 
@@ -2749,7 +2749,7 @@ T:O Holy, Blessed Trinity
 M:4/4
 L:1/4
 K:D
-"ii"D | F "V^1"G "vi"A "ii"A | "V"B "V^1"B "ii"A2 | "vi"z "II~2"A "vii%7"A "bVII"d | "vi^1"c "IV"A "ii"B "III"B | "vi"A3
+[Q:1/4=120] "ii"D | F "V^1"G "vi"A "ii"A | "V"B "V^1"B "ii"A2 | "vi"z "II~2"A "vii%7"A "bVII"d | "vi^1"c "IV"A "ii"B "III"B | "vi"A3
 "ii"A | "vii-"d "IV"c "V"B "ii"A | "V"B "iii"G "IV~4"F2 | "vii"z "ii-7"F "III"B "V"B | "vi^1"A "ii"F "V"G "VI~4"E | "ii"D3 |]
 
 X:309
@@ -2757,7 +2757,7 @@ T:All Praise To Thee, My God, This Night
 M:4/4
 L:1/4
 K:G
-"V"G | "II~4"G "ii"F "iii"G "V^1"G | "I"A "ii"A "V"B "VII+"G | "vi"c "IV^1"c "V"B B | "vi7^3"A "IV"A "V"G
+[Q:1/4=100] "V"G | "II~4"G "ii"F "iii"G "V^1"G | "I"A "ii"A "V"B "VII+"G | "vi"c "IV^1"c "V"B B | "vi7^3"A "IV"A "V"G
 "V"d | "vi"c "ii^1"A "V"B B | "vi^1"A "ii"A "V"G "V^1"D | "vi^1"E "ii"F "iii"G "vii"B | "vi^1"A "ii"A "V"G |]
 
 X:310
@@ -2765,7 +2765,7 @@ T:God, That Madest Earth and Heaven
 M:4/4
 L:1/4
 K:G
-"V"G3/2 "vii-"F/ "I"E "V^1"G | "vi"A3/2 "IM7"G/ "ii"F "vii"D | "I"E2 "ii-7"F3/2 F/ | "V"G4 |
+[Q:1/4=100] "V"G3/2 "vii-"F/ "I"E "V^1"G | "vi"A3/2 "IM7"G/ "ii"F "vii"D | "I"E2 "ii-7"F3/2 F/ | "V"G4 |
 "V"G3/2 "vii-"F/ "I"E "V^1"G | "vi"A3/2 "IM7"G/ "ii"F "vii"D | "I"E2 "ii-7"F3/2 F/ | "V"G4 |
 "I^1"c "V"B "I^1"c "V^1"d | "I"e "ii"d "I^1"c "V"B | "vi"c "V^1"B "vi^1"A "iii"G | "vi"B3/2 "vi^1"A/ "II~4"G "ii"F |
 "V^1"G3/2 "vii-"F/ "I"E "V^1"G | "vi"A3/2 "IM7"G/ "ii"F "vii"D | "I"E2 "ii-7"F3/2 F/ | "V"G4 |]
@@ -2775,7 +2775,7 @@ T:Jesus, Tender Shepherd, Hear Me
 M:4/4
 L:1/4
 K:F
-"IV"c c "vi^2"c "iii"B | "IV"A "IV^1"A "IV^2"A "IM7^3"G | "IV^1"F "I^2"G "IV"A A | "I^1"c/"iii"B/ "IV"A "I"G2 |
+[Q:1/4=110] "IV"c c "vi^2"c "iii"B | "IV"A "IV^1"A "IV^2"A "IM7^3"G | "IV^1"F "I^2"G "IV"A A | "I^1"c/"iii"B/ "IV"A "I"G2 |
 "IV^1"c "IV"c "I^1"c "IM7"B | "IV"A "ii"A "bII+"A "VI7"G | "ii"F "V7^2"G "IV^2"A A | "IM7"B E "IV"F2 |]
 
 X:312
@@ -2783,7 +2783,7 @@ T:Now Rest Beneath Night's Shadow
 M:4/4
 L:1/4
 K:G
-"V"B | "I"G "IV^1"A "V"B/"V~4"c/ "V"d | "iii"c2 "V"B "iii"B/"I^1"c/ | "V^1"d "V^1"d "ii"A "vii-"B | "iii7"G2 "ii"F
+[Q:1/4=84] "V"B | "I"G "IV^1"A "V"B/"V~4"c/ "V"d | "iii"c2 "V"B "iii"B/"I^1"c/ | "V^1"d "V^1"d "ii"A "vii-"B | "iii7"G2 "ii"F
 "ii7^3"D | "V^1"G "vi"A "V"B "V^1"B | "ii"A3 "bIII+"B | "iii"G "vii%7^2"A "V"B/"V~4"c/ "bvi-"d | "vi"c2 "III"B
 "iii"B/"I^1"c/ | "ii^1"d y "V"d "VI7^3"A y "III"B | "iii"G2 "VII"F "vii"=D | "iii7"G "vii%7^2"A "V"B "I^1"c | "IM7"B "ii"A "V"G |]
 
@@ -2792,7 +2792,7 @@ T:Now the Light Has Gone Away
 M:4/4
 L:1/4
 K:F
-"IV"F3/2 F/ F "IV^1"F | "IM7^2"E "IV"F "I"G2 | G G G "IM7^3"G | "IV^1"F "I^2"G "IV"A2 |
+[Q:1/4=100]  "IV"F3/2 F/ F "IV^1"F | "IM7^2"E "IV"F "I"G2 | G G G "IM7^3"G | "IV^1"F "I^2"G "IV"A2 |
 "IV"A3/2 A/ A A | "iii"G "IV7"F "vii-"d2 | "IV^2"c A c "vii-"B | "I~2"D "IM7"E "IV"F2 |]
 
 X:314
@@ -2800,5 +2800,5 @@ T:O Trinity of Blessed Light
 M:none
 L:1/4
 K:D
-"ii"A/"ii-7"B/ "vi^1"A/"II~4"G/"ii"F/"iii"G/ E/ "vii-"F/ G/ "ii^2"A/"vii%7^3"B/ "V"B/"V~2"A/ "ii"A | A/"ii-7"B/ "vi^1"A/"II~4"G/"ii"F/"iii"G/ "I^1"E/ "ii"F/ "V^2"G/ "vi^1"A/"IM7"B/ "vii-"B/"vii%7"A/ "IV"A |
+[Q:1/4=60] "ii"A/"ii-7"B/ "vi^1"A/"II~4"G/"ii"F/"iii"G/ E/ "vii-"F/ G/ "ii^2"A/"vii%7^3"B/ "V"B/"V~2"A/ "ii"A | A/"ii-7"B/ "vi^1"A/"II~4"G/"ii"F/"iii"G/ "I^1"E/ "ii"F/ "V^2"G/ "vi^1"A/"IM7"B/ "vii-"B/"vii%7"A/ "IV"A |
 "ii"A/"ii-7"B/ "vii-"d/ "ii7^2"c/"ii^2"d/ "V"B/ "V~2"A/"V^1"G/ "II~4"A/"V^2"B/ "ii"A/"II~4"G/"ii"F/ "IV"F | "iii"G/"III~4"A/ "vi^1"A/"II~4"G/"ii"F/"iii"G/ E/ "vii-"F/ G/ "ii^2"A/"vii%7^3"B/ "V"B/"V~2"A/ "VI~4"A |]

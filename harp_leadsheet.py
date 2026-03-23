@@ -395,8 +395,7 @@ def annotate_soprano(soprano_line, beat_chords, default_len=Fraction(1, 4)):
     """
     # Strip [V:...] prefix
     line = re.sub(r'\[V:\s*[^\]]+\]', '', soprano_line)
-    # Strip [Q:...] tempo
-    line = re.sub(r'\[Q:[^\]]*\]', '', line)
+    # Keep [Q:...] tempo — don't strip it
     # Strip lyrics-related stuff and decorations
     line = re.sub(r'![a-zA-Z0-9_]+!', '', line)
 

@@ -319,8 +319,8 @@ fn score_voicing(
     let coverage = chord_pcs.iter().filter(|&&pc| covered.contains(&pc)).count();
     score += coverage as f32 * 15.0;
 
-    // 5. Total notes
-    score += voicing.total_notes() as f32 * 5.0;
+    // 5. Total notes — strongly prefer 6-8 notes
+    score += voicing.total_notes() as f32 * 8.0;
 
     // 6. Penalize large gaps
     for w in midis.windows(2) {
@@ -334,6 +334,15 @@ fn score_voicing(
     if !voicing.lh.is_empty() && !voicing.rh.is_empty() {
         score += 15.0;
     }
+
+    // 8. Bias load to LH: prefer LH 3-4 notes, RH 2-3 notes
+    let lh_count = voicing.lh.len();
+    let rh_count = voicing.rh.len();
+    if lh_count >= 3 { score += 20.0; }
+    if lh_count == 4 { score += 10.0; }
+    if rh_count == 2 { score += 10.0; }  // melody + 1 support
+    if rh_count == 3 { score += 5.0; }   // melody + 2 support
+    if rh_count == 4 && lh_count < 3 { score -= 15.0; } // don't overload RH at LH's expense
 
     score
 }
@@ -449,5 +458,26 @@ mod debug_tests {
         assert!(voicings.len() > 0);
         assert!(voicings[0].rh.len() > 1 || voicings[0].lh.len() > 0, 
             "Best voicing should have more than just melody");
+    }
+}
+
+#[cfg(test)]
+mod bias_tests {
+    use super::*;
+    use crate::chord_symbol::parse_chord_symbol;
+
+    #[test]
+    fn test_lh_bias() {
+        // Try several melody positions
+        for (chord_str, melody) in &[("I", 60), ("I", 64), ("I", 67), ("V", 71), ("IV", 65)] {
+            let chord = parse_chord_symbol(chord_str).unwrap();
+            let voicings = enumerate_voicings(*melody, &chord, 0, 1);
+            if let Some(v) = voicings.first() {
+                println!("{} melody={}: RH={} LH={} total={} score={:.0}",
+                    chord_str, melody, v.rh.len(), v.lh.len(), v.total_notes(), v.score);
+            } else {
+                println!("{} melody={}: NO VOICING", chord_str, melody);
+            }
+        }
     }
 }
