@@ -36,16 +36,17 @@
 
     /* Lead sheet display — horizontal rows */
     .leadsheet-container {
-      background: white; border-radius: 12px; padding: 1rem;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 1rem;
-      width: 100%; max-width: 900px; overflow-x: auto;
+      background: white; border-radius: 12px; padding: 0.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08); margin-bottom: 0.5rem;
+      width: 100%;
       font-family: 'JetBrains Mono', monospace;
     }
+    #leadsheet-wrapper { width: 100%; }
     .leadsheet-table {
-      border-collapse: collapse; width: 100%;
+      border-collapse: collapse; width: auto;
     }
     .leadsheet-table td {
-      padding: 0.15rem 0.3rem; text-align: center; vertical-align: middle;
+      padding: 0.1rem 0.2rem; text-align: right; vertical-align: middle;
       font-size: 0.75rem; white-space: nowrap;
     }
     .leadsheet-table .row-chord td {
@@ -61,6 +62,22 @@
     }
     .leadsheet-table .barline-cell {
       width: 1px; padding: 0; background: #bbb;
+    }
+
+    /* Print stylesheet */
+    @media print {
+      body { padding: 0; background: white; }
+      .controls, .player-bar, .ref-table-container, .status { display: none; }
+      .leadsheet-container {
+        box-shadow: none; max-width: 100%; padding: 0.25rem;
+        page-break-inside: avoid; margin-bottom: 0.5rem;
+      }
+      .leadsheet-table td { font-size: 7pt; padding: 0.1rem 0.15rem; }
+      .leadsheet-table .row-chord td { font-size: 6pt; }
+      .leadsheet-table .row-label { font-size: 6pt; }
+      h1 { display: none; }
+      .hymn-block { page-break-inside: avoid; }
+      .hymn-title { font-size: 10pt; margin-bottom: 2pt; }
     }
 
     /* Player bar */
@@ -118,10 +135,13 @@
     <button class="mode-btn" onclick="setMode(4)">Mix</button>
     <button class="mode-btn" onclick="setMode(5)">Aeo</button>
     <button class="mode-btn" onclick="setMode(6)">Loc</button>
+    <button onclick="printAll()">Print All</button>
   </div>
 
-  <div class="leadsheet-container">
-    <table class="leadsheet-table" id="leadsheet-table"></table>
+  <div id="leadsheet-wrapper">
+    <div class="leadsheet-container">
+      <table class="leadsheet-table" id="leadsheet-table"></table>
+    </div>
   </div>
 
   <div class="player-bar" id="player-bar">
@@ -231,39 +251,22 @@
 
     // ── Voicing Display ────────────────────────────────────
     function renderLeadSheet(hymn) {
-      const table = document.getElementById('leadsheet-table');
-      table.innerHTML = '';
+      const wrapper = document.getElementById('leadsheet-wrapper');
+      wrapper.innerHTML = '';
 
-      // Collect beats from precomputed JSON
+      // Collect columns from precomputed JSON
       const cols = [];
-
       for (const beat of hymn.beats) {
         if (beat.type === 'bar') {
           cols.push({ type: 'bar' });
         } else {
-          const isChordChange = !!beat.chord;
           const rh = beat.rh || [];
           const lh = beat.lh || [];
-
-          // Apply mode offset to string numbers
-          const rhNums = rh.map(s => ({ num: s + modeOffset }));
-          const lhNums = lh.map(s => ({ num: s + modeOffset }));
-
-          // Thumb: first RH string number, or compute from midi
-          let thumbNum = rh.length > 0 ? rh[0] + modeOffset : '';
-          if (!thumbNum && beat.midi) {
-            const s = midiToStringNum(beat.midi, baseKeyPC);
-            thumbNum = s !== null ? s + modeOffset : '';
-          }
-
           cols.push({
             type: 'beat',
             chord: beat.chord || '',
-            rhNums,
-            lhNums,
-            thumbNum,
-            isChordChange,
-            gap: 0,
+            rh, lh,
+            isChordChange: !!beat.chord,
             lhTick: lh.length > 0 && lh.length < 4,
             lhChordName: beat.lh_chord || '',
             rhChordName: beat.rh_chord || '',
@@ -274,83 +277,108 @@
         }
       }
 
-      // Always 4 rows per hand (4 fingers)
-      const maxRH = 4, maxLH = 4;
-
-      // Build rows: RH chord, LH chord, RH fingers, LH fingers
-      const rowChordRH = document.createElement('tr');
-      rowChordRH.className = 'row-chord';
-      rowChordRH.innerHTML = '<td class="row-label">RH</td>';
-
-      const rowChordLH = document.createElement('tr');
-      rowChordLH.className = 'row-chord';
-      rowChordLH.innerHTML = '<td class="row-label">LH</td>';
-
-      const fingerNames = ['thumb', 'index', 'middle', 'ring'];
-
-      const rhRows = [];
-      for (let f = 0; f < maxRH; f++) {
-        const tr = document.createElement('tr');
-        tr.className = 'row-rh';
-        tr.innerHTML = `<td class="row-label">${f === 0 ? 'RH ' : ''}${fingerNames[f]}</td>`;
-        rhRows.push(tr);
-      }
-
-      const lhRows = [];
-      for (let f = 0; f < maxLH; f++) {
-        const tr = document.createElement('tr');
-        tr.className = f === 0 ? 'row-lh-thumb' : 'row-lh';
-        tr.innerHTML = `<td class="row-label">${f === 0 ? 'LH ' : ''}${fingerNames[f]}</td>`;
-        lhRows.push(tr);
-      }
-
+      // Split into measures
+      const measures = [];
+      let cur = [];
       for (const c of cols) {
         if (c.type === 'bar') {
-          rowChordRH.innerHTML += '<td class="barline-cell"></td>';
-          rowChordLH.innerHTML += '<td class="barline-cell"></td>';
-          rhRows.forEach(r => r.innerHTML += '<td class="barline-cell"></td>');
-          lhRows.forEach(r => r.innerHTML += '<td class="barline-cell"></td>');
-          continue;
-        }
-
-        // Chord rows — RH chord on top, LH chord below
-        if (c.isChordChange && c.chord) {
-          const tick = c.lhTick ? "'" : '';
-          const rh = c.rhChordName || c.chord;
-          const lh = c.lhChordName ? `${tick}${c.lhChordName}` : '';
-          rowChordRH.innerHTML += `<td>${rh}</td>`;
-          rowChordLH.innerHTML += `<td>${lh}</td>`;
+          if (cur.length) { measures.push(cur); cur = []; }
         } else {
-          rowChordRH.innerHTML += '<td></td>';
-          rowChordLH.innerHTML += '<td></td>';
-        }
-
-        // RH rows
-        for (let f = 0; f < maxRH; f++) {
-          if (c.isChordChange && c.rhNums.length > f && c.rhNums[f].num !== '?') {
-            rhRows[f].innerHTML += `<td>${c.rhNums[f].num}</td>`;
-          } else if (f === 0) {
-            // First RH row shows thumb on non-chord beats
-            rhRows[f].innerHTML += `<td>${c.thumbNum}</td>`;
-          } else {
-            rhRows[f].innerHTML += '<td></td>';
-          }
-        }
-
-        // LH rows
-        for (let f = 0; f < maxLH; f++) {
-          if (c.isChordChange && c.lhNums.length > f && c.lhNums[f].num !== '?') {
-            lhRows[f].innerHTML += `<td>${c.lhNums[f].num}</td>`;
-          } else {
-            lhRows[f].innerHTML += '<td></td>';
-          }
+          cur.push(c);
         }
       }
+      if (cur.length) measures.push(cur);
 
-      table.appendChild(rowChordRH);
-      table.appendChild(rowChordLH);
-      rhRows.forEach(r => table.appendChild(r));
-      lhRows.forEach(r => table.appendChild(r));
+      // Calculate beats per line based on container width
+      const containerWidth = document.getElementById('leadsheet-wrapper').offsetWidth || 900;
+      const beatWidth = 28; // approx pixels per beat column
+      const maxBeatsPerLine = Math.max(8, Math.floor(containerWidth / beatWidth));
+      const measureLines = [];
+      let line = [], lineBeats = 0;
+      for (const m of measures) {
+        if (lineBeats + m.length > maxBeatsPerLine && line.length) {
+          measureLines.push(line);
+          line = []; lineBeats = 0;
+        }
+        line.push(m);
+        lineBeats += m.length;
+      }
+      if (line.length) measureLines.push(line);
+
+      // Render each line as its own table
+      for (const ml of measureLines) {
+        const container = document.createElement('div');
+        container.className = 'leadsheet-container';
+
+        const tbl = document.createElement('table');
+        tbl.className = 'leadsheet-table';
+
+        // Flatten measures with barlines between
+        const flatCols = [];
+        for (let mi = 0; mi < ml.length; mi++) {
+          if (mi > 0) flatCols.push({ type: 'bar' });
+          for (const c of ml[mi]) flatCols.push(c);
+        }
+
+        // Build 10 rows
+        const makeRow = (cls, label) => {
+          const tr = document.createElement('tr');
+          tr.className = cls;
+          tr.innerHTML = `<td class="row-label">${label}</td>`;
+          return tr;
+        };
+
+        const fingerNames = ['thumb', 'index', 'middle', 'ring'];
+        const rowChordRH = makeRow('row-chord', 'RH');
+        const rowChordLH = makeRow('row-chord', 'LH');
+        const rhRows = fingerNames.map((n, i) => makeRow('row-rh', i === 0 ? 'RH ' + n : n));
+        const lhRows = fingerNames.map((n, i) => makeRow(i === 0 ? 'row-lh-thumb' : 'row-lh', i === 0 ? 'LH ' + n : n));
+
+        for (const c of flatCols) {
+          if (c.type === 'bar') {
+            [rowChordRH, rowChordLH, ...rhRows, ...lhRows].forEach(r =>
+              r.innerHTML += '<td class="barline-cell"></td>');
+            continue;
+          }
+
+          // Chord rows
+          if (c.isChordChange && c.chord) {
+            const tick = c.lhTick ? "'" : '';
+            rowChordRH.innerHTML += `<td>${c.rhChordName || c.chord}</td>`;
+            rowChordLH.innerHTML += `<td>${c.lhChordName ? tick + c.lhChordName : ''}</td>`;
+          } else {
+            rowChordRH.innerHTML += '<td></td>';
+            rowChordLH.innerHTML += '<td></td>';
+          }
+
+          // RH finger rows
+          for (let f = 0; f < 4; f++) {
+            if (c.isChordChange && f < c.rh.length) {
+              rhRows[f].innerHTML += `<td>${c.rh[f] + modeOffset}</td>`;
+            } else if (f === 0 && c.rh.length) {
+              rhRows[f].innerHTML += `<td>${c.rh[0] + modeOffset}</td>`;
+            } else {
+              rhRows[f].innerHTML += '<td></td>';
+            }
+          }
+
+          // LH finger rows
+          for (let f = 0; f < 4; f++) {
+            if (c.isChordChange && f < c.lh.length) {
+              lhRows[f].innerHTML += `<td>${c.lh[f] + modeOffset}</td>`;
+            } else {
+              lhRows[f].innerHTML += '<td></td>';
+            }
+          }
+        }
+
+        tbl.appendChild(rowChordRH);
+        tbl.appendChild(rowChordLH);
+        rhRows.forEach(r => tbl.appendChild(r));
+        lhRows.forEach(r => tbl.appendChild(r));
+        container.appendChild(tbl);
+        wrapper.appendChild(container);
+      }
     }
 
     function computeGap(voicing) {
@@ -518,6 +546,129 @@
       renderChordTable(hymn);
     }
 
+    // ── Print All ──────────────────────────────────────────
+    function renderHymnBlock(hymn) {
+      const block = document.createElement('div');
+      block.className = 'hymn-block';
+
+      const title = document.createElement('div');
+      title.className = 'hymn-title';
+      title.textContent = `${hymn.number}. ${hymn.title} (${hymn.key}, ${hymn.tempo}bpm)`;
+      title.style.fontWeight = 'bold';
+      block.appendChild(title);
+
+      // Build the table for this hymn
+      const cols = [];
+      for (const beat of hymn.beats) {
+        if (beat.type === 'bar') {
+          cols.push({ type: 'bar' });
+        } else {
+          const rh = beat.rh || [];
+          const lh = beat.lh || [];
+          cols.push({
+            type: 'beat',
+            chord: beat.chord || '',
+            rh_chord: beat.rh_chord || '',
+            lh_chord: beat.lh_chord || '',
+            rh, lh,
+            isChordChange: !!beat.chord,
+            lhTick: lh.length > 0 && lh.length < 4,
+          });
+        }
+      }
+
+      // Split into measures
+      const measures = [];
+      let cur = [];
+      for (const c of cols) {
+        if (c.type === 'bar') {
+          if (cur.length) { measures.push(cur); cur = []; }
+        } else {
+          cur.push(c);
+        }
+      }
+      if (cur.length) measures.push(cur);
+
+      // Group measures into lines that fit ~90 chars
+      const maxBeatsPerLine = 30;
+      const measureLines = [];
+      let line = [], lineBeats = 0;
+      for (const m of measures) {
+        if (lineBeats + m.length > maxBeatsPerLine && line.length) {
+          measureLines.push(line);
+          line = []; lineBeats = 0;
+        }
+        line.push(m);
+        lineBeats += m.length;
+      }
+      if (line.length) measureLines.push(line);
+
+      // Render each line as a table
+      for (const ml of measureLines) {
+        const tbl = document.createElement('table');
+        tbl.className = 'leadsheet-table';
+        tbl.style.pageBreakInside = 'avoid';
+
+        const allCols = [];
+        for (let mi = 0; mi < ml.length; mi++) {
+          if (mi > 0) allCols.push({ type: 'bar' });
+          for (const c of ml[mi]) allCols.push(c);
+        }
+
+        // Build 10 rows
+        const rowData = Array.from({length: 10}, () => []);
+        for (const c of allCols) {
+          if (c.type === 'bar') {
+            for (const r of rowData) r.push('|');
+          } else {
+            rowData[0].push(c.isChordChange ? c.rh_chord : '');
+            const tick = c.lhTick ? "'" : '';
+            rowData[1].push(c.isChordChange ? tick + c.lh_chord : '');
+            for (let f = 0; f < 4; f++) {
+              if (c.isChordChange && f < c.rh.length)
+                rowData[2+f].push(String(c.rh[f]));
+              else if (f === 0 && c.rh.length)
+                rowData[2+f].push(String(c.rh[0]));
+              else
+                rowData[2+f].push('');
+            }
+            for (let f = 0; f < 4; f++) {
+              if (c.isChordChange && f < c.lh.length)
+                rowData[6+f].push(String(c.lh[f]));
+              else
+                rowData[6+f].push('');
+            }
+          }
+        }
+
+        for (let ri = 0; ri < 10; ri++) {
+          const tr = document.createElement('tr');
+          tr.className = ri < 2 ? 'row-chord' : ri === 6 ? 'row-lh-thumb' : ri < 6 ? 'row-rh' : 'row-lh';
+          for (const cell of rowData[ri]) {
+            const td = document.createElement('td');
+            if (cell === '|') td.className = 'barline-cell';
+            else td.textContent = cell;
+            tr.appendChild(td);
+          }
+          tbl.appendChild(tr);
+        }
+        block.appendChild(tbl);
+      }
+
+      return block;
+    }
+
+    function printAll() {
+      const wrapper = document.getElementById('leadsheet-wrapper');
+      wrapper.innerHTML = '<div class="hymn-title" style="font-size:14pt;font-weight:bold;margin-bottom:8pt">OpenHymnal — Harp Lead Sheets</div>';
+
+      for (const hymn of hymns) {
+        wrapper.appendChild(renderHymnBlock(hymn));
+      }
+
+      setTimeout(() => window.print(), 500);
+    }
+
     // ── Audio Engine ─────────────────────────────────────────
     let audioCtx = null;
     let isPlaying = false;
@@ -649,6 +800,15 @@
         document.getElementById('beat-display').textContent =
           `${playBeatIdx + 1} / ${hymn.beats.length}`;
       }
+    });
+
+    // Re-render on resize (debounced)
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (hymns.length > 0) renderLeadSheet(hymns[currentHymn]);
+      }, 200);
     });
 
     // ── Init ───────────────────────────────────────────────
