@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generate harp lead sheets from SATB hymns in OpenHymnal-C.abc.
+Generate harp lead sheets from SATB hymns in OpenHymnal.abc.
 
 Parses 4-part SATB harmony, derives per-beat chords using Roman numeral
 analysis with 7-bit ASCII notation, and generates LaTeX + ABC output.
@@ -707,7 +707,7 @@ def generate_abc_file(songs, output_path, max_songs=None):
 
 
 def main():
-    input_file = sys.argv[1] if len(sys.argv) > 1 else 'OpenHymnal-C.abc'
+    input_file = sys.argv[1] if len(sys.argv) > 1 else 'OpenHymnal.abc'
     output_file = sys.argv[2] if len(sys.argv) > 2 else 'harp_leadsheets.abc'
 
     max_songs = None

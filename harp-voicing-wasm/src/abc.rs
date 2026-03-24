@@ -28,13 +28,13 @@ pub fn key_to_pc(key: &str) -> u8 {
 /// ABC base MIDI for uppercase letters (octave 4 convention: C=48..B=59).
 fn abc_base(letter: u8) -> Option<i16> {
     match letter {
-        b'C' => Some(48),
-        b'D' => Some(50),
-        b'E' => Some(52),
-        b'F' => Some(53),
-        b'G' => Some(55),
-        b'A' => Some(57),
-        b'B' => Some(59),
+        b'C' => Some(60),
+        b'D' => Some(62),
+        b'E' => Some(64),
+        b'F' => Some(65),
+        b'G' => Some(67),
+        b'A' => Some(69),
+        b'B' => Some(71),
         _ => None,
     }
 }
@@ -864,18 +864,18 @@ mod tests {
     #[test]
     fn test_abc_note_to_midi() {
         let empty = HashMap::new();
-        // C4 = 48+12 = 60? No: uppercase C = 48, lowercase c = 60
-        assert_eq!(abc_note_to_midi("C", &empty), Some(48));
-        assert_eq!(abc_note_to_midi("c", &empty), Some(60));
-        assert_eq!(abc_note_to_midi("C'", &empty), Some(60));
-        assert_eq!(abc_note_to_midi("C,", &empty), Some(36));
-        assert_eq!(abc_note_to_midi("^F", &empty), Some(54)); // F=53+1
-        assert_eq!(abc_note_to_midi("_B", &empty), Some(58)); // B=59-1
+        // Standard ABC: uppercase C = middle C (MIDI 60), lowercase c = C5 (MIDI 72)
+        assert_eq!(abc_note_to_midi("C", &empty), Some(60));
+        assert_eq!(abc_note_to_midi("c", &empty), Some(72));
+        assert_eq!(abc_note_to_midi("C'", &empty), Some(72));
+        assert_eq!(abc_note_to_midi("C,", &empty), Some(48));
+        assert_eq!(abc_note_to_midi("^F", &empty), Some(66)); // F=65+1
+        assert_eq!(abc_note_to_midi("_B", &empty), Some(70)); // B=71-1
 
         // With key signature: G major has F#
         let g_acc = key_signature_accidentals("G");
-        assert_eq!(abc_note_to_midi("F", &g_acc), Some(54)); // F# due to key sig
-        assert_eq!(abc_note_to_midi("=F", &g_acc), Some(53)); // explicit natural
+        assert_eq!(abc_note_to_midi("F", &g_acc), Some(66)); // F# due to key sig
+        assert_eq!(abc_note_to_midi("=F", &g_acc), Some(65)); // explicit natural
     }
 
     #[test]
@@ -885,7 +885,7 @@ mod tests {
         assert_eq!(tokens.len(), 6); // 3 notes + bar + 2 notes
         match &tokens[0] {
             VoiceToken::Note { midi, duration } => {
-                assert_eq!(*midi, 48);
+                assert_eq!(*midi, 60);
                 let beats = duration.0 as f64 / duration.1 as f64;
                 assert!((beats - 1.0).abs() < 0.001, "Expected 1 beat, got {}", beats);
             }

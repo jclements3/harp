@@ -17,7 +17,7 @@ from collections import defaultdict
 MAJOR_SCALE = [0, 2, 4, 5, 7, 9, 11]
 NOTE_TO_PC = {'C': 0, 'D': 2, 'E': 4, 'F': 5, 'G': 7, 'A': 9, 'B': 11}
 PC_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B']
-ABC_BASE = {'C': 48, 'D': 50, 'E': 52, 'F': 53, 'G': 55, 'A': 57, 'B': 59}
+ABC_BASE = {'C': 60, 'D': 62, 'E': 64, 'F': 65, 'G': 67, 'A': 69, 'B': 71}
 
 CHORD_TEMPLATES = [
     (frozenset({0, 4, 7}),      '', False, ''),
@@ -68,6 +68,18 @@ def string_to_midi(string_num, key_root):
     return (octave + 1) * 12 + (key_root + MAJOR_SCALE[deg]) % 12
 
 
+def snap_to_diatonic(midi, key_root):
+    """Snap a chromatic MIDI note to the nearest diatonic string.
+    Prefers upward resolution, matching JS/Rust behavior."""
+    if midi_to_string(midi, key_root) is not None:
+        return midi
+    for offset in [1, -1, 2, -2]:
+        candidate = midi + offset
+        if midi_to_string(candidate, key_root) is not None:
+            return candidate
+    return midi
+
+
 def all_octaves(pitch_class, low, high):
     notes = []
     midi = pitch_class
@@ -79,12 +91,35 @@ def all_octaves(pitch_class, low, high):
     return notes
 
 
-def abc_note_to_midi(token):
-    acc = 0
+SHARP_ORDER = ['F', 'C', 'G', 'D', 'A', 'E', 'B']
+FLAT_ORDER = ['B', 'E', 'A', 'D', 'G', 'C', 'F']
+SHARP_KEYS = {'G': 1, 'D': 2, 'A': 3, 'E': 4, 'B': 5, 'F#': 6, 'C#': 7}
+FLAT_KEYS = {'F': 1, 'Bb': 2, 'Eb': 3, 'Ab': 4, 'Db': 5, 'Gb': 6, 'Cb': 7}
+
+
+def key_sig_accidentals(key):
+    """Return dict of letter -> semitone adjustment for key signature."""
+    acc = {}
+    if key in SHARP_KEYS:
+        for i in range(SHARP_KEYS[key]):
+            acc[SHARP_ORDER[i]] = 1
+    elif key in FLAT_KEYS:
+        for i in range(FLAT_KEYS[key]):
+            acc[FLAT_ORDER[i]] = -1
+    return acc
+
+
+def abc_note_to_midi(token, key_acc=None):
+    if key_acc is None:
+        key_acc = {}
+    explicit_acc = None
     i = 0
     while i < len(token) and token[i] in '^_=':
-        if token[i] == '^': acc += 1
-        elif token[i] == '_': acc -= 1
+        if explicit_acc is None:
+            explicit_acc = 0
+        if token[i] == '^': explicit_acc += 1
+        elif token[i] == '_': explicit_acc -= 1
+        elif token[i] == '=': explicit_acc = 0
         i += 1
     if i >= len(token):
         return None
@@ -93,7 +128,12 @@ def abc_note_to_midi(token):
     letter = ch.upper()
     if letter not in ABC_BASE:
         return None
-    midi = ABC_BASE[letter] + acc
+    # Apply explicit accidental, or key signature
+    if explicit_acc is not None:
+        adj = explicit_acc
+    else:
+        adj = key_acc.get(letter, 0)
+    midi = ABC_BASE[letter] + adj
     if is_lower:
         midi += 12
     i += 1
@@ -423,6 +463,7 @@ def parse_leadsheets(filename):
                 music_lines.append(line)
 
         music_str = ' '.join(music_lines)
+        key_acc = key_sig_accidentals(key)
 
         # Extract tempo
         tm = re.search(r'\[Q:\s*\d+/\d+=(\d+)\]', music_str)
@@ -445,9 +486,11 @@ def parse_leadsheets(filename):
             pm = re.match(r'^[_^=]*[A-Ga-g][,\']*', token)
             if not pm:
                 continue
-            midi = abc_note_to_midi(pm.group())
+            midi = abc_note_to_midi(pm.group(), key_acc)
             if midi is None:
                 continue
+            key_root = KEY_TO_PC.get(key, 0)
+            midi = snap_to_diatonic(midi, key_root)
             beats.append({
                 'type': 'note',
                 'midi': midi,
