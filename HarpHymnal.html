@@ -45,6 +45,10 @@
       padding: 0.1rem 0.2rem; text-align: center; vertical-align: middle;
       font-size: 0.85rem; white-space: nowrap;
     }
+    .leadsheet-table .row-fullchord td {
+      color: #aaa; font-weight: 600; font-size: 0.75rem;
+      text-align: center;
+    }
     .leadsheet-table .row-chord td {
       color: #000; font-weight: 700; font-size: 0.85rem;
       border-bottom: 1px solid #ddd; text-align: center;
@@ -731,13 +735,13 @@
 
       if (!bestSplit) return null;
 
-      const lowestRoot = allOctaves(keyRoot, HARP_LOW_MIDI, HARP_HIGH_MIDI)[0];
-      const refStr = lowestRoot !== undefined ? (midiToHarpString(lowestRoot, keyRoot) || 0) : 0;
+      const refStr = 0; // string 1 = lowest string on harp
       const toStrings = (arr) => arr.sort((a, b) => b - a).map(m => {
         const s = midiToHarpString(m, keyRoot);
         return s !== null ? s - refStr + 1 : 0;
       });
 
+      const allNotes = [...bestSplit.rh, ...bestSplit.lh];
       return {
         rhMidi: bestSplit.rh.sort((a, b) => b - a),
         lhMidi: bestSplit.lh.sort((a, b) => b - a),
@@ -745,6 +749,7 @@
         lhStrings: toStrings([...bestSplit.lh]),
         rhChord: identifyChord(bestSplit.rh, keyRoot),
         lhChord: identifyChord(bestSplit.lh, keyRoot),
+        fullChord: identifyChord(allNotes, keyRoot),
       };
     }
 
@@ -817,6 +822,7 @@
 
             if (voicingKey !== lastKey) {
               beat.chord = voicing.rhChord + '/' + voicing.lhChord;
+              beat.fullChord = voicing.fullChord;
               beat.rhChord = voicing.rhChord;
               beat.lhChord = voicing.lhChord;
               beat.rhStrings = voicing.rhStrings;
@@ -1005,6 +1011,7 @@
         return tr;
       };
 
+      const rowFullChord = makeRow('row-fullchord', 'Chord');
       const rowRhChord = makeRow('row-chord', 'RH');
       const rowLhChord = makeRow('row-chord', 'LH');
       const rhRows = fingerNames.map((n, i) => makeRow(i === 0 ? 'row-rh-thumb' : 'row-rh', i === 0 ? 'thumb' : n));
@@ -1012,10 +1019,11 @@
 
       for (const c of flatCols) {
         if (c.type === 'bar') {
-          [rowRhChord, rowLhChord, ...rhRows, ...lhRows].forEach(r => r.innerHTML += '<td class="barline-cell"></td>');
+          [rowFullChord, rowRhChord, rowLhChord, ...rhRows, ...lhRows].forEach(r => r.innerHTML += '<td class="barline-cell"></td>');
           continue;
         }
 
+        rowFullChord.innerHTML += `<td>${c.isChordChange ? (c.fullChord || '').trim() : ''}</td>`;
         rowRhChord.innerHTML += `<td>${c.isChordChange ? c.rhChord.trim() : ''}</td>`;
         rowLhChord.innerHTML += `<td>${c.isChordChange ? c.lhChord.trim() : ''}</td>`;
 
@@ -1036,6 +1044,7 @@
         }
       }
 
+      tbl.appendChild(rowFullChord);
       tbl.appendChild(rowRhChord);
       tbl.appendChild(rowLhChord);
       rhRows.forEach(r => tbl.appendChild(r));
@@ -1056,13 +1065,11 @@
         cols.push({
           type: 'beat', chord: beat.chord || '',
           rh: beat.chord ? rh : [], lh: beat.chord ? lh : [],
+          fullChord: beat.fullChord || '',
           rhChord: beat.rhChord || '', lhChord: beat.lhChord || '',
           melodyString: (() => {
             const s = midiToHarpString(beat.midi, hymn.keyRoot);
-            if (s === null) return null;
-            const lr = allOctaves(hymn.keyRoot, HARP_LOW_MIDI, HARP_HIGH_MIDI)[0];
-            const ref = lr !== undefined ? (midiToHarpString(lr, hymn.keyRoot) || 0) : 0;
-            return s - ref + 1;
+            return s !== null ? s + 1 : null;
           })(),
           isChordChange: !!beat.chord,
         });
@@ -1153,8 +1160,7 @@
       const parsed = parseChordSymbol(ascii);
       if (parsed.error) return '';
       const rootPc = ((keyRoot + MAJOR_SCALE[parsed.rootDegree % 7] + parsed.rootAccidental) % 12 + 12) % 12;
-      const lowestRoot = allOctaves(keyRoot, HARP_LOW_MIDI, HARP_HIGH_MIDI)[0];
-      const refStr = lowestRoot !== undefined ? (midiToHarpString(lowestRoot, keyRoot) || 0) : 0;
+      const refStr = 0; // string 1 = lowest string on harp
       return parsed.intervals.map(iv => {
         const pc = (rootPc + iv) % 12;
         const midi = allOctaves(pc, 48, 84)[0];
