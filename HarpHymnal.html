@@ -1234,13 +1234,20 @@
       const table = document.getElementById('chord-table');
       const exampleKeyRoot = KEY_TO_PC[currentKey] || hymn.keyRoot;
       const seen = new Set();
-      const chords = [];
+      const entries = [];
       for (const beat of hymn.beats) {
-        if (beat.chord && !seen.has(beat.chord)) { seen.add(beat.chord); chords.push(beat.chord); }
+        if (beat.chord && !seen.has(beat.chord)) {
+          seen.add(beat.chord);
+          entries.push({
+            harp: beat.chord,
+            composer: beat.fullChord || '',
+          });
+        }
       }
-      let html = `<tr><th>ASCII</th><th>Strings</th><th>Traditional</th><th>Say</th><th>Example in ${currentKey || hymn.key}</th></tr>`;
-      for (const c of chords) {
-        html += `<tr><td class="ascii">${c}</td><td>${chordToStrings(c, hymn.keyRoot)}</td><td class="trad">${chordToTraditional(c)}</td><td class="say">${chordToSay(c)}</td><td>${chordToExample(c, exampleKeyRoot)}</td></tr>`;
+      let html = `<tr><th>Harp</th><th>Strings</th><th>Composer</th><th>Traditional</th><th>Say</th><th>Example in ${currentKey || hymn.key}</th></tr>`;
+      for (const e of entries) {
+        const composerChord = e.composer;
+        html += `<tr><td class="ascii">${e.harp}</td><td>${composerChord ? chordToStrings(composerChord, hymn.keyRoot) : ''}</td><td class="ascii">${composerChord}</td><td class="trad">${composerChord ? chordToTraditional(composerChord) : ''}</td><td class="say">${composerChord ? chordToSay(composerChord) : ''}</td><td>${composerChord ? chordToExample(composerChord, exampleKeyRoot) : ''}</td></tr>`;
       }
       table.innerHTML = html;
     }
