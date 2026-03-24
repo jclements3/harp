@@ -522,6 +522,17 @@
       return midi;
     }
 
+    // ── Snap chromatic note to nearest diatonic string ──────
+    function snapToDiatonic(midi, keyRoot) {
+      if (midiToHarpString(midi, keyRoot) !== null) return midi;
+      // Try one semitone up and down, prefer up (resolution direction)
+      if (midiToHarpString(midi + 1, keyRoot) !== null) return midi + 1;
+      if (midiToHarpString(midi - 1, keyRoot) !== null) return midi - 1;
+      if (midiToHarpString(midi + 2, keyRoot) !== null) return midi + 2;
+      if (midiToHarpString(midi - 2, keyRoot) !== null) return midi - 2;
+      return midi; // give up
+    }
+
     // ── Parse ABC voice line into note/bar tokens ──────────
     function parseVoiceTokens(musicStr, keySigAcc) {
       const tokens = [];
@@ -544,13 +555,15 @@
       const satb = [soprano, alto, tenor, bass].filter(n => n !== null);
       if (satb.length < 2) return null;
 
-      const melodyMidi = soprano;
+      // R10: Snap chromatic melody to nearest diatonic note
+      const melodyMidi = snapToDiatonic(soprano, keyRoot);
       const melodyStr = midiToHarpString(melodyMidi, keyRoot);
       if (melodyStr === null) return null;
 
-      // Collect SATB pitch classes
-      const satbPcs = [...new Set(satb.map(pitchClass))];
-      const bassPc = bass !== null ? pitchClass(bass) : satbPcs[0];
+      // R9: Snap all SATB notes to diatonic
+      const satbSnapped = satb.map(m => snapToDiatonic(m, keyRoot));
+      const satbPcs = [...new Set(satbSnapped.map(pitchClass))];
+      const bassPc = bass !== null ? pitchClass(snapToDiatonic(bass, keyRoot)) : satbPcs[0];
 
       // Build voicing from scratch around melody (RH thumb) and bass
       // RH: melody on thumb + 1-3 notes below within span
@@ -733,6 +746,57 @@
         }
       }
 
+      // Progressive relaxation: if strict rules fail, try wider gap, fewer notes
+      if (!bestSplit) {
+        // Try gap 4-5
+        for (const rh of rhConfigs) {
+          if (bestSplit) break;
+          const rhStrs = rh.map(m => midiToHarpString(m, keyRoot));
+          if (rhStrs.includes(null)) continue;
+          const rhLowestStr = Math.min(...rhStrs);
+          for (let gap = 4; gap <= 5; gap++) {
+            if (bestSplit) break;
+            const lhUpperStr = rhLowestStr - 1 - gap;
+            if (lhUpperStr < 0) continue;
+            const lhUpperMidi = harpStringToMidi(lhUpperStr, keyRoot);
+            const lhEligible = candidates.filter(m => {
+              if (m > lhUpperMidi) return false;
+              const s = midiToHarpString(m, keyRoot);
+              return s !== null && lhUpperStr - s < MAX_HAND_SPAN;
+            }).sort((a, b) => b - a).slice(0, 6);
+            for (let ti = 0; ti < lhEligible.length && !bestSplit; ti++) {
+              const thumb = lhEligible[ti];
+              const below = lhEligible.slice(ti + 1);
+              const configs = [[thumb]];
+              for (const a of below) configs.push([thumb, a]);
+              for (let i = 0; i < below.length; i++)
+                for (let j = i + 1; j < below.length; j++)
+                  configs.push([thumb, below[i], below[j]]);
+              for (const lh of configs) {
+                const total = rh.length + lh.length;
+                if (total < 3) continue;
+                const allStrs = [...rh, ...lh].map(m => midiToHarpString(m, keyRoot));
+                if (new Set(allStrs).size !== allStrs.length) continue;
+                bestSplit = { rh, lh };
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      // Last resort: melody only in RH, any 2 notes in LH
+      if (!bestSplit) {
+        const lhCands = candidates.filter(m => m < melodyMidi - 12 && midiToHarpString(m, keyRoot) !== null);
+        if (lhCands.length >= 2) {
+          bestSplit = { rh: [melodyMidi], lh: lhCands.slice(-2) };
+        } else if (lhCands.length >= 1) {
+          bestSplit = { rh: [melodyMidi], lh: [lhCands[lhCands.length - 1]] };
+        } else {
+          bestSplit = { rh: [melodyMidi], lh: [] };
+        }
+      }
+
       if (!bestSplit) return null;
 
       const refStr = 0; // string 1 = lowest string on harp
@@ -813,7 +877,8 @@
 
           const voicing = voiceFromSATB(sMidi, aMidi, tMidi, bMidi, keyRoot, lastVoicing);
 
-          const beat = { type: 'note', midi: sMidi, originalMidi: sMidi };
+          const snappedMelody = snapToDiatonic(sMidi, keyRoot);
+          const beat = { type: 'note', midi: snappedMelody, originalMidi: sMidi };
 
           if (voicing) {
             // Show chord when voicing changes (different notes, not just same name)
@@ -1159,15 +1224,10 @@
     function chordToStrings(ascii, keyRoot) {
       const parsed = parseChordSymbol(ascii);
       if (parsed.error) return '';
-      const rootPc = ((keyRoot + MAJOR_SCALE[parsed.rootDegree % 7] + parsed.rootAccidental) % 12 + 12) % 12;
-      const refStr = 0; // string 1 = lowest string on harp
-      return parsed.intervals.map(iv => {
-        const pc = (rootPc + iv) % 12;
-        const midi = allOctaves(pc, 48, 84)[0];
-        if (midi === undefined) return '?';
-        const s = midiToHarpString(midi, keyRoot);
-        return s !== null ? s - refStr + 1 : '?';
-      }).join(' ');
+      const rootDeg = parsed.rootDegree;
+      // Map semitone intervals to scale degree names relative to chord root
+      const ivNames = { 0:'1', 1:'b2', 2:'2', 3:'b3', 4:'3', 5:'4', 6:'b5', 7:'5', 8:'#5', 9:'6', 10:'b7', 11:'7' };
+      return parsed.intervals.map(iv => ivNames[iv % 12] || '?').join(' ');
     }
 
     function renderChordTable(hymn) {
