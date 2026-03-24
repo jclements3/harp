@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 /// Maximum diatonic span per hand (10 strings).
-pub const MAX_HAND_SPAN: u8 = 10;
+pub const MAX_HAND_SPAN: i16 = 10;
 
 /// Maximum fingers per hand.
 pub const FINGERS_PER_HAND: usize = 4;
@@ -20,7 +20,7 @@ pub enum Hand {
 #[derive(Debug, Clone, Serialize)]
 pub struct FingerNote {
     pub midi: u8,
-    pub string_num: u8,
+    pub string_num: i16,
     pub finger: u8, // 1=thumb, 2=index, 3=middle, 4=ring
     pub hand: Hand,
     pub note_name: String,

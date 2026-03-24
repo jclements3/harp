@@ -1,0 +1,9 @@
+[package]
+name = "harp-midi"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+harp-voicing-wasm = { path = "../harp-voicing-wasm" }
+midly = "0.5"
+clap = { version = "4", features = ["derive"] }

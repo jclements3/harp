@@ -1,9 +1,18 @@
+pub mod abc;
+pub mod chord_display;
 pub mod chord_symbol;
 pub mod harp;
 pub mod music;
 pub mod voicing;
 
+use serde::Deserialize;
 use wasm_bindgen::prelude::*;
+
+#[derive(Deserialize)]
+struct PrevVoicingJson {
+    rh_midi: Vec<u8>,
+    lh_midi: Vec<u8>,
+}
 
 #[wasm_bindgen]
 pub struct HarpVoicer {
@@ -66,6 +75,18 @@ impl HarpVoicer {
         let pcs: HashSet<u8> = midi_notes.iter().map(|&m| music::pitch_class(m)).collect();
         if pcs.len() < 2 { return String::new(); }
 
+        let roman_strs = ["I","II","III","IV","V","VI","VII"];
+
+        // Dyad: just show the bass note's scale degree
+        if pcs.len() == 2 {
+            let bass_pc = midi_notes.iter().min().map(|&m| music::pitch_class(m)).unwrap_or(0);
+            let deg = music::MAJOR_SCALE.iter().position(|&s| (self.key_root + s) % 12 == bass_pc);
+            return match deg {
+                Some(d) => roman_strs[d].to_string(),
+                None => String::new(),
+            };
+        }
+
         let bass_pc = midi_notes.iter().min().map(|&m| music::pitch_class(m));
         let mut best_root = 0u8;
         let mut best_idx = 0usize;
@@ -94,7 +115,6 @@ impl HarpVoicer {
         let deg = match degree { Some(d) => d, None => return String::new() };
 
         let (_, (lower, suffix), inv_order) = &chord_templates[best_idx];
-        let roman_strs = ["I","II","III","IV","V","VI","VII"];
         let roman = if *lower { roman_strs[deg].to_lowercase() } else { roman_strs[deg].to_string() };
 
         let inv = match bass_pc {
@@ -108,6 +128,79 @@ impl HarpVoicer {
         let mut result = format!("{}{}", roman, suffix);
         if inv > 0 { result.push_str(&format!("^{}", inv)); }
         result
+    }
+
+    /// Snap a chromatic MIDI note to the nearest diatonic string in the current key.
+    pub fn snap_to_diatonic(&self, midi: u8) -> u8 {
+        music::snap_to_diatonic(midi, self.key_root)
+    }
+
+    /// Voice from SATB parts, returning a JSON voicing object.
+    /// alto, tenor, bass are optional (pass 255 to skip).
+    pub fn voice_from_satb(
+        &self,
+        soprano: u8,
+        alto: u8,
+        tenor: u8,
+        bass: u8,
+        prev_json: &str,
+    ) -> String {
+        let alto_opt = if alto == 255 { None } else { Some(alto) };
+        let tenor_opt = if tenor == 255 { None } else { Some(tenor) };
+        let bass_opt = if bass == 255 { None } else { Some(bass) };
+
+        let prev = if prev_json.is_empty() {
+            None
+        } else {
+            serde_json::from_str::<PrevVoicingJson>(prev_json).ok().map(|p| {
+                voicing::PrevVoicing {
+                    rh_midi: p.rh_midi,
+                    lh_midi: p.lh_midi,
+                }
+            })
+        };
+
+        let identify = |notes: &[u8], kr: u8| -> String {
+            let voicer = HarpVoicer { key_root: kr };
+            voicer.identify_chord(notes)
+        };
+
+        match voicing::voice_from_satb(
+            soprano, alto_opt, tenor_opt, bass_opt,
+            self.key_root,
+            prev.as_ref(),
+            &identify,
+        ) {
+            Some(v) => serde_json::to_string(&v).unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e)),
+            None => "null".to_string(),
+        }
+    }
+
+    /// Process an ABC file (SATB or lead sheet) and return JSON hymns with voicings.
+    pub fn process_abc(&self, abc_text: &str) -> String {
+        let hymns = abc::parse_lead_sheets(abc_text);
+        serde_json::to_string(&hymns)
+            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e))
+    }
+
+    /// Convert ASCII chord symbol to traditional notation.
+    pub fn chord_to_traditional(&self, ascii: &str) -> String {
+        chord_display::chord_to_traditional(ascii)
+    }
+
+    /// Convert ASCII chord symbol to spoken form.
+    pub fn chord_to_say(&self, ascii: &str) -> String {
+        chord_display::chord_to_say(ascii)
+    }
+
+    /// Show the pitch classes for a chord in the current key.
+    pub fn chord_to_example(&self, ascii: &str) -> String {
+        chord_display::chord_to_example(ascii, self.key_root)
+    }
+
+    /// Show the interval structure of a chord.
+    pub fn chord_to_intervals(&self, ascii: &str) -> String {
+        chord_display::chord_to_intervals(ascii)
     }
 
     /// Parse a chord symbol and return its structure as JSON.
