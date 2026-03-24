@@ -819,7 +819,8 @@
       const toStrings = (arr) => arr.sort((a, b) => b - a).map(m => {
         const s = midiToHarpString(m, keyRoot);
         if (s === null) return null;
-        return s - refStr + 1;
+        const rel = s - refStr + 1;
+        return rel <= 0 ? rel - 1 : rel; // skip zero: ...-2, -1, 1, 2...
       });
 
       const allNotes = [...bestSplit.rh, ...bestSplit.lh];
@@ -1154,7 +1155,8 @@
             if (s === null) return null;
             const lr = allOctaves(hymn.keyRoot, HARP_LOW_MIDI, HARP_HIGH_MIDI)[0];
             const ref = lr !== undefined ? (midiToHarpString(lr, hymn.keyRoot) || 0) : 0;
-            return s - ref + 1;
+            const rel = s - ref + 1;
+            return rel <= 0 ? rel - 1 : rel;
           })(),
           isChordChange: !!beat.chord,
         });
