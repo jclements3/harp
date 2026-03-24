@@ -506,7 +506,7 @@
     }
 
     // ── SATB-based voicing: expand 4 notes to 6-8, split for harp hands ──
-    function voiceFromSATB(soprano, alto, tenor, bass, keyRoot) {
+    function voiceFromSATB(soprano, alto, tenor, bass, keyRoot, prevVoicing) {
       const satb = [soprano, alto, tenor, bass].filter(n => n !== null);
       if (satb.length < 2) return null;
 
@@ -620,33 +620,79 @@
             const allStrs = [...rh, ...lh].map(m => midiToHarpString(m, keyRoot));
             if (new Set(allStrs).size !== allStrs.length) continue;
 
-            // Score
-            let score = 0;
-            score += lh.length * 10;
-            score += (rh.length >= 2 ? 10 : 0);
-            if (lh.length >= 3) score += 15;
-            if (lh.length === 4) score += 10;
-            if (total >= 6 && total <= 8) score += 20;
+            // 29-string check: highest string + 6 (max mode offset) must fit
+            const allStrsNum = allStrs.filter(s => s !== null);
+            const highestStr = Math.max(...allStrsNum);
+            const lowestStr = Math.min(...allStrsNum);
+            if (highestStr + 6 > 29 + lowestStr) continue; // won't fit in all modes
 
-            // Prefer SATB pitch classes covered
+            const melodyPc = pitchClass(melodyMidi);
+            const allMidis = [...rh, ...lh].sort((a, b) => a - b);
+
+            // Score — implements SRS rules R1-R8
+            let score = 0;
+
+            // R1: LH carries the load
+            if (lh.length === 4) score += 30;
+            else if (lh.length === 3) score += 20;
+            else if (lh.length === 2) score += 5;
+            if (rh.length === 2) score += 10;
+            else if (rh.length === 3) score += 8;
+            if (rh.length >= 4 && lh.length < 3) score -= 15;
+            if (total >= 6 && total <= 8) score += 20;
+            if (total < 5) score -= 20;
+
+            // R2: Maximize span per hand
+            const rhSpan = Math.max(...rhStrs) - Math.min(...rhStrs);
+            const lhStrsAll = lh.map(m => midiToHarpString(m, keyRoot));
+            const lhSpan = Math.max(...lhStrsAll) - Math.min(...lhStrsAll);
+            score += rhSpan * 3;
+            score += lhSpan * 3;
+
+            // R3: Melody avoidance in RH — don't double melody pitch class
+            const rhSupport = rh.filter(m => m !== melodyMidi);
+            const melodyDoubled = rhSupport.some(m => pitchClass(m) === melodyPc);
+            if (melodyDoubled) score -= 15;
+            else score += 10;
+
+            // R4: Chord tone coverage
             const covered = new Set([...rh, ...lh].map(pitchClass));
             score += satbPcs.filter(pc => covered.has(pc)).length * 15;
 
-            // Bass in lowest position
+            // R5: Bass correctness
             if (pitchClass(Math.min(...lh)) === bassPc) score += 20;
+            // Root in bass register
+            score += lh.filter(m => m < 60 && pitchClass(m) === bassPc).length * 10;
 
-            // Spread
-            const allMidis = [...rh, ...lh].sort((a, b) => a - b);
-            score += (allMidis[allMidis.length - 1] - allMidis[0]) * 1;
+            // R6: Voice leading from previous voicing
+            if (prevVoicing) {
+              const prevAll = [...prevVoicing.rhMidi, ...prevVoicing.lhMidi];
+              let movement = 0;
+              for (const m of allMidis) {
+                const closest = prevAll.reduce((best, p) =>
+                  Math.abs(p - m) < Math.abs(best - m) ? p : best, prevAll[0]);
+                movement += Math.abs(m - closest);
+              }
+              score += Math.max(0, 20 - movement); // smooth = high score
 
-            // Penalize large gaps between adjacent notes
-            for (let g = 1; g < allMidis.length; g++) {
-              const d = allMidis[g] - allMidis[g - 1];
-              if (d > 12) score -= (d - 12) * 3;
+              // Bass leap penalty
+              const prevBass = Math.min(...prevVoicing.lhMidi);
+              const curBass = Math.min(...lh);
+              const bassLeap = Math.abs(curBass - prevBass);
+              if (bassLeap > 7) score -= (bassLeap - 7) * 5;
             }
 
-            // Prefer gap of 1 between hands
+            // R7: Gap preference
             score -= Math.abs(gap - 1) * 2;
+
+            // R8: Even distribution — penalize gaps > octave between adjacent notes
+            for (let g = 1; g < allMidis.length; g++) {
+              const d = allMidis[g] - allMidis[g - 1];
+              if (d > 12) score -= (d - 12) * 5;
+            }
+
+            // Both hands used
+            score += 15;
 
             if (score > bestScore) { bestScore = score; bestSplit = { rh, lh }; }
           }
@@ -729,7 +775,7 @@
           const tMidi = sIdx < tNotes.length ? tNotes[sIdx].midi : null;
           const bMidi = sIdx < bNotes.length ? bNotes[sIdx].midi : null;
 
-          const voicing = voiceFromSATB(sMidi, aMidi, tMidi, bMidi, keyRoot);
+          const voicing = voiceFromSATB(sMidi, aMidi, tMidi, bMidi, keyRoot, lastVoicing);
 
           const beat = { type: 'note', midi: sMidi, originalMidi: sMidi };
 
