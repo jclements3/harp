@@ -435,8 +435,21 @@
     const ROMAN_STRS = ['I','II','III','IV','V','VI','VII'];
 
     function identifyChord(midiNotes, keyRoot) {
+      if (!midiNotes || midiNotes.length < 2) return '';
       const pcs = new Set(midiNotes.map(pitchClass));
       if (pcs.size < 2) return '';
+      // With only 2 unique pitch classes, just show the interval (not a full chord)
+      if (pcs.size === 2) {
+        const sorted = [...pcs].sort((a, b) => a - b);
+        // Find the root as a scale degree
+        const bassPc = pitchClass(Math.min(...midiNotes));
+        let deg = -1;
+        for (let d = 0; d < 7; d++) {
+          if ((keyRoot + MAJOR_SCALE[d]) % 12 === bassPc) { deg = d; break; }
+        }
+        if (deg < 0) return '';
+        return ROMAN_STRS[deg];
+      }
       const bassPc = pitchClass(Math.min(...midiNotes));
       let bestRoot = 0, bestIdx = 0, bestScore = -999;
 
@@ -799,7 +812,13 @@
 
       if (!bestSplit) return null;
 
-      const refStr = 0; // string 1 = lowest string on harp
+      // String 1 = lowest diatonic string on the harp in this key
+      const lowestMidi = HARP_LOW_MIDI;
+      let refStr = 0;
+      for (let m = lowestMidi; m <= lowestMidi + 12; m++) {
+        const s = midiToHarpString(m, keyRoot);
+        if (s !== null) { refStr = s; break; }
+      }
       const toStrings = (arr) => arr.sort((a, b) => b - a).map(m => {
         const s = midiToHarpString(m, keyRoot);
         return s !== null ? s - refStr + 1 : 0;
@@ -1134,7 +1153,13 @@
           rhChord: beat.rhChord || '', lhChord: beat.lhChord || '',
           melodyString: (() => {
             const s = midiToHarpString(beat.midi, hymn.keyRoot);
-            return s !== null ? s + 1 : null;
+            if (s === null) return null;
+            let ref = 0;
+            for (let m = HARP_LOW_MIDI; m <= HARP_LOW_MIDI + 12; m++) {
+              const rs = midiToHarpString(m, hymn.keyRoot);
+              if (rs !== null) { ref = rs; break; }
+            }
+            return s - ref + 1;
           })(),
           isChordChange: !!beat.chord,
         });
@@ -1238,16 +1263,21 @@
       for (const beat of hymn.beats) {
         if (beat.chord && !seen.has(beat.chord)) {
           seen.add(beat.chord);
+          const allMidi = [...(beat.rhMidi || []), ...(beat.lhMidi || [])].sort((a, b) => a - b);
           entries.push({
             harp: beat.chord,
             composer: beat.fullChord || '',
+            rhStrings: beat.rhStrings || [],
+            lhStrings: beat.lhStrings || [],
+            rhNotes: (beat.rhMidi || []).sort((a, b) => a - b).map(m => midiToName(m)),
+            lhNotes: (beat.lhMidi || []).sort((a, b) => a - b).map(m => midiToName(m)),
           });
         }
       }
-      let html = `<tr><th>Harp</th><th>Strings</th><th>Composer</th><th>Traditional</th><th>Say</th><th>Example in ${currentKey || hymn.key}</th></tr>`;
+      let html = `<tr><th>Harp</th><th>LH RH Strings</th><th>Composer</th><th>Traditional</th><th>Say</th><th>Example in ${currentKey || hymn.key}</th></tr>`;
       for (const e of entries) {
         const composerChord = e.composer;
-        html += `<tr><td class="ascii">${e.harp}</td><td>${composerChord ? chordToStrings(composerChord, hymn.keyRoot) : ''}</td><td class="ascii">${composerChord}</td><td class="trad">${composerChord ? chordToTraditional(composerChord) : ''}</td><td class="say">${composerChord ? chordToSay(composerChord) : ''}</td><td>${composerChord ? chordToExample(composerChord, exampleKeyRoot) : ''}</td></tr>`;
+        html += `<tr><td class="ascii">${e.harp}</td><td>[${[...e.lhStrings].sort((a,b)=>a-b).join(' ')}] [${[...e.rhStrings].sort((a,b)=>a-b).join(' ')}]</td><td class="ascii">${composerChord}</td><td class="trad">${composerChord ? chordToTraditional(composerChord) : ''}</td><td class="say">${composerChord ? chordToSay(composerChord) : ''}</td><td>[${e.lhNotes.join(' ')}] [${e.rhNotes.join(' ')}]</td></tr>`;
       }
       table.innerHTML = html;
     }
