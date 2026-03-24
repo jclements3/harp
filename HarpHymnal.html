@@ -812,13 +812,10 @@
 
       if (!bestSplit) return null;
 
-      // String 1 = lowest diatonic string on the harp in this key
-      const lowestMidi = HARP_LOW_MIDI;
-      let refStr = 0;
-      for (let m = lowestMidi; m <= lowestMidi + 12; m++) {
-        const s = midiToHarpString(m, keyRoot);
-        if (s !== null) { refStr = s; break; }
-      }
+      // String 1 = the key root. Notes below go negative.
+      // Find the lowest root on the harp to use as reference
+      const lowestRootMidi = allOctaves(keyRoot, HARP_LOW_MIDI, HARP_HIGH_MIDI)[0];
+      const refStr = lowestRootMidi !== undefined ? (midiToHarpString(lowestRootMidi, keyRoot) || 0) : 0;
       const toStrings = (arr) => arr.sort((a, b) => b - a).map(m => {
         const s = midiToHarpString(m, keyRoot);
         return s !== null ? s - refStr + 1 : 0;
@@ -1154,11 +1151,8 @@
           melodyString: (() => {
             const s = midiToHarpString(beat.midi, hymn.keyRoot);
             if (s === null) return null;
-            let ref = 0;
-            for (let m = HARP_LOW_MIDI; m <= HARP_LOW_MIDI + 12; m++) {
-              const rs = midiToHarpString(m, hymn.keyRoot);
-              if (rs !== null) { ref = rs; break; }
-            }
+            const lr = allOctaves(hymn.keyRoot, HARP_LOW_MIDI, HARP_HIGH_MIDI)[0];
+            const ref = lr !== undefined ? (midiToHarpString(lr, hymn.keyRoot) || 0) : 0;
             return s - ref + 1;
           })(),
           isChordChange: !!beat.chord,
