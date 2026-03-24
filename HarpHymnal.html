@@ -818,7 +818,8 @@
       const refStr = lowestRootMidi !== undefined ? (midiToHarpString(lowestRootMidi, keyRoot) || 0) : 0;
       const toStrings = (arr) => arr.sort((a, b) => b - a).map(m => {
         const s = midiToHarpString(m, keyRoot);
-        return s !== null ? s - refStr + 1 : 0;
+        if (s === null) return null;
+        return s - refStr + 1;
       });
 
       const allNotes = [...bestSplit.rh, ...bestSplit.lh];
