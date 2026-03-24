@@ -100,7 +100,11 @@
       <span class="key-detail" id="key-detail">no sharps/flats</span>
     </td>
     <td style="vertical-align:middle;width:100%">
-      <select id="hymn-select" style="width:100%"><option>Loading...</option></select>
+      <div style="display:flex;gap:0.5rem">
+        <select id="hymn-select" style="flex:1;font-size:0.8rem"><option>Loading...</option></select>
+        <input id="hymn-search" type="text" placeholder="Search..." style="flex:1;font-size:1.1rem;padding:0.4rem 0.8rem;border:2px solid #ccc;border-radius:8px;font-family:'Crimson Pro',Georgia,serif" list="hymn-list" autocomplete="off">
+        <datalist id="hymn-list"></datalist>
+      </div>
     </td>
     <td style="vertical-align:middle">
       <button onclick="document.getElementById('file-input').click()">Load</button>
@@ -149,17 +153,22 @@
 
     function midiToHarpString(midi, keyRoot) {
       const pc = pitchClass(midi);
-      const octave = Math.floor(midi / 12) - 1;
       const deg = MAJOR_SCALE.findIndex(s => (keyRoot + s) % 12 === pc);
       if (deg < 0) return null;
-      return octave * 7 + deg;
+      // Calculate octave relative to the key root
+      // The scale runs from keyRoot up: deg 0 is root, deg 6 is just below next root
+      // So a note's string octave is based on distance from root, not MIDI octave
+      const semiAboveRoot = (pc - keyRoot + 12) % 12;
+      const midiOfRootInSameOctaveGroup = midi - semiAboveRoot;
+      const rootOctave = Math.floor(midiOfRootInSameOctaveGroup / 12) - 1;
+      return rootOctave * 7 + deg;
     }
 
     function harpStringToMidi(stringNum, keyRoot) {
       const octave = Math.floor(stringNum / 7);
       const degree = stringNum % 7;
-      const pc = (keyRoot + MAJOR_SCALE[degree]) % 12;
-      return (octave + 1) * 12 + pc;
+      const semisAboveRoot = MAJOR_SCALE[degree];
+      return (octave + 1) * 12 + keyRoot + semisAboveRoot;
     }
 
     function midiToName(midi) {
@@ -465,18 +474,39 @@
     const ABC_BASE = { 'C': 48, 'D': 50, 'E': 52, 'F': 53, 'G': 55, 'A': 57, 'B': 59 };
     const KEY_TO_PC = {'C':0,'Db':1,'D':2,'Eb':3,'E':4,'F':5,'F#':6,'Gb':6,'G':7,'Ab':8,'A':9,'Bb':10,'B':11,'Cb':11,'C#':1};
 
-    function abcNoteToMidi(token) {
-      let acc = 0, i = 0;
+    // Key signature accidentals: which notes get sharps/flats
+    // Returns map of letter -> semitone adjustment
+    function keySignatureAccidentals(key) {
+      const sharpOrder = ['F','C','G','D','A','E','B'];
+      const flatOrder = ['B','E','A','D','G','C','F'];
+      const sharpKeys = {'G':1,'D':2,'A':3,'E':4,'B':5,'F#':6,'C#':7};
+      const flatKeys = {'F':1,'Bb':2,'Eb':3,'Ab':4,'Db':5,'Gb':6,'Cb':7};
+      const acc = {};
+      if (sharpKeys[key]) {
+        for (let i = 0; i < sharpKeys[key]; i++) acc[sharpOrder[i]] = 1;
+      } else if (flatKeys[key]) {
+        for (let i = 0; i < flatKeys[key]; i++) acc[flatOrder[i]] = -1;
+      }
+      return acc;
+    }
+
+    function abcNoteToMidi(token, keySigAcc) {
+      let acc = null, i = 0; // null = use key sig, number = explicit
       while (i < token.length && '^_='.includes(token[i])) {
+        if (acc === null) acc = 0;
         if (token[i] === '^') acc++;
         else if (token[i] === '_') acc--;
+        else if (token[i] === '=') acc = 0; // explicit natural
         i++;
       }
       if (i >= token.length) return null;
       const ch = token[i];
       const isLower = ch === ch.toLowerCase() && ch !== ch.toUpperCase();
-      if (!ABC_BASE[ch.toUpperCase()]) return null;
-      let midi = ABC_BASE[ch.toUpperCase()] + acc;
+      const letter = ch.toUpperCase();
+      if (!ABC_BASE[letter]) return null;
+      // Apply key signature if no explicit accidental
+      const adjustment = (acc !== null) ? acc : (keySigAcc && keySigAcc[letter] || 0);
+      let midi = ABC_BASE[letter] + adjustment;
       if (isLower) midi += 12;
       i++;
       while (i < token.length) {
@@ -489,7 +519,7 @@
     }
 
     // ── Parse ABC voice line into note/bar tokens ──────────
-    function parseVoiceTokens(musicStr) {
+    function parseVoiceTokens(musicStr, keySigAcc) {
       const tokens = [];
       const re = /([_^=]*[A-Ga-g][,']*[\d]*\/?[\d]*|z[\d]*\/?[\d]*|\|[\|\]\[:]*)/g;
       let m;
@@ -499,7 +529,7 @@
         if (token.startsWith('z')) { tokens.push({ type: 'rest' }); continue; }
         const pitchMatch = token.match(/^[_^=]*[A-Ga-g][,']*/);
         if (!pitchMatch) continue;
-        const midi = abcNoteToMidi(pitchMatch[0]);
+        const midi = abcNoteToMidi(pitchMatch[0], keySigAcc);
         if (midi !== null) tokens.push({ type: 'note', midi });
       }
       return tokens;
@@ -748,12 +778,13 @@
         }
 
         const keyRoot = KEY_TO_PC[key] || 0;
+        const keySigAcc = keySignatureAccidentals(key);
 
         // Parse each voice into tokens
-        const soprano = parseVoiceTokens(voiceLines.S1V1.join(' '));
-        const alto = parseVoiceTokens(voiceLines.S1V2.join(' '));
-        const tenor = parseVoiceTokens(voiceLines.S2V1.join(' '));
-        const bass = parseVoiceTokens(voiceLines.S2V2.join(' '));
+        const soprano = parseVoiceTokens(voiceLines.S1V1.join(' '), keySigAcc);
+        const alto = parseVoiceTokens(voiceLines.S1V2.join(' '), keySigAcc);
+        const tenor = parseVoiceTokens(voiceLines.S2V1.join(' '), keySigAcc);
+        const bass = parseVoiceTokens(voiceLines.S2V2.join(' '), keySigAcc);
 
         // Align voices beat by beat (only note tokens)
         const aNotes = alto.filter(t => t.type === 'note');
@@ -823,6 +854,7 @@
           else if (line.trim() && !line.startsWith('%') && !line.startsWith('L:')) musicLines.push(line);
         }
         const keyRoot = KEY_TO_PC[key] || 0;
+        const keySigAcc = keySignatureAccidentals(key);
         const beats = [];
         const musicStr = musicLines.join(' ');
         const re = /("([^"]*)")?\s*([_^=]*[A-Ga-g][,']*\d*\/?[\d]*|z\d*\/?[\d]*|\[x\d*\]|\|[\|\]\[:]*)/g;
@@ -835,7 +867,7 @@
           if (token.startsWith('z') || token.startsWith('[x')) continue;
           const pitchMatch = token.match(/^[_^=]*[A-Ga-g][,']*/);
           if (!pitchMatch) continue;
-          const midi = abcNoteToMidi(pitchMatch[0]);
+          const midi = abcNoteToMidi(pitchMatch[0], keySigAcc);
           if (midi === null) continue;
 
           const beat = { type: 'note', midi, originalMidi: midi, chord: chordSym, activeChord: lastChord };
@@ -1025,7 +1057,13 @@
           type: 'beat', chord: beat.chord || '',
           rh: beat.chord ? rh : [], lh: beat.chord ? lh : [],
           rhChord: beat.rhChord || '', lhChord: beat.lhChord || '',
-          melodyString: midiToHarpString(beat.midi, hymn.keyRoot),
+          melodyString: (() => {
+            const s = midiToHarpString(beat.midi, hymn.keyRoot);
+            if (s === null) return null;
+            const lr = allOctaves(hymn.keyRoot, HARP_LOW_MIDI, HARP_HIGH_MIDI)[0];
+            const ref = lr !== undefined ? (midiToHarpString(lr, hymn.keyRoot) || 0) : 0;
+            return s - ref + 1;
+          })(),
           isChordChange: !!beat.chord,
         });
       }
@@ -1172,15 +1210,34 @@
         try {
           hymns = parseLeadSheets(text);
           const sel = document.getElementById('hymn-select');
+          const datalist = document.getElementById('hymn-list');
+          const search = document.getElementById('hymn-search');
           sel.innerHTML = '';
+          datalist.innerHTML = '';
           hymns.forEach((h, i) => {
+            const label = `${h.number}. ${h.title}`;
             const opt = document.createElement('option');
             opt.value = i;
-            opt.textContent = `${h.number}. ${h.title}`;
+            opt.textContent = label;
             sel.appendChild(opt);
+            const dlOpt = document.createElement('option');
+            dlOpt.value = label;
+            datalist.appendChild(dlOpt);
           });
           sel.addEventListener('change', () => selectHymn(parseInt(sel.value)));
-          status.textContent = `${hymns.length} hymns loaded (voicings computed in JS).`;
+          search.addEventListener('input', () => {
+            const q = search.value.toLowerCase();
+            const match = hymns.findIndex(h =>
+              h.title.toLowerCase().includes(q) || h.number.toString().includes(q));
+            if (match >= 0) { sel.value = match; selectHymn(match); }
+          });
+          search.addEventListener('change', () => {
+            // Handle datalist selection (full "N. Title" string)
+            const val = search.value;
+            const match = hymns.findIndex(h => `${h.number}. ${h.title}` === val);
+            if (match >= 0) { sel.value = match; selectHymn(match); search.value = ''; }
+          });
+          status.textContent = `${hymns.length} hymns loaded.`;
           if (hymns.length) selectHymn(0);
         } catch (e) {
           status.textContent = 'Error processing ABC: ' + e.message;
