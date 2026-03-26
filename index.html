@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harp Tools</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Crimson Pro', Georgia, serif;
+      background: #f8f6f1; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 3rem 1rem; color: #2a2a2a;
+    }
+    h1 { font-size: 2rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .subtitle { color: #888; font-size: 1rem; margin-bottom: 2rem; }
+    .cards {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem; max-width: 900px; width: 100%;
+    }
+    a.card {
+      background: white; border-radius: 12px; padding: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      text-decoration: none; color: #2a2a2a;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    a.card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+    }
+    .card h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.4rem; color: #2563eb; }
+    .card p { font-size: 0.9rem; color: #666; line-height: 1.4; }
+    .footer { margin-top: 3rem; font-size: 0.8rem; color: #bbb; }
+  </style>
+</head>
+<body>
+  <h1>Harp Tools</h1>
+  <p class="subtitle">Practice, hymnal, and music analysis for pedal harp</p>
+  <div class="cards">
+    <a class="card" href="html/HarpHymnal.html">
+      <h2>Harp Hymnal</h2>
+      <p>284 SATB hymns with computed harp voicings. Leadsheet view with string numbers per finger, chord table, key transposition, and mode selection.</p>
+    </a>
+    <a class="card" href="html/harp_trainer.html">
+      <h2>Harp Trainer</h2>
+      <p>Chord ID, interval-to-chord, and sight-reading drills. VexFlow notation, metronome, shape notes, and optional WASM mic input for live pitch detection.</p>
+    </a>
+    <a class="card" href="html/harp_voicing.html">
+      <h2>Voicing Helper</h2>
+      <p>Interactive chord voicing explorer. Enter a chord symbol, see harp string assignments for both hands with scoring breakdown.</p>
+    </a>
+  </div>
+  <p class="footer">Serve with: python3 -m http.server 8000</p>
+</body>
+</html>
