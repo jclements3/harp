@@ -1,0 +1,59 @@
+# Build artifacts
+target/
+pkg/
+*.wasm
+
+# Cargo.lock for library crates only (binary crates track theirs)
+harp-pitch-wasm/Cargo.lock
+harp-voicing-wasm/Cargo.lock
+
+# Python
+__pycache__/
+*.pyc
+
+# Generated output
+*.ps
+*.pdf
+*.png
+*.svg
+*.log
+*.aux
+out.*
+
+# Large data files (keep originals in data/)
+harp_midi_output/
+
+# Third-party tools (not ours)
+abctool.py
+abcplus_en.pdf
+
+# Editor backups
+*~
+*.swp
+*.swo
+
+# Original OpenHymnal (we only track our transposed version)
+OpenHymnal2014.06.abc
+OpenHymnal2014.06.md
+
+# External reference repos
+mutopia/
+mutopia_shapes/
+
+# OS
+.DS_Store
+
+# Practice notes (personal)
+practice.md
+chords.md
+shapednotes.md
+
+# Generated score/voicing files
+harp_voicings_score.*
+
+# Test scratch files
+test_*.abc
+test_*.ps
+test_*.pdf
+test_*.png
+Westlawn.abc

@@ -2,7 +2,7 @@
 Type=Application
 Name=Harp Voicing Helper
 Comment=Launch Harp Voicing Helper in browser
-Exec=bash -c 'cd /home/james.clements/projects/harp && ./serve_voicing.sh'
+Exec=bash -c 'cd /home/james.clements/projects/harp/html && ./serve_voicing.sh'
 Terminal=true
 Icon=audio-x-generic
 Categories=Audio;Music;Education;
