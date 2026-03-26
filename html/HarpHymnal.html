@@ -1360,8 +1360,8 @@
       try {
         status.textContent = 'Loading ABC file...';
         // Try SATB OpenHymnal first, fall back to lead sheets
-        let resp = await fetch('../data/OpenHymnal.abc');
-        if (!resp.ok) resp = await fetch('../data/harp_leadsheets.abc');
+        let resp = await fetch('/data/OpenHymnal.abc');
+        if (!resp.ok) resp = await fetch('/data/harp_leadsheets.abc');
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
         const text = await resp.text();
         processAbc(text);
