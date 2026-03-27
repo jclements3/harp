@@ -328,8 +328,9 @@ impl eframe::App for PlayerApp {
                     if self.scroll_offset < 0.0 { self.scroll_offset = 0.0; }
 
                     let events = self.current_events().to_vec();
+                    let key_root = self.scores.get(self.current_score)
+                        .map(|s| s.key_root).unwrap_or(0);
 
-                    // Clip to the card
                     render_score(
                         &painter,
                         &layout,
@@ -337,6 +338,7 @@ impl eframe::App for PlayerApp {
                         self.scroll_offset,
                         self.current_beat,
                         view_width,
+                        key_root,
                     );
                 });
         });

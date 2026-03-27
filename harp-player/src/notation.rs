@@ -72,7 +72,7 @@ fn is_treble(midi: i32) -> bool {
 
 // Finger rows below the bass staff
 const FINGER_ROW_H: f32 = 12.0;
-const FINGER_GAP: f32 = 30.0; // gap between bass staff bottom and finger rows
+const FINGER_GAP: f32 = 40.0; // gap between bass staff bottom and finger rows
 const NUM_FINGER_ROWS: usize = 8; // RH: T 2 3 4, LH: T 2 3 4
 
 pub struct NotationLayout {
@@ -571,6 +571,7 @@ pub fn render_score(
     scroll_offset: f32,
     current_beat: f32,
     view_width: f32,
+    key_root: i32,
 ) {
     // Draw label rows, staff, clefs, and finger labels
     draw_row_labels(painter, layout);
@@ -595,23 +596,28 @@ pub fn render_score(
                 let is_active = current_beat >= beat_time && current_beat < beat_time + beats;
 
                 if x > -50.0 && x < view_width + 50.0 {
-                    // Apply display offset: ABC base is octave low for voicing compatibility
-                    let offset = crate::abc::DISPLAY_OCTAVE_OFFSET;
+                    // Derive display MIDI from string numbers — these are the ground truth.
+                    // String numbers use the -7 offset, so add 7 back to get absolute,
+                    // then convert to MIDI via harp_string_to_midi.
+                    // harp_string_to_midi uses the base-48 system, so add 12 for real pitch.
+                    let str_offset = crate::abc::STRING_NUMBER_OFFSET;
 
-                    // RH: treble staff, stems up. Skip notes below middle C.
-                    for &midi in rh_midi {
-                        let display_midi = midi + offset;
-                        if display_midi >= 60 { // C4 and above
+                    // RH: treble staff, stems up
+                    for &s in rh_strings {
+                        // relative string is 1-based, harp_string_to_midi is 0-based
+                        let abs_str = s + str_offset - 1;
+                        let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
+                        if display_midi >= 60 {
                             let y = treble_y(midi_to_staff_pos(display_midi), layout.treble_top_y);
                             draw_note(painter, x, y, *beats, display_midi, is_active, layout);
                         }
                     }
 
-                    // LH: bass staff, stems down. Skip notes above B3 (one ledger above bass).
-                    // Notes higher than that would visually overlap treble staff.
-                    for &midi in lh_midi {
-                        let display_midi = midi + offset;
-                        if display_midi <= 59 { // B3 and below
+                    // LH: bass staff, stems down
+                    for &s in lh_strings {
+                        let abs_str = s + str_offset - 1;
+                        let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
+                        if display_midi <= 59 {
                             let y = bass_y(midi_to_staff_pos(display_midi), layout.bass_top_y);
                             draw_note_at(painter, x, y, *beats, display_midi, is_active, layout, false);
                         }
