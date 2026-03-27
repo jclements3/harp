@@ -598,18 +598,23 @@ pub fn render_score(
                     // Apply display offset: ABC base is octave low for voicing compatibility
                     let offset = crate::abc::DISPLAY_OCTAVE_OFFSET;
 
-                    // RH: always treble staff, stems up
+                    // RH: treble staff, stems up. Skip notes below middle C.
                     for &midi in rh_midi {
                         let display_midi = midi + offset;
-                        let y = treble_y(midi_to_staff_pos(display_midi), layout.treble_top_y);
-                        draw_note(painter, x, y, *beats, display_midi, is_active, layout);
+                        if display_midi >= 60 { // C4 and above
+                            let y = treble_y(midi_to_staff_pos(display_midi), layout.treble_top_y);
+                            draw_note(painter, x, y, *beats, display_midi, is_active, layout);
+                        }
                     }
 
-                    // LH: always bass staff, stems down
+                    // LH: bass staff, stems down. Skip notes above B3 (one ledger above bass).
+                    // Notes higher than that would visually overlap treble staff.
                     for &midi in lh_midi {
                         let display_midi = midi + offset;
-                        let y = bass_y(midi_to_staff_pos(display_midi), layout.bass_top_y);
-                        draw_note_at(painter, x, y, *beats, display_midi, is_active, layout, false);
+                        if display_midi <= 59 { // B3 and below
+                            let y = bass_y(midi_to_staff_pos(display_midi), layout.bass_top_y);
+                            draw_note_at(painter, x, y, *beats, display_midi, is_active, layout, false);
+                        }
                     }
 
                     // Label rows above + finger numbers below at chord changes

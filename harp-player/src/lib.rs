@@ -403,3 +403,50 @@ mod tests2 {
         }
     }
 }
+// Add to tests
+#[cfg(test)]
+mod collision_test {
+    use super::abc::*;
+    #[test]
+    fn find_collisions() {
+        let scores = load_embedded_scores();
+        // Check first hymn (Blessed Jesus)
+        let s = &scores[0];
+        eprintln!("Checking: {} - {}", s.number, s.title);
+        for (i, event) in s.events.iter().enumerate() {
+            if let ScoreEvent::Note { rh_midi, lh_midi, rh_strings, lh_strings, chord_name, .. } = event {
+                // Check MIDI collision
+                for rm in rh_midi {
+                    for lm in lh_midi {
+                        if rm == lm {
+                            eprintln!("  MIDI COLLISION at beat {}: RH and LH both have MIDI {} chord={:?}", i, rm, chord_name);
+                        }
+                    }
+                }
+                // Check string collision
+                for rs in rh_strings {
+                    for ls in lh_strings {
+                        if rs == ls {
+                            eprintln!("  STRING COLLISION at beat {}: RH and LH both have string {} chord={:?}", i, rs, chord_name);
+                        }
+                    }
+                }
+            }
+        }
+        // Also check Joy to the World
+        if let Some(joy) = scores.iter().find(|s| s.title.contains("Joy")) {
+            eprintln!("Checking: {} - {}", joy.number, joy.title);
+            for (i, event) in joy.events.iter().enumerate() {
+                if let ScoreEvent::Note { rh_midi, lh_midi, chord_name, .. } = event {
+                    for rm in rh_midi {
+                        for lm in lh_midi {
+                            if rm == lm {
+                                eprintln!("  MIDI COLLISION at beat {}: both have MIDI {} chord={:?}", i, rm, chord_name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

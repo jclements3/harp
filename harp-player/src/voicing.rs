@@ -85,6 +85,8 @@ pub fn voice_from_satb(
         let rh_lowest_str = *rh_strs.iter().min().unwrap();
 
         for gap in 0..=3i32 {
+            // gap=0: LH thumb adjacent to RH lowest (no overlap, no empty strings)
+            // gap=1: 1 empty string between, etc.
             let lh_upper_str = rh_lowest_str - 1 - gap;
             if lh_upper_str < 0 { continue; }
             let lh_upper_midi = harp_string_to_midi(lh_upper_str, key_root);
