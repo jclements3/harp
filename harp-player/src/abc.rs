@@ -44,8 +44,13 @@ const ABC_BASE: [(char, i32); 7] = [
     ('C', 60), ('D', 62), ('E', 64), ('F', 65), ('G', 67), ('A', 69), ('B', 71),
 ];
 
-/// No display offset needed — MIDI values are correct.
+/// No display offset needed for notation — MIDI values are correct.
 pub const DISPLAY_OCTAVE_OFFSET: i32 = 0;
+
+/// String number offset: ABC base 60 produces strings 7 higher than the
+/// hymnal's base-48 system. Subtract this from relative string numbers
+/// to match the hymnal's display.
+pub const STRING_NUMBER_OFFSET: i32 = 7;
 
 fn abc_note_to_midi(token: &str, key_sig_acc: &[i32; 7]) -> Option<i32> {
     let bytes = token.as_bytes();
@@ -305,8 +310,8 @@ pub fn parse_all(text: &str) -> Vec<Score> {
                             melody_midi: snapped,
                             rh_midi: v.rh_midi.clone(),
                             lh_midi: v.lh_midi.clone(),
-                            rh_strings: v.rh_strings.clone(),
-                            lh_strings: v.lh_strings.clone(),
+                            rh_strings: v.rh_strings.iter().map(|&s| s - STRING_NUMBER_OFFSET).collect(),
+                            lh_strings: v.lh_strings.iter().map(|&s| s - STRING_NUMBER_OFFSET).collect(),
                             beats,
                             chord_name: if is_chord_change { Some(v.full_chord.clone()) } else { None },
                             rh_chord: if is_chord_change { Some(v.rh_chord.clone()) } else { None },
