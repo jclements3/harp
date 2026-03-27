@@ -52,16 +52,16 @@ pub fn midi_to_staff_pos(midi: i32) -> i32 {
 /// Staff pos 0 = middle C = one ledger line below treble staff.
 /// Treble staff bottom line = E4 (pos 2), top = F5 (pos 9).
 pub fn treble_y(staff_pos: i32, treble_top_y: f32) -> f32 {
-    // Top line of treble = F5 = pos 9
+    // Top line of treble = F5 = pos 10
     // Each line is STAFF_LINE_SPACING apart
-    let top_line_pos = 9; // F5
+    let top_line_pos = 10; // F5
     treble_top_y + (top_line_pos - staff_pos) as f32 * (STAFF_LINE_SPACING / 2.0)
 }
 
 /// Y coordinate for a staff position on the bass staff.
-/// Bass staff top line = A3 (pos -5), bottom = G2 (pos -12).
+/// Bass staff top line = A3 (pos -2), bottom = G2 (pos -10).
 pub fn bass_y(staff_pos: i32, bass_top_y: f32) -> f32 {
-    let top_line_pos = -5; // A3
+    let top_line_pos = -2; // A3
     bass_top_y + (top_line_pos - staff_pos) as f32 * (STAFF_LINE_SPACING / 2.0)
 }
 
@@ -573,6 +573,16 @@ pub fn render_score(
     view_width: f32,
     key_root: i32,
 ) {
+    // DEBUG: show key_root on screen
+    let kr_names = ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
+    painter.text(
+        egui::Pos2::new(view_width - 80.0, layout.label_top_y),
+        egui::Align2::LEFT_TOP,
+        &format!("kr={} ({})", key_root, kr_names[key_root as usize % 12]),
+        egui::FontId::monospace(10.0),
+        egui::Color32::RED,
+    );
+
     // Draw label rows, staff, clefs, and finger labels
     draw_row_labels(painter, layout);
     draw_staff(painter, layout, view_width);
@@ -599,6 +609,25 @@ pub fn render_score(
                     let str_offset = crate::abc::STRING_NUMBER_OFFSET;
 
                     if *is_chord_change && !rh_strings.is_empty() {
+                        // DEBUG: show computation for first RH string
+                        if beat_time < 1.0 {
+                            let kr_names = ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
+                            for &s in rh_strings {
+                                let abs_str = s + str_offset - 1;
+                                let raw_midi = crate::music::harp_string_to_midi(abs_str, key_root);
+                                let display_midi = raw_midi + 12;
+                                let note = kr_names[display_midi as usize % 12];
+                                let oct = display_midi / 12 - 1;
+                                painter.text(
+                                    egui::Pos2::new(x, layout.finger_top_y + 110.0 + s as f32 * 12.0),
+                                    egui::Align2::CENTER_TOP,
+                                    &format!("s{}→a{}→r{}→d{}={}{}",s,abs_str,raw_midi,display_midi,note,oct),
+                                    egui::FontId::monospace(8.0),
+                                    egui::Color32::RED,
+                                );
+                            }
+                        }
+
                         // At chord changes: draw full RH voicing from string numbers
                         for &s in rh_strings {
                             let abs_str = s + str_offset - 1;
