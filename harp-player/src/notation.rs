@@ -590,37 +590,39 @@ pub fn render_score(
 
     for event in events {
         match event {
-            ScoreEvent::Note { rh_midi, lh_midi, rh_strings, lh_strings,
+            ScoreEvent::Note { melody_midi, rh_strings, lh_strings,
                                 beats, chord_name, rh_chord, lh_chord, is_chord_change, .. } => {
                 let x = layout.beat_x(beat_time + beats / 2.0, scroll_offset);
                 let is_active = current_beat >= beat_time && current_beat < beat_time + beats;
 
                 if x > -50.0 && x < view_width + 50.0 {
-                    // Derive display MIDI from string numbers — these are the ground truth.
-                    // String numbers use the -7 offset, so add 7 back to get absolute,
-                    // then convert to MIDI via harp_string_to_midi.
-                    // harp_string_to_midi uses the base-48 system, so add 12 for real pitch.
                     let str_offset = crate::abc::STRING_NUMBER_OFFSET;
 
-                    // RH: treble staff, stems up
-                    for &s in rh_strings {
-                        // relative string is 1-based, harp_string_to_midi is 0-based
-                        let abs_str = s + str_offset - 1;
-                        let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
-                        if display_midi >= 60 {
-                            let y = treble_y(midi_to_staff_pos(display_midi), layout.treble_top_y);
-                            draw_note(painter, x, y, *beats, display_midi, is_active, layout);
+                    if *is_chord_change && !rh_strings.is_empty() {
+                        // At chord changes: draw full RH voicing from string numbers
+                        for &s in rh_strings {
+                            let abs_str = s + str_offset - 1;
+                            let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
+                            if display_midi >= 60 {
+                                let y = treble_y(midi_to_staff_pos(display_midi), layout.treble_top_y);
+                                draw_note(painter, x, y, *beats, display_midi, is_active, layout);
+                            }
                         }
-                    }
 
-                    // LH: bass staff, stems down
-                    for &s in lh_strings {
-                        let abs_str = s + str_offset - 1;
-                        let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
-                        if display_midi <= 59 {
-                            let y = bass_y(midi_to_staff_pos(display_midi), layout.bass_top_y);
-                            draw_note_at(painter, x, y, *beats, display_midi, is_active, layout, false);
+                        // Draw full LH voicing from string numbers
+                        for &s in lh_strings {
+                            let abs_str = s + str_offset - 1;
+                            let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
+                            if display_midi <= 59 {
+                                let y = bass_y(midi_to_staff_pos(display_midi), layout.bass_top_y);
+                                draw_note_at(painter, x, y, *beats, display_midi, is_active, layout, false);
+                            }
                         }
+                    } else {
+                        // Between chord changes: draw melody note only (on treble)
+                        // melody_midi is from ABC base 60, correct pitch
+                        let y = treble_y(midi_to_staff_pos(*melody_midi), layout.treble_top_y);
+                        draw_note(painter, x, y, *beats, *melody_midi, is_active, layout);
                     }
 
                     // Label rows above + finger numbers below at chord changes
