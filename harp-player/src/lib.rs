@@ -452,3 +452,43 @@ mod collision_test {
         }
     }
 }
+#[cfg(test)]
+mod debug_hymn22 {
+    use super::abc::*;
+    use super::music::*;
+
+    #[test]
+    fn debug_blessed_jesus() {
+        let scores = load_embedded_scores();
+        let s = &scores[0];
+        eprintln!("Hymn: {} - {} key={} key_root={}", s.number, s.title, s.key, s.key_root);
+        
+        let str_offset = STRING_NUMBER_OFFSET;
+        
+        for (i, event) in s.events.iter().take(10).enumerate() {
+            if let ScoreEvent::Note { rh_strings, lh_strings, rh_midi, lh_midi, chord_name, is_chord_change, .. } = event {
+                if *is_chord_change {
+                    eprintln!("[{i}] chord={chord_name:?}");
+                    eprintln!("  RH strings: {rh_strings:?}  RH midi: {rh_midi:?}");
+                    for &rs in rh_strings {
+                        let abs_str = rs + str_offset - 1;
+                        let display = harp_string_to_midi(abs_str, s.key_root) + 12;
+                        let pc = display % 12;
+                        let oct = display / 12 - 1;
+                        let names = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+                        eprintln!("    str {} -> abs {} -> display midi {} = {}{}", rs, abs_str, display, names[pc as usize], oct);
+                    }
+                    eprintln!("  LH strings: {lh_strings:?}  LH midi: {lh_midi:?}");
+                    for &ls in lh_strings {
+                        let abs_str = ls + str_offset - 1;
+                        let display = harp_string_to_midi(abs_str, s.key_root) + 12;
+                        let pc = display % 12;
+                        let oct = display / 12 - 1;
+                        let names = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+                        eprintln!("    str {} -> abs {} -> display midi {} = {}{}", ls, abs_str, display, names[pc as usize], oct);
+                    }
+                }
+            }
+        }
+    }
+}
