@@ -39,15 +39,13 @@ pub enum ScoreEvent {
 
 // ── ABC parsing internals ──
 
-// Use the same base as harp-hymnal so the voicing engine produces correct string numbers.
-// The notation renderer adds +12 to display at the correct octave.
+// Correct ABC base: uppercase C = C4 = MIDI 60 (standard ABC notation).
 const ABC_BASE: [(char, i32); 7] = [
-    ('C', 48), ('D', 50), ('E', 52), ('F', 53), ('G', 55), ('A', 57), ('B', 59),
+    ('C', 60), ('D', 62), ('E', 64), ('F', 65), ('G', 67), ('A', 69), ('B', 71),
 ];
 
-/// Octave offset: ABC base is one octave low (matches hymnal voicing engine).
-/// Notation display adds this to get correct staff positions.
-pub const DISPLAY_OCTAVE_OFFSET: i32 = 12;
+/// No display offset needed — MIDI values are correct.
+pub const DISPLAY_OCTAVE_OFFSET: i32 = 0;
 
 fn abc_note_to_midi(token: &str, key_sig_acc: &[i32; 7]) -> Option<i32> {
     let bytes = token.as_bytes();
