@@ -324,9 +324,9 @@ fn draw_bass_ledger_lines(painter: &egui::Painter, x: f32, midi: i32, layout: &N
     let pos = midi_to_staff_pos(midi);
     let lw = NOTEHEAD_RX + LEDGER_EXTEND;
 
-    // Bass top line = pos -5 (A3). Ledger above for middle C area
-    if pos >= -3 {
-        let mut p = -3;
+    // Bass top line = A3 (pos -2). Ledger above for middle C (pos 0) area
+    if pos >= 0 {
+        let mut p = 0;
         while p <= pos + 1 {
             let y = bass_y(p, layout.bass_top_y);
             painter.line_segment(
@@ -336,9 +336,9 @@ fn draw_bass_ledger_lines(painter: &egui::Painter, x: f32, midi: i32, layout: &N
             p += 2;
         }
     }
-    // Bass bottom line = pos -12 (G2). Ledger below.
-    if pos <= -14 {
-        let mut p = -14;
+    // Bass bottom line = G2 (pos -10). Ledger below.
+    if pos <= -12 {
+        let mut p = -12;
         while p >= pos {
             let y = bass_y(p, layout.bass_top_y);
             painter.line_segment(
@@ -364,9 +364,9 @@ fn draw_ledger_lines(painter: &egui::Painter, x: f32, midi: i32, layout: &Notati
             egui::Stroke::new(1.0, STAFF_COLOR),
         );
     }
-    // Treble top line = pos 9 (F5). Ledger above: pos 11 (A5), 13 (C6), etc.
-    if pos >= 11 {
-        let mut p = 11;
+    // Treble top line = pos 10 (F5). Ledger above: pos 12 (A5), 14 (C6), etc.
+    if pos >= 12 {
+        let mut p = 12;
         while p <= pos + 1 {
             let y = treble_y(p, layout.treble_top_y);
             painter.line_segment(
