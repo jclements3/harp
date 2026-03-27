@@ -1,24 +1,28 @@
 [package]
-name = "harp-trainer"
+name = "harp-sampler"
 version = "0.1.0"
 edition = "2024"
 
 [lib]
-name = "harp_trainer"
+name = "harp_sampler"
 crate-type = ["lib", "cdylib"]
 path = "src/lib.rs"
 
 [[bin]]
-name = "harp-trainer"
+name = "harp-sampler"
 path = "src/main.rs"
 
 [dependencies]
-cpal = "0.15"
-pitch-detection = "0.3"
 eframe = "0.31"
-ringbuf = "0.4"
-rand = "0.8"
+cpal = "0.15"
+rustfft = "6.2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
 log = "0.4"
+chrono = "0.4"
+
+[target.'cfg(not(target_os = "android"))'.dependencies]
+rfd = "0.15"
 
 [target.'cfg(target_os = "android")'.dependencies]
 android_logger = "0.14"

@@ -1,0 +1,9 @@
+# Android cross-compilation config
+# cargo-ndk sets the linker automatically; these flags fix C++ runtime linking
+# for crates that use C++ (oboe-sys via cpal).
+
+[target.aarch64-linux-android]
+rustflags = ["-C", "link-args=-lc++_static -lc++abi"]
+
+[target.x86_64-linux-android]
+rustflags = ["-C", "link-args=-lc++_static -lc++abi"]

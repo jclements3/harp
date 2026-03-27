@@ -1,23 +1,19 @@
 [package]
-name = "harp-trainer"
+name = "harp-player"
 version = "0.1.0"
 edition = "2024"
 
 [lib]
-name = "harp_trainer"
+name = "harp_player"
 crate-type = ["lib", "cdylib"]
 path = "src/lib.rs"
 
 [[bin]]
-name = "harp-trainer"
+name = "harp-player"
 path = "src/main.rs"
 
 [dependencies]
-cpal = "0.15"
-pitch-detection = "0.3"
 eframe = "0.31"
-ringbuf = "0.4"
-rand = "0.8"
 log = "0.4"
 
 [target.'cfg(target_os = "android")'.dependencies]
