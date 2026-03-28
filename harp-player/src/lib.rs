@@ -272,16 +272,14 @@ impl eframe::App for PlayerApp {
 
                 cof_painter.circle_stroke(cof_center, outer_r, egui::Stroke::new(1.0, BORDER));
 
-                // Draw chord polygon: filled shape connecting chord tones in CoF order
+                // Layer 1: Filled chord triangle/quad (unique chord tones in CoF order)
                 if !self.current_chord_degrees.is_empty() {
-                    // Sort chord degrees by their position on the circle (clockwise)
                     let mut chord_with_idx: Vec<(usize, i32)> = self.current_chord_degrees.iter()
                         .filter_map(|&d| degree_to_cof_idx(d).map(|idx| (idx, d)))
                         .collect();
                     chord_with_idx.sort_by_key(|&(idx, _)| idx);
 
-                    if chord_with_idx.len() >= 2 {
-                        // Build polygon vertices in circle order
+                    if chord_with_idx.len() >= 3 {
                         let points: Vec<egui::Pos2> = chord_with_idx.iter()
                             .map(|&(idx, _)| {
                                 let (x, y) = cof_positions[idx];
@@ -289,23 +287,61 @@ impl eframe::App for PlayerApp {
                             })
                             .collect();
 
-                        // Filled polygon with translucent melody color
                         let mel_color = RAINBOW[self.current_melody_degree as usize % 7];
                         let fill = egui::Color32::from_rgba_unmultiplied(
-                            mel_color.r(), mel_color.g(), mel_color.b(), 40,
+                            mel_color.r(), mel_color.g(), mel_color.b(), 30,
                         );
                         cof_painter.add(egui::Shape::convex_polygon(
-                            points.clone(), fill, egui::Stroke::NONE,
+                            points.clone(), fill, egui::Stroke::new(1.5, egui::Color32::from_rgba_unmultiplied(
+                                mel_color.r(), mel_color.g(), mel_color.b(), 80,
+                            )),
                         ));
+                    }
+                }
 
-                        // Outline edges colored by starting vertex degree
-                        for i in 0..chord_with_idx.len() {
-                            let j = (i + 1) % chord_with_idx.len();
-                            let color = RAINBOW[chord_with_idx[i].1 as usize % 7];
-                            cof_painter.line_segment(
-                                [points[i], points[j]],
-                                egui::Stroke::new(2.5, color),
-                            );
+                // Layer 2: Star lines tracing all notes in playing order (melody down through fingers)
+                // Build the note sequence from current chord's RH+LH used strings
+                {
+                    let to_degree = |s: i32| -> i32 {
+                        let lin = if s > 0 { s - 1 } else { s };
+                        ((lin % 7) + 7) % 7
+                    };
+                    // Get current beat's RH+LH strings in order (high to low)
+                    let events = self.current_events().to_vec();
+                    let mut beat_time = 0.0f32;
+                    let mut note_sequence: Vec<i32> = Vec::new();
+                    for event in &events {
+                        if let ScoreEvent::Note { rh_strings, lh_strings, beats, is_chord_change, .. } = event {
+                            if self.current_beat >= beat_time && self.current_beat < beat_time + beats {
+                                if *is_chord_change && !rh_strings.is_empty() {
+                                    // Collect degrees in playing order (high to low)
+                                    for &s in rh_strings {
+                                        note_sequence.push(to_degree(s));
+                                    }
+                                    for &s in lh_strings {
+                                        note_sequence.push(to_degree(s));
+                                    }
+                                }
+                                break;
+                            }
+                            beat_time += beats;
+                        } else if let ScoreEvent::Rest { beats } = event {
+                            beat_time += beats;
+                        }
+                    }
+
+                    // Draw crossing lines through the note sequence
+                    if note_sequence.len() >= 2 {
+                        for w in note_sequence.windows(2) {
+                            if let (Some(from_idx), Some(to_idx)) = (degree_to_cof_idx(w[0]), degree_to_cof_idx(w[1])) {
+                                let (fx, fy) = cof_positions[from_idx];
+                                let (tx, ty) = cof_positions[to_idx];
+                                let color = RAINBOW[w[0] as usize % 7];
+                                cof_painter.line_segment(
+                                    [egui::Pos2::new(fx, fy), egui::Pos2::new(tx, ty)],
+                                    egui::Stroke::new(1.5, color),
+                                );
+                            }
                         }
                     }
                 }
