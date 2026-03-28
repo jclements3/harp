@@ -762,12 +762,12 @@ pub fn render_score(
                     let str_offset = crate::abc::STRING_NUMBER_OFFSET;
 
                     // Truncate to the selected finger count
-                    // RH: take from top (melody first = thumb, then fingers 2,3,4)
-                    let rh_used: Vec<i32> = rh_strings.iter().take(rh_fingers).copied().collect();
-                    // LH: take from bottom (bass first = pinky, then fingers 3,2,thumb)
+                    // RH: take from top (melody first = thumb, then fingers 2,3,4), cap at rh_fingers
+                    let rh_used: Vec<i32> = rh_strings.iter().take(rh_fingers.min(4)).copied().collect();
+                    // LH: take from bottom (bass first = pinky, then fingers 3,2,thumb), cap at lh_fingers
                     let lh_len = lh_strings.len();
                     let lh_skip = lh_len.saturating_sub(lh_fingers);
-                    let lh_used: Vec<i32> = lh_strings.iter().skip(lh_skip).copied().collect();
+                    let lh_used: Vec<i32> = lh_strings.iter().skip(lh_skip).take(lh_fingers).copied().collect();
 
                     if *is_chord_change && !rh_used.is_empty() {
                         // At chord changes: draw RH voicing (stems up = right hand)
