@@ -72,7 +72,7 @@ fn is_treble(midi: i32) -> bool {
 
 // Finger rows below the bass staff
 const FINGER_ROW_H: f32 = 18.0;
-const FINGER_GAP: f32 = 52.0; // gap between bass staff bottom and finger rows
+const FINGER_GAP: f32 = 72.0; // gap between bass staff bottom and finger rows
 const NUM_FINGER_ROWS: usize = 8; // RH: T 2 3 4, LH: T 2 3 4
 
 pub struct NotationLayout {

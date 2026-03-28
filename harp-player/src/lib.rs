@@ -258,9 +258,10 @@ impl eframe::App for PlayerApp {
                                 egui::TextEdit::singleline(&mut self.search_text)
                                     .hint_text("Search...")
                                     .desired_width(ui.available_width() - 4.0)
+                                    .min_size(egui::Vec2::new(0.0, 24.0))
                                     .text_color(TEXT_PRIMARY)
                                     .background_color(CARD_BG)
-                                    .font(egui::FontSelection::FontId(egui::FontId::proportional(11.0)))
+                                    .font(egui::FontSelection::FontId(egui::FontId::proportional(13.0)))
                             );
                             if response.changed() && !self.search_text.is_empty() {
                                 let q = self.search_text.to_lowercase();
