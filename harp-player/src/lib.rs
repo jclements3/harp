@@ -272,28 +272,38 @@ impl eframe::App for PlayerApp {
 
                 cof_painter.circle_stroke(cof_center, outer_r, egui::Stroke::new(1.0, BORDER));
 
-                // Draw chord polygon: connect chord tones starting from melody
+                // Draw chord polygon: filled shape connecting chord tones in CoF order
                 if !self.current_chord_degrees.is_empty() {
-                    // Order: start at melody degree, then the other chord degrees
-                    let mut chord_order: Vec<i32> = vec![self.current_melody_degree];
-                    for &d in &self.current_chord_degrees {
-                        if d != self.current_melody_degree && !chord_order.contains(&d) {
-                            chord_order.push(d);
-                        }
-                    }
-                    // Close the polygon back to melody
-                    if chord_order.len() > 1 {
-                        chord_order.push(self.current_melody_degree);
-                    }
+                    // Sort chord degrees by their position on the circle (clockwise)
+                    let mut chord_with_idx: Vec<(usize, i32)> = self.current_chord_degrees.iter()
+                        .filter_map(|&d| degree_to_cof_idx(d).map(|idx| (idx, d)))
+                        .collect();
+                    chord_with_idx.sort_by_key(|&(idx, _)| idx);
 
-                    // Draw connecting lines
-                    for w in chord_order.windows(2) {
-                        if let (Some(from_idx), Some(to_idx)) = (degree_to_cof_idx(w[0]), degree_to_cof_idx(w[1])) {
-                            let (fx, fy) = cof_positions[from_idx];
-                            let (tx, ty) = cof_positions[to_idx];
-                            let color = RAINBOW[w[0] as usize % 7];
+                    if chord_with_idx.len() >= 2 {
+                        // Build polygon vertices in circle order
+                        let points: Vec<egui::Pos2> = chord_with_idx.iter()
+                            .map(|&(idx, _)| {
+                                let (x, y) = cof_positions[idx];
+                                egui::Pos2::new(x, y)
+                            })
+                            .collect();
+
+                        // Filled polygon with translucent melody color
+                        let mel_color = RAINBOW[self.current_melody_degree as usize % 7];
+                        let fill = egui::Color32::from_rgba_unmultiplied(
+                            mel_color.r(), mel_color.g(), mel_color.b(), 40,
+                        );
+                        cof_painter.add(egui::Shape::convex_polygon(
+                            points.clone(), fill, egui::Stroke::NONE,
+                        ));
+
+                        // Outline edges colored by starting vertex degree
+                        for i in 0..chord_with_idx.len() {
+                            let j = (i + 1) % chord_with_idx.len();
+                            let color = RAINBOW[chord_with_idx[i].1 as usize % 7];
                             cof_painter.line_segment(
-                                [egui::Pos2::new(fx, fy), egui::Pos2::new(tx, ty)],
+                                [points[i], points[j]],
                                 egui::Stroke::new(2.5, color),
                             );
                         }
