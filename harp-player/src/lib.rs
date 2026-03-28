@@ -95,6 +95,10 @@ struct PlayerApp {
     search_text: String,
     status: String,
     recent_hymns: Vec<usize>,
+
+    // Current chord info for circle of fifths display
+    current_chord_degrees: Vec<i32>,  // diatonic degrees (0-6) of current chord tones
+    current_melody_degree: i32,       // melody's diatonic degree (0-6)
 }
 
 impl PlayerApp {
@@ -120,6 +124,8 @@ impl PlayerApp {
             search_text: String::new(),
             status,
             recent_hymns: Vec::new(),
+            current_chord_degrees: vec![0, 2, 4], // default I chord
+            current_melody_degree: 0,
         }
     }
 
@@ -184,6 +190,37 @@ impl eframe::App for PlayerApp {
             ctx.request_repaint();
         }
 
+        // Update current chord info from the current beat
+        {
+            let to_degree = |s: i32| -> i32 {
+                let lin = if s > 0 { s - 1 } else { s };
+                ((lin % 7) + 7) % 7
+            };
+            let events = self.current_events().to_vec();
+            let mut beat_time = 0.0f32;
+            for event in &events {
+                match event {
+                    ScoreEvent::Note { melody_string, rh_strings, lh_strings, beats, is_chord_change, .. } => {
+                        if self.current_beat >= beat_time && self.current_beat < beat_time + beats {
+                            if *is_chord_change && !rh_strings.is_empty() {
+                                let mut degs: Vec<i32> = rh_strings.iter()
+                                    .chain(lh_strings.iter())
+                                    .map(|&s| to_degree(s))
+                                    .collect();
+                                degs.sort(); degs.dedup();
+                                self.current_chord_degrees = degs;
+                            }
+                            self.current_melody_degree = to_degree(*melody_string);
+                            break;
+                        }
+                        beat_time += beats;
+                    }
+                    ScoreEvent::Rest { beats } => { beat_time += beats; }
+                    ScoreEvent::Bar => {}
+                }
+            }
+        }
+
         // ── Top controls: 3 columns ──
         // ── Top controls ──
         // Row 1: [Hymn ▾]              [Search]
@@ -193,7 +230,7 @@ impl eframe::App for PlayerApp {
         egui::TopBottomPanel::top("controls").show(ctx, |ui| {
             ui.add_space(2.0);
             ui.horizontal(|ui| {
-                // ── Col 1: Circle of fifths ──
+                // ── Col 1: Circle of fifths with chord polygon ──
                 let selected_pc = music::key_to_pc(&self.current_key);
                 let diameter = 100.0;
                 let cof_size = diameter * 0.5;
@@ -207,28 +244,108 @@ impl eframe::App for PlayerApp {
                 const COF_LABELS: [&str; 12] = ["C","G","D","A","E","B","F#","Db","Ab","Eb","Bb","F"];
                 let outer_r = cof_size - 2.0;
                 let inner_r = cof_size * 0.55;
-                cof_painter.circle_stroke(cof_center, outer_r, egui::Stroke::new(1.0, BORDER));
-                for (i, (&pc, &label)) in COF_ORDER.iter().zip(COF_LABELS.iter()).enumerate() {
+                let label_r = (outer_r + inner_r) * 0.5;
+
+                // Rainbow colors for 7 diatonic degrees (ROYGBIV)
+                const RAINBOW: [egui::Color32; 7] = [
+                    egui::Color32::from_rgb(255, 0, 0),     // 0 = red (root)
+                    egui::Color32::from_rgb(255, 127, 0),   // 1 = orange
+                    egui::Color32::from_rgb(255, 255, 0),   // 2 = yellow
+                    egui::Color32::from_rgb(0, 180, 0),     // 3 = green
+                    egui::Color32::from_rgb(0, 100, 255),   // 4 = blue
+                    egui::Color32::from_rgb(75, 0, 130),    // 5 = indigo
+                    egui::Color32::from_rgb(148, 0, 211),   // 6 = violet
+                ];
+
+                // Map each COF position to its diatonic degree (-1 if not in key)
+                let key_root = ((selected_pc - music::MAJOR_SCALE[self.mode_offset as usize]) % 12 + 12) % 12;
+                let cof_positions: Vec<(f32, f32)> = (0..12).map(|i| {
                     let angle = std::f32::consts::TAU * i as f32 / 12.0 - std::f32::consts::FRAC_PI_2;
-                    let label_r = (outer_r + inner_r) * 0.5;
-                    let lx = cof_center.x + label_r * angle.cos();
-                    let ly = cof_center.y + label_r * angle.sin();
-                    let is_current = pc == selected_pc;
-                    let color = if is_current { ACCENT } else { TEXT_MUTED };
-                    let font_size = if is_current { 10.0 } else { 8.0 };
-                    if is_current {
-                        cof_painter.circle_filled(
-                            egui::Pos2::new(lx, ly), 10.0,
-                            egui::Color32::from_rgb(219, 234, 254),
+                    (cof_center.x + label_r * angle.cos(), cof_center.y + label_r * angle.sin())
+                }).collect();
+
+                // Find which COF index each diatonic degree maps to
+                let degree_to_cof_idx = |deg: i32| -> Option<usize> {
+                    let pc = (key_root + music::MAJOR_SCALE[deg as usize]) % 12;
+                    COF_ORDER.iter().position(|&c| c == pc)
+                };
+
+                cof_painter.circle_stroke(cof_center, outer_r, egui::Stroke::new(1.0, BORDER));
+
+                // Draw chord polygon: connect chord tones starting from melody
+                if !self.current_chord_degrees.is_empty() {
+                    // Order: start at melody degree, then the other chord degrees
+                    let mut chord_order: Vec<i32> = vec![self.current_melody_degree];
+                    for &d in &self.current_chord_degrees {
+                        if d != self.current_melody_degree && !chord_order.contains(&d) {
+                            chord_order.push(d);
+                        }
+                    }
+                    // Close the polygon back to melody
+                    if chord_order.len() > 1 {
+                        chord_order.push(self.current_melody_degree);
+                    }
+
+                    // Draw connecting lines
+                    for w in chord_order.windows(2) {
+                        if let (Some(from_idx), Some(to_idx)) = (degree_to_cof_idx(w[0]), degree_to_cof_idx(w[1])) {
+                            let (fx, fy) = cof_positions[from_idx];
+                            let (tx, ty) = cof_positions[to_idx];
+                            let color = RAINBOW[w[0] as usize % 7];
+                            cof_painter.line_segment(
+                                [egui::Pos2::new(fx, fy), egui::Pos2::new(tx, ty)],
+                                egui::Stroke::new(2.5, color),
+                            );
+                        }
+                    }
+                }
+
+                // Draw labels: diatonic notes get rainbow color + bold, chord tones highlighted
+                for (i, (&pc, &label)) in COF_ORDER.iter().zip(COF_LABELS.iter()).enumerate() {
+                    let (lx, ly) = cof_positions[i];
+
+                    // Find diatonic degree for this pc (-1 if chromatic)
+                    let degree = music::MAJOR_SCALE.iter().position(|&s| (key_root + s) % 12 == pc);
+                    let is_chord_tone = degree.map_or(false, |d| self.current_chord_degrees.contains(&(d as i32)));
+
+                    if let Some(deg) = degree {
+                        // Diatonic note: rainbow colored
+                        let rainbow_color = RAINBOW[deg];
+                        if is_chord_tone {
+                            // Chord tone: larger, with highlight circle
+                            cof_painter.circle_filled(
+                                egui::Pos2::new(lx, ly), 9.0, rainbow_color,
+                            );
+                            cof_painter.text(
+                                egui::Pos2::new(lx, ly),
+                                egui::Align2::CENTER_CENTER,
+                                label,
+                                egui::FontId::proportional(9.0),
+                                egui::Color32::WHITE,
+                            );
+                        } else {
+                            // Diatonic but not in chord: small rainbow dot + label
+                            cof_painter.circle_filled(
+                                egui::Pos2::new(lx, ly), 4.0, rainbow_color,
+                            );
+                            cof_painter.text(
+                                egui::Pos2::new(lx, ly - 9.0),
+                                egui::Align2::CENTER_CENTER,
+                                label,
+                                egui::FontId::proportional(7.0),
+                                rainbow_color,
+                            );
+                        }
+                    } else {
+                        // Chromatic (not in key): dim
+                        cof_painter.text(
+                            egui::Pos2::new(lx, ly),
+                            egui::Align2::CENTER_CENTER,
+                            label,
+                            egui::FontId::proportional(6.0),
+                            egui::Color32::from_rgb(180, 180, 180),
                         );
                     }
-                    cof_painter.text(
-                        egui::Pos2::new(lx, ly),
-                        egui::Align2::CENTER_CENTER,
-                        label,
-                        egui::FontId::proportional(font_size),
-                        color,
-                    );
                 }
 
                 // ── Col 2: controls ──
