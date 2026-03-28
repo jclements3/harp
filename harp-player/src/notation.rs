@@ -124,14 +124,13 @@ fn note_y_on_best_staff(midi: i32, layout: &NotationLayout) -> f32 {
     }
 }
 
-/// Draw ledger lines for a note on whichever staff it's placed on.
-fn draw_ledger_lines_for_midi(painter: &egui::Painter, x: f32, midi: i32, layout: &NotationLayout) {
-    let pos = midi_to_staff_pos(midi);
+/// Draw ledger lines for a note at the given staff position on the specified staff.
+fn draw_ledger_lines(painter: &egui::Painter, x: f32, pos: i32, on_treble: bool, layout: &NotationLayout) {
     let lw = NOTEHEAD_RX + LEDGER_EXTEND;
 
-    if midi >= 60 {
-        // Treble staff: bottom line = E4 (pos 2), top = F5 (pos 10)
-        // Ledger below: middle C (pos 0)
+    if on_treble {
+        // Treble staff lines: pos 2 (bottom) to pos 10 (top)
+        // Ledger below (middle C area)
         if pos <= 0 {
             let mut p = 0;
             while p >= pos {
@@ -143,7 +142,7 @@ fn draw_ledger_lines_for_midi(painter: &egui::Painter, x: f32, midi: i32, layout
                 p -= 2;
             }
         }
-        // Ledger above: A5 (pos 12), C6 (pos 14), etc.
+        // Ledger above
         if pos >= 12 {
             let mut p = 12;
             while p <= pos + 1 {
@@ -156,8 +155,8 @@ fn draw_ledger_lines_for_midi(painter: &egui::Painter, x: f32, midi: i32, layout
             }
         }
     } else {
-        // Bass staff: top line = A3 (pos -2), bottom = G2 (pos -10)
-        // Ledger above: middle C area (pos 0)
+        // Bass staff lines: pos -2 (top) to pos -10 (bottom)
+        // Ledger above (middle C area)
         if pos >= 0 {
             let mut p = 0;
             while p <= pos + 1 {
@@ -169,7 +168,7 @@ fn draw_ledger_lines_for_midi(painter: &egui::Painter, x: f32, midi: i32, layout
                 p += 2;
             }
         }
-        // Ledger below: E2 (pos -12), etc.
+        // Ledger below
         if pos <= -12 {
             let mut p = -12;
             while p >= pos {
@@ -204,21 +203,19 @@ fn draw_notehead(painter: &egui::Painter, x: f32, y: f32, filled: bool, color: e
     }
 }
 
-/// Draw a note with stem UP (on the RIGHT side) — used for RH notes.
+/// Draw a note with stem UP (right side) — used for RH notes.
+/// `pos` = staff position (0 = middle C), `on_treble` = which staff to draw on.
 fn draw_note_stem_up(
-    painter: &egui::Painter,
-    x: f32, y: f32,
-    beats: f32,
-    midi: i32,
-    is_active: bool,
-    layout: &NotationLayout,
+    painter: &egui::Painter, layout: &NotationLayout,
+    x: f32, pos: i32, on_treble: bool, beats: f32, is_active: bool,
 ) {
     let color = if is_active { ACTIVE_COLOR } else { NOTE_COLOR };
+    let y = if on_treble { treble_y(pos, layout.treble_top_y) } else { bass_y(pos, layout.bass_top_y) };
     let filled = beats < 2.0;
     let has_stem = beats < 4.0;
     let flags = if beats <= 0.25 { 2 } else if beats <= 0.5 { 1 } else { 0 };
 
-    draw_ledger_lines_for_midi(painter, x, midi, layout);
+    draw_ledger_lines(painter, x, pos, on_treble, layout);
     draw_notehead(painter, x, y, filled, color);
 
     if has_stem {
@@ -241,21 +238,19 @@ fn draw_note_stem_up(
     }
 }
 
-/// Draw a note with stem DOWN (on the LEFT side) — used for LH notes.
+/// Draw a note with stem DOWN (left side) — used for LH notes.
+/// `pos` = staff position (0 = middle C), `on_treble` = which staff to draw on.
 fn draw_note_stem_down(
-    painter: &egui::Painter,
-    x: f32, y: f32,
-    beats: f32,
-    midi: i32,
-    is_active: bool,
-    layout: &NotationLayout,
+    painter: &egui::Painter, layout: &NotationLayout,
+    x: f32, pos: i32, on_treble: bool, beats: f32, is_active: bool,
 ) {
     let color = if is_active { ACTIVE_COLOR } else { NOTE_COLOR };
+    let y = if on_treble { treble_y(pos, layout.treble_top_y) } else { bass_y(pos, layout.bass_top_y) };
     let filled = beats < 2.0;
     let has_stem = beats < 4.0;
     let flags = if beats <= 0.25 { 2 } else if beats <= 0.5 { 1 } else { 0 };
 
-    draw_ledger_lines_for_midi(painter, x, midi, layout);
+    draw_ledger_lines(painter, x, pos, on_treble, layout);
     draw_notehead(painter, x, y, filled, color);
 
     if has_stem {
@@ -331,217 +326,6 @@ pub fn draw_clefs(painter: &egui::Painter, layout: &NotationLayout) {
     );
 }
 
-/// Draw a single note.
-pub fn draw_note(
-    painter: &egui::Painter,
-    x: f32, y: f32,
-    beats: f32,
-    midi: i32,
-    is_active: bool,
-    layout: &NotationLayout,
-) {
-    let color = if is_active { ACTIVE_COLOR } else { NOTE_COLOR };
-    let staff_pos = midi_to_staff_pos(midi);
-
-    // Determine note type from duration
-    let filled = beats < 2.0;   // quarter and shorter = filled
-    let has_stem = beats < 4.0;  // whole notes have no stem
-    let flags = if beats <= 0.25 { 2 }       // sixteenth
-                else if beats <= 0.5 { 1 }    // eighth
-                else { 0 };
-
-    // ── Ledger lines ──
-    draw_ledger_lines(painter, x, midi, layout);
-
-    // ── Notehead ──
-    // Tilted ellipse for realistic look
-    let n_points = 16;
-    let tilt = -0.3f32; // slight rotation
-    let points: Vec<egui::Pos2> = (0..n_points).map(|i| {
-        let angle = 2.0 * std::f32::consts::PI * i as f32 / n_points as f32;
-        let ex = NOTEHEAD_RX * angle.cos();
-        let ey = NOTEHEAD_RY * angle.sin();
-        // Apply rotation
-        let rx = ex * tilt.cos() - ey * tilt.sin();
-        let ry = ex * tilt.sin() + ey * tilt.cos();
-        egui::Pos2::new(x + rx, y + ry)
-    }).collect();
-
-    if filled {
-        painter.add(egui::Shape::convex_polygon(
-            points,
-            color,
-            egui::Stroke::NONE,
-        ));
-    } else {
-        // Open notehead (half note, whole note)
-        painter.add(egui::Shape::convex_polygon(
-            points.clone(),
-            egui::Color32::TRANSPARENT,
-            egui::Stroke::new(1.5, color),
-        ));
-    }
-
-    // ── Stem ──
-    if has_stem {
-        // RH (treble staff): always stems up, on the right side
-        let stem_up = true;
-        let stem_x = if stem_up { x + NOTEHEAD_RX - 0.5 } else { x - NOTEHEAD_RX + 0.5 };
-        let stem_y1 = y;
-        let stem_y2 = if stem_up { y - STEM_LENGTH } else { y + STEM_LENGTH };
-
-        painter.line_segment(
-            [egui::Pos2::new(stem_x, stem_y1), egui::Pos2::new(stem_x, stem_y2)],
-            egui::Stroke::new(1.2, color),
-        );
-
-        // ── Flags ──
-        if flags > 0 {
-            for f in 0..flags {
-                let flag_y = if stem_up {
-                    stem_y2 + f as f32 * 6.0
-                } else {
-                    stem_y2 - f as f32 * 6.0
-                };
-                let flag_dir = if stem_up { 1.0 } else { -1.0 };
-
-                // Curved flag (simplified as a bezier-ish line)
-                let pts = [
-                    egui::Pos2::new(stem_x, flag_y),
-                    egui::Pos2::new(stem_x + 8.0, flag_y + flag_dir * FLAG_LENGTH * 0.5),
-                    egui::Pos2::new(stem_x + 4.0, flag_y + flag_dir * FLAG_LENGTH),
-                ];
-                painter.line_segment([pts[0], pts[1]], egui::Stroke::new(1.5, color));
-                painter.line_segment([pts[1], pts[2]], egui::Stroke::new(1.5, color));
-            }
-        }
-    }
-}
-
-/// Draw a note at an explicit Y position (for bass staff notes).
-pub fn draw_note_at(
-    painter: &egui::Painter,
-    x: f32, y: f32,
-    beats: f32,
-    midi: i32,
-    is_active: bool,
-    layout: &NotationLayout,
-    is_treble_staff: bool,
-) {
-    let color = if is_active { ACTIVE_COLOR } else { NOTE_COLOR };
-    let staff_pos = midi_to_staff_pos(midi);
-    let filled = beats < 2.0;
-    let has_stem = beats < 4.0;
-    let flags = if beats <= 0.25 { 2 } else if beats <= 0.5 { 1 } else { 0 };
-
-    // Ledger lines for bass staff
-    if !is_treble_staff {
-        draw_bass_ledger_lines(painter, x, midi, layout);
-    }
-
-    // Notehead
-    let n_points = 16;
-    let tilt = -0.3f32;
-    let points: Vec<egui::Pos2> = (0..n_points).map(|i| {
-        let angle = 2.0 * std::f32::consts::PI * i as f32 / n_points as f32;
-        let ex = NOTEHEAD_RX * angle.cos();
-        let ey = NOTEHEAD_RY * angle.sin();
-        let rx = ex * tilt.cos() - ey * tilt.sin();
-        let ry = ex * tilt.sin() + ey * tilt.cos();
-        egui::Pos2::new(x + rx, y + ry)
-    }).collect();
-
-    if filled {
-        painter.add(egui::Shape::convex_polygon(points, color, egui::Stroke::NONE));
-    } else {
-        painter.add(egui::Shape::convex_polygon(points, egui::Color32::TRANSPARENT, egui::Stroke::new(1.5, color)));
-    }
-
-    if has_stem {
-        // LH (bass staff): always stems down, on the left side
-        let stem_up = false;
-        let stem_x = if stem_up { x + NOTEHEAD_RX - 0.5 } else { x - NOTEHEAD_RX + 0.5 };
-        let stem_y2 = if stem_up { y - STEM_LENGTH } else { y + STEM_LENGTH };
-
-        painter.line_segment(
-            [egui::Pos2::new(stem_x, y), egui::Pos2::new(stem_x, stem_y2)],
-            egui::Stroke::new(1.2, color),
-        );
-
-        if flags > 0 {
-            for f in 0..flags {
-                let flag_y = if stem_up { stem_y2 + f as f32 * 6.0 } else { stem_y2 - f as f32 * 6.0 };
-                let flag_dir = if stem_up { 1.0 } else { -1.0 };
-                let pts = [
-                    egui::Pos2::new(stem_x, flag_y),
-                    egui::Pos2::new(stem_x + 8.0, flag_y + flag_dir * FLAG_LENGTH * 0.5),
-                    egui::Pos2::new(stem_x + 4.0, flag_y + flag_dir * FLAG_LENGTH),
-                ];
-                painter.line_segment([pts[0], pts[1]], egui::Stroke::new(1.5, color));
-                painter.line_segment([pts[1], pts[2]], egui::Stroke::new(1.5, color));
-            }
-        }
-    }
-}
-
-fn draw_bass_ledger_lines(painter: &egui::Painter, x: f32, midi: i32, layout: &NotationLayout) {
-    let pos = midi_to_staff_pos(midi);
-    let lw = NOTEHEAD_RX + LEDGER_EXTEND;
-
-    // Bass top line = A3 (pos -2). Ledger above for middle C (pos 0) area
-    if pos >= 0 {
-        let mut p = 0;
-        while p <= pos + 1 {
-            let y = bass_y(p, layout.bass_top_y);
-            painter.line_segment(
-                [egui::Pos2::new(x - lw, y), egui::Pos2::new(x + lw, y)],
-                egui::Stroke::new(1.0, STAFF_COLOR),
-            );
-            p += 2;
-        }
-    }
-    // Bass bottom line = G2 (pos -10). Ledger below.
-    if pos <= -12 {
-        let mut p = -12;
-        while p >= pos {
-            let y = bass_y(p, layout.bass_top_y);
-            painter.line_segment(
-                [egui::Pos2::new(x - lw, y), egui::Pos2::new(x + lw, y)],
-                egui::Stroke::new(1.0, STAFF_COLOR),
-            );
-            p -= 2;
-        }
-    }
-}
-
-/// Draw ledger lines for RH notes on the treble staff only.
-/// Limits below-staff ledger lines to just middle C (one ledger line).
-fn draw_ledger_lines(painter: &egui::Painter, x: f32, midi: i32, layout: &NotationLayout) {
-    let pos = midi_to_staff_pos(midi);
-    let lw = NOTEHEAD_RX + LEDGER_EXTEND;
-
-    // Treble bottom line = pos 2 (E4). Only draw middle C ledger (pos 0), nothing lower.
-    if pos <= 0 && pos >= -2 {
-        let y = treble_y(0, layout.treble_top_y);
-        painter.line_segment(
-            [egui::Pos2::new(x - lw, y), egui::Pos2::new(x + lw, y)],
-            egui::Stroke::new(1.0, STAFF_COLOR),
-        );
-    }
-    // Treble top line = pos 10 (F5). Ledger above: pos 12 (A5), 14 (C6), etc.
-    if pos >= 12 {
-        let mut p = 12;
-        while p <= pos + 1 {
-            let y = treble_y(p, layout.treble_top_y);
-            painter.line_segment(
-                [egui::Pos2::new(x - lw, y), egui::Pos2::new(x + lw, y)],
-                egui::Stroke::new(1.0, STAFF_COLOR),
-            );
-            p += 2;
-        }
-    }
-
-}
 
 /// Draw a rest symbol at the given X position on the treble staff.
 pub fn draw_rest(painter: &egui::Painter, x: f32, beats: f32, layout: &NotationLayout) {
@@ -727,7 +511,10 @@ fn draw_label_values(
     );
 }
 
-/// Render a full harp score: RH notes on treble staff, LH notes on bass staff.
+/// Render a full harp score.
+/// `mc_string` = absolute harp string number for middle C in the current key.
+/// Notes are positioned by string number: staff_pos = abs_string - mc_string.
+/// RH → treble staff (stem up), LH → bass staff (stem down).
 pub fn render_score(
     painter: &egui::Painter,
     layout: &NotationLayout,
@@ -735,67 +522,55 @@ pub fn render_score(
     scroll_offset: f32,
     current_beat: f32,
     view_width: f32,
-    key_root: i32,
+    mc_string: i32,
     rh_fingers: usize,
     lh_fingers: usize,
 ) {
-    // Draw staff (no clefs or row labels — stem direction encodes hand)
+    let str_offset = crate::abc::STRING_NUMBER_OFFSET;
+
+    // Convert a relative string number to staff position (0 = middle C)
+    let to_pos = |s: i32| -> i32 { s + str_offset - 1 - mc_string };
+
     draw_staff(painter, layout, view_width);
 
-    // Draw playhead
     let playhead_x = layout.beat_x(current_beat, scroll_offset);
     if playhead_x > 0.0 && playhead_x < view_width {
         draw_playhead(painter, playhead_x, layout);
     }
 
-    // Walk through events and draw visible ones
     let mut beat_time: f32 = 0.0;
 
     for event in events {
         match event {
-            ScoreEvent::Note { melody_midi, rh_strings, lh_strings,
+            ScoreEvent::Note { melody_string, rh_strings, lh_strings,
                                 beats, chord_name, rh_chord, lh_chord, is_chord_change, .. } => {
                 let x = layout.beat_x(beat_time + beats / 2.0, scroll_offset);
                 let is_active = current_beat >= beat_time && current_beat < beat_time + beats;
 
                 if x > -50.0 && x < view_width + 50.0 {
-                    let str_offset = crate::abc::STRING_NUMBER_OFFSET;
-
-                    // Truncate to the selected finger count
-                    // RH: take from top (melody first = thumb, then fingers 2,3,4), cap at rh_fingers
+                    // Truncate to finger count
                     let rh_used: Vec<i32> = rh_strings.iter().take(rh_fingers.min(4)).copied().collect();
-                    // LH: take from bottom (bass first = pinky, then fingers 3,2,thumb), cap at lh_fingers
                     let lh_len = lh_strings.len();
                     let lh_skip = lh_len.saturating_sub(lh_fingers);
                     let lh_used: Vec<i32> = lh_strings.iter().skip(lh_skip).take(lh_fingers).copied().collect();
 
                     if *is_chord_change && !rh_used.is_empty() {
-                        // At chord changes: draw RH voicing (stems up = right hand)
-                        // RH always on treble staff to avoid confusion with LH on bass
+                        // RH notes on treble staff (stem up)
                         for &s in &rh_used {
-                            let abs_str = s + str_offset - 1;
-                            let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
-                            let pos = midi_to_staff_pos(display_midi);
-                            let y = treble_y(pos, layout.treble_top_y);
-                            draw_note_stem_up(painter, x, y, *beats, display_midi, is_active, layout);
+                            let pos = to_pos(s);
+                            draw_note_stem_up(painter, layout, x, pos, true, *beats, is_active);
                         }
-
-                        // Draw LH voicing (stems down = left hand)
-                        // LH notes go on whichever staff fits their pitch — stem direction tells the player it's LH
+                        // LH notes on bass staff (stem down)
                         for &s in &lh_used {
-                            let abs_str = s + str_offset - 1;
-                            let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
-                            let y = note_y_on_best_staff(display_midi, layout);
-                            draw_note_stem_down(painter, x, y, *beats, display_midi, is_active, layout);
+                            let pos = to_pos(s);
+                            draw_note_stem_down(painter, layout, x, pos, false, *beats, is_active);
                         }
                     } else {
-                        // Between chord changes: draw melody note only (stems up = RH, always treble)
-                        let pos = midi_to_staff_pos(*melody_midi);
-                        let y = treble_y(pos, layout.treble_top_y);
-                        draw_note_stem_up(painter, x, y, *beats, *melody_midi, is_active, layout);
+                        // Melody only (RH, treble staff)
+                        let pos = to_pos(*melody_string);
+                        draw_note_stem_up(painter, layout, x, pos, true, *beats, is_active);
                     }
 
-                    // Label rows above + finger numbers below at chord changes
                     if *is_chord_change {
                         draw_label_values(
                             painter, layout, x,

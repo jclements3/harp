@@ -418,11 +418,10 @@ impl eframe::App for PlayerApp {
                     if self.scroll_offset < 0.0 { self.scroll_offset = 0.0; }
 
                     let events = self.current_events().to_vec();
-                    // Compute key_root from the user-selected key and mode
-                    // Mode offset rotates the scale: e.g. "D Dorian" uses the C major pedal setting
-                    // Parent major root = selected_key_pc - MAJOR_SCALE[mode_offset]
+                    // Compute key_root and middle C string for the current key/mode
                     let selected_pc = music::key_to_pc(&self.current_key);
                     let key_root = ((selected_pc - music::MAJOR_SCALE[self.mode_offset as usize]) % 12 + 12) % 12;
+                    let mc_string = music::middle_c_string(key_root);
 
                     render_score(
                         &painter,
@@ -431,7 +430,7 @@ impl eframe::App for PlayerApp {
                         self.scroll_offset,
                         self.current_beat,
                         view_width,
-                        key_root,
+                        mc_string,
                         self.rh_fingers as usize,
                         self.lh_fingers as usize,
                     );

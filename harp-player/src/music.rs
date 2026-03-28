@@ -53,6 +53,12 @@ pub fn snap_to_diatonic(midi: i32, key_root: i32) -> i32 {
     midi
 }
 
+/// Absolute harp string number for middle C (MIDI 60) in a given key.
+/// Used as the reference point: staff_pos = abs_string - middle_c_string.
+pub fn middle_c_string(key_root: i32) -> i32 {
+    midi_to_harp_string(60, key_root).unwrap_or(21)
+}
+
 pub fn key_to_pc(key: &str) -> i32 {
     match key {
         "C" => 0, "Db" | "C#" => 1, "D" => 2, "Eb" => 3, "E" => 4,

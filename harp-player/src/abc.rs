@@ -23,6 +23,7 @@ pub enum ScoreEvent {
     /// A beat with harp voicing: melody + RH notes on treble, LH notes on bass
     Note {
         melody_midi: i32,
+        melody_string: i32,
         rh_midi: Vec<i32>,
         lh_midi: Vec<i32>,
         rh_strings: Vec<i32>,
@@ -306,11 +307,14 @@ pub fn parse_all(text: &str) -> Vec<Score> {
                             .unwrap_or_default();
                         let is_chord_change = voicing_key != last_key;
 
+                        let rh_strs: Vec<i32> = v.rh_strings.iter().map(|&s| s - STRING_NUMBER_OFFSET).collect();
+                        let melody_str = *rh_strs.first().unwrap_or(&0);
                         events.push(ScoreEvent::Note {
                             melody_midi: snapped,
+                            melody_string: melody_str,
                             rh_midi: v.rh_midi.clone(),
                             lh_midi: v.lh_midi.clone(),
-                            rh_strings: v.rh_strings.iter().map(|&s| s - STRING_NUMBER_OFFSET).collect(),
+                            rh_strings: rh_strs,
                             lh_strings: v.lh_strings.iter().map(|&s| s - STRING_NUMBER_OFFSET).collect(),
                             beats,
                             chord_name: if is_chord_change { Some(v.full_chord.clone()) } else { None },
@@ -320,8 +324,12 @@ pub fn parse_all(text: &str) -> Vec<Score> {
                         });
                         last_voicing = voicing;
                     } else {
+                        let mel_str = crate::music::midi_to_harp_string(snapped, key_root)
+                            .map(|s| crate::music::to_relative_string(s, key_root))
+                            .unwrap_or(0);
                         events.push(ScoreEvent::Note {
                             melody_midi: snapped,
+                            melody_string: mel_str,
                             rh_midi: vec![snapped],
                             lh_midi: vec![],
                             rh_strings: vec![],
