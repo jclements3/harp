@@ -771,10 +771,12 @@ pub fn render_score(
 
                     if *is_chord_change && !rh_used.is_empty() {
                         // At chord changes: draw RH voicing (stems up = right hand)
+                        // RH always on treble staff to avoid confusion with LH on bass
                         for &s in &rh_used {
                             let abs_str = s + str_offset - 1;
                             let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
-                            let y = note_y_on_best_staff(display_midi, layout);
+                            let pos = midi_to_staff_pos(display_midi);
+                            let y = treble_y(pos, layout.treble_top_y);
                             draw_note_stem_up(painter, x, y, *beats, display_midi, is_active, layout);
                         }
 
@@ -787,8 +789,9 @@ pub fn render_score(
                             draw_note_stem_down(painter, x, y, *beats, display_midi, is_active, layout);
                         }
                     } else {
-                        // Between chord changes: draw melody note only (stems up = RH)
-                        let y = note_y_on_best_staff(*melody_midi, layout);
+                        // Between chord changes: draw melody note only (stems up = RH, always treble)
+                        let pos = midi_to_staff_pos(*melody_midi);
+                        let y = treble_y(pos, layout.treble_top_y);
                         draw_note_stem_up(painter, x, y, *beats, *melody_midi, is_active, layout);
                     }
 
