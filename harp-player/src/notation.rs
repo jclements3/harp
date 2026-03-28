@@ -9,15 +9,15 @@ use eframe::egui;
 use crate::abc::ScoreEvent;
 
 // ── Layout constants ──
-const STAFF_LINE_SPACING: f32 = 8.0;    // pixels between staff lines
+const STAFF_LINE_SPACING: f32 = 14.0;   // pixels between staff lines
 const STAFF_LINES: usize = 5;
-const GRAND_STAFF_GAP: f32 = 56.0;      // gap between treble and bass staves
-const NOTEHEAD_RX: f32 = 5.0;           // notehead ellipse x-radius
-const NOTEHEAD_RY: f32 = 3.5;           // notehead ellipse y-radius
-const STEM_LENGTH: f32 = 28.0;
-const FLAG_LENGTH: f32 = 12.0;
-const LEDGER_EXTEND: f32 = 4.0;         // how far ledger lines extend past notehead
-const BEAT_WIDTH: f32 = 40.0;           // pixels per beat (horizontal spacing)
+const GRAND_STAFF_GAP: f32 = 84.0;      // gap between treble and bass staves
+const NOTEHEAD_RX: f32 = 8.0;           // notehead ellipse x-radius
+const NOTEHEAD_RY: f32 = 5.5;           // notehead ellipse y-radius
+const STEM_LENGTH: f32 = 42.0;
+const FLAG_LENGTH: f32 = 18.0;
+const LEDGER_EXTEND: f32 = 6.0;         // how far ledger lines extend past notehead
+const BEAT_WIDTH: f32 = 60.0;           // pixels per beat (horizontal spacing)
 
 // ── Colors ──
 const STAFF_COLOR: egui::Color32 = egui::Color32::from_rgb(180, 180, 180);
@@ -33,7 +33,7 @@ const THUMB_COLOR: egui::Color32 = egui::Color32::from_rgb(37, 99, 235);
 const FINGER_COLOR: egui::Color32 = egui::Color32::from_rgb(100, 100, 100);
 
 // Label row heights above the treble staff
-const LABEL_ROW_H: f32 = 13.0;
+const LABEL_ROW_H: f32 = 19.0;
 const NUM_LABEL_ROWS: usize = 3; // Chord, RH, LH
 const LABEL_BLOCK_H: f32 = NUM_LABEL_ROWS as f32 * LABEL_ROW_H;
 
@@ -71,8 +71,8 @@ fn is_treble(midi: i32) -> bool {
 }
 
 // Finger rows below the bass staff
-const FINGER_ROW_H: f32 = 12.0;
-const FINGER_GAP: f32 = 40.0; // gap between bass staff bottom and finger rows
+const FINGER_ROW_H: f32 = 18.0;
+const FINGER_GAP: f32 = 52.0; // gap between bass staff bottom and finger rows
 const NUM_FINGER_ROWS: usize = 8; // RH: T 2 3 4, LH: T 2 3 4
 
 pub struct NotationLayout {
@@ -111,6 +111,170 @@ impl NotationLayout {
     /// X position for a beat time.
     pub fn beat_x(&self, beat_time: f32, scroll_offset: f32) -> f32 {
         self.left_margin + beat_time * BEAT_WIDTH - scroll_offset
+    }
+}
+
+/// Get the Y position for a MIDI note on the best staff (treble if >= middle C, bass otherwise).
+fn note_y_on_best_staff(midi: i32, layout: &NotationLayout) -> f32 {
+    let pos = midi_to_staff_pos(midi);
+    if midi >= 60 {
+        treble_y(pos, layout.treble_top_y)
+    } else {
+        bass_y(pos, layout.bass_top_y)
+    }
+}
+
+/// Draw ledger lines for a note on whichever staff it's placed on.
+fn draw_ledger_lines_for_midi(painter: &egui::Painter, x: f32, midi: i32, layout: &NotationLayout) {
+    let pos = midi_to_staff_pos(midi);
+    let lw = NOTEHEAD_RX + LEDGER_EXTEND;
+
+    if midi >= 60 {
+        // Treble staff: bottom line = E4 (pos 2), top = F5 (pos 10)
+        // Ledger below: middle C (pos 0)
+        if pos <= 0 {
+            let mut p = 0;
+            while p >= pos {
+                let y = treble_y(p, layout.treble_top_y);
+                painter.line_segment(
+                    [egui::Pos2::new(x - lw, y), egui::Pos2::new(x + lw, y)],
+                    egui::Stroke::new(1.0, STAFF_COLOR),
+                );
+                p -= 2;
+            }
+        }
+        // Ledger above: A5 (pos 12), C6 (pos 14), etc.
+        if pos >= 12 {
+            let mut p = 12;
+            while p <= pos + 1 {
+                let y = treble_y(p, layout.treble_top_y);
+                painter.line_segment(
+                    [egui::Pos2::new(x - lw, y), egui::Pos2::new(x + lw, y)],
+                    egui::Stroke::new(1.0, STAFF_COLOR),
+                );
+                p += 2;
+            }
+        }
+    } else {
+        // Bass staff: top line = A3 (pos -2), bottom = G2 (pos -10)
+        // Ledger above: middle C area (pos 0)
+        if pos >= 0 {
+            let mut p = 0;
+            while p <= pos + 1 {
+                let y = bass_y(p, layout.bass_top_y);
+                painter.line_segment(
+                    [egui::Pos2::new(x - lw, y), egui::Pos2::new(x + lw, y)],
+                    egui::Stroke::new(1.0, STAFF_COLOR),
+                );
+                p += 2;
+            }
+        }
+        // Ledger below: E2 (pos -12), etc.
+        if pos <= -12 {
+            let mut p = -12;
+            while p >= pos {
+                let y = bass_y(p, layout.bass_top_y);
+                painter.line_segment(
+                    [egui::Pos2::new(x - lw, y), egui::Pos2::new(x + lw, y)],
+                    egui::Stroke::new(1.0, STAFF_COLOR),
+                );
+                p -= 2;
+            }
+        }
+    }
+}
+
+/// Draw a notehead at (x, y).
+fn draw_notehead(painter: &egui::Painter, x: f32, y: f32, filled: bool, color: egui::Color32) {
+    let n_points = 16;
+    let tilt = -0.3f32;
+    let points: Vec<egui::Pos2> = (0..n_points).map(|i| {
+        let angle = 2.0 * std::f32::consts::PI * i as f32 / n_points as f32;
+        let ex = NOTEHEAD_RX * angle.cos();
+        let ey = NOTEHEAD_RY * angle.sin();
+        let rx = ex * tilt.cos() - ey * tilt.sin();
+        let ry = ex * tilt.sin() + ey * tilt.cos();
+        egui::Pos2::new(x + rx, y + ry)
+    }).collect();
+
+    if filled {
+        painter.add(egui::Shape::convex_polygon(points, color, egui::Stroke::NONE));
+    } else {
+        painter.add(egui::Shape::convex_polygon(points, egui::Color32::TRANSPARENT, egui::Stroke::new(1.5, color)));
+    }
+}
+
+/// Draw a note with stem UP (on the RIGHT side) — used for RH notes.
+fn draw_note_stem_up(
+    painter: &egui::Painter,
+    x: f32, y: f32,
+    beats: f32,
+    midi: i32,
+    is_active: bool,
+    layout: &NotationLayout,
+) {
+    let color = if is_active { ACTIVE_COLOR } else { NOTE_COLOR };
+    let filled = beats < 2.0;
+    let has_stem = beats < 4.0;
+    let flags = if beats <= 0.25 { 2 } else if beats <= 0.5 { 1 } else { 0 };
+
+    draw_ledger_lines_for_midi(painter, x, midi, layout);
+    draw_notehead(painter, x, y, filled, color);
+
+    if has_stem {
+        let stem_x = x + NOTEHEAD_RX - 0.5;
+        let stem_y2 = y - STEM_LENGTH;
+        painter.line_segment(
+            [egui::Pos2::new(stem_x, y), egui::Pos2::new(stem_x, stem_y2)],
+            egui::Stroke::new(1.2, color),
+        );
+        for f in 0..flags {
+            let flag_y = stem_y2 + f as f32 * 6.0;
+            let pts = [
+                egui::Pos2::new(stem_x, flag_y),
+                egui::Pos2::new(stem_x + 8.0, flag_y + FLAG_LENGTH * 0.5),
+                egui::Pos2::new(stem_x + 4.0, flag_y + FLAG_LENGTH),
+            ];
+            painter.line_segment([pts[0], pts[1]], egui::Stroke::new(1.5, color));
+            painter.line_segment([pts[1], pts[2]], egui::Stroke::new(1.5, color));
+        }
+    }
+}
+
+/// Draw a note with stem DOWN (on the LEFT side) — used for LH notes.
+fn draw_note_stem_down(
+    painter: &egui::Painter,
+    x: f32, y: f32,
+    beats: f32,
+    midi: i32,
+    is_active: bool,
+    layout: &NotationLayout,
+) {
+    let color = if is_active { ACTIVE_COLOR } else { NOTE_COLOR };
+    let filled = beats < 2.0;
+    let has_stem = beats < 4.0;
+    let flags = if beats <= 0.25 { 2 } else if beats <= 0.5 { 1 } else { 0 };
+
+    draw_ledger_lines_for_midi(painter, x, midi, layout);
+    draw_notehead(painter, x, y, filled, color);
+
+    if has_stem {
+        let stem_x = x - NOTEHEAD_RX + 0.5;
+        let stem_y2 = y + STEM_LENGTH;
+        painter.line_segment(
+            [egui::Pos2::new(stem_x, y), egui::Pos2::new(stem_x, stem_y2)],
+            egui::Stroke::new(1.2, color),
+        );
+        for f in 0..flags {
+            let flag_y = stem_y2 - f as f32 * 6.0;
+            let pts = [
+                egui::Pos2::new(stem_x, flag_y),
+                egui::Pos2::new(stem_x - 8.0, flag_y - FLAG_LENGTH * 0.5),
+                egui::Pos2::new(stem_x - 4.0, flag_y - FLAG_LENGTH),
+            ];
+            painter.line_segment([pts[0], pts[1]], egui::Stroke::new(1.5, color));
+            painter.line_segment([pts[1], pts[2]], egui::Stroke::new(1.5, color));
+        }
     }
 }
 
@@ -153,7 +317,7 @@ pub fn draw_clefs(painter: &egui::Painter, layout: &NotationLayout) {
         egui::Pos2::new(8.0, treble_center_y),
         egui::Align2::LEFT_CENTER,
         "\u{1D11E}", // treble clef unicode (may not render, fallback below)
-        egui::FontId::proportional(28.0),
+        egui::FontId::proportional(42.0),
         NOTE_COLOR,
     );
 
@@ -162,7 +326,7 @@ pub fn draw_clefs(painter: &egui::Painter, layout: &NotationLayout) {
         egui::Pos2::new(8.0, bass_center_y),
         egui::Align2::LEFT_CENTER,
         "\u{1D122}", // bass clef unicode
-        egui::FontId::proportional(24.0),
+        egui::FontId::proportional(36.0),
         NOTE_COLOR,
     );
 }
@@ -392,7 +556,7 @@ pub fn draw_rest(painter: &egui::Painter, x: f32, beats: f32, layout: &NotationL
         egui::Pos2::new(x, center_y),
         egui::Align2::CENTER_CENTER,
         symbol,
-        egui::FontId::proportional(16.0),
+        egui::FontId::proportional(20.0),
         REST_COLOR,
     );
 }
@@ -437,7 +601,7 @@ fn draw_row_labels(painter: &egui::Painter, layout: &NotationLayout) {
             egui::Pos2::new(x, y),
             egui::Align2::LEFT_CENTER,
             label,
-            egui::FontId::monospace(9.0),
+            egui::FontId::monospace(14.0),
             colors[i],
         );
     }
@@ -459,7 +623,7 @@ fn draw_finger_labels(painter: &egui::Painter, layout: &NotationLayout) {
                 egui::Pos2::new(x, y - FINGER_ROW_H * 0.1),
                 egui::Align2::LEFT_CENTER,
                 "RH",
-                egui::FontId::monospace(7.0),
+                egui::FontId::monospace(10.0),
                 RH_LABEL_COLOR,
             );
         } else if i == 4 {
@@ -467,7 +631,7 @@ fn draw_finger_labels(painter: &egui::Painter, layout: &NotationLayout) {
                 egui::Pos2::new(x, y - FINGER_ROW_H * 0.1),
                 egui::Align2::LEFT_CENTER,
                 "LH",
-                egui::FontId::monospace(7.0),
+                egui::FontId::monospace(10.0),
                 LH_LABEL_COLOR,
             );
         }
@@ -475,7 +639,7 @@ fn draw_finger_labels(painter: &egui::Painter, layout: &NotationLayout) {
             egui::Pos2::new(x + 20.0, y),
             egui::Align2::LEFT_CENTER,
             label,
-            egui::FontId::monospace(9.0),
+            egui::FontId::monospace(14.0),
             color,
         );
     }
@@ -501,7 +665,7 @@ fn draw_finger_values(
             egui::Pos2::new(x, row_y(i)),
             egui::Align2::CENTER_CENTER,
             &s.to_string(),
-            egui::FontId::monospace(10.0),
+            egui::FontId::monospace(15.0),
             color,
         );
     }
@@ -515,7 +679,7 @@ fn draw_finger_values(
             egui::Pos2::new(x, row_y(4 + i)),
             egui::Align2::CENTER_CENTER,
             &s.to_string(),
-            egui::FontId::monospace(10.0),
+            egui::FontId::monospace(15.0),
             color,
         );
     }
@@ -540,7 +704,7 @@ fn draw_label_values(
         egui::Pos2::new(x, row_y(0)),
         egui::Align2::CENTER_CENTER,
         chord_name,
-        egui::FontId::monospace(9.0),
+        egui::FontId::monospace(14.0),
         if is_active { ACTIVE_COLOR } else { CHORD_NAME_COLOR },
     );
 
@@ -549,7 +713,7 @@ fn draw_label_values(
         egui::Pos2::new(x, row_y(1)),
         egui::Align2::CENTER_CENTER,
         rh_chord,
-        egui::FontId::monospace(10.0),
+        egui::FontId::monospace(15.0),
         if is_active { ACTIVE_COLOR } else { RH_LABEL_COLOR },
     );
 
@@ -558,7 +722,7 @@ fn draw_label_values(
         egui::Pos2::new(x, row_y(2)),
         egui::Align2::CENTER_CENTER,
         lh_chord,
-        egui::FontId::monospace(10.0),
+        egui::FontId::monospace(15.0),
         if is_active { ACTIVE_COLOR } else { LH_LABEL_COLOR },
     );
 }
@@ -572,6 +736,8 @@ pub fn render_score(
     current_beat: f32,
     view_width: f32,
     key_root: i32,
+    rh_fingers: usize,
+    lh_fingers: usize,
 ) {
     // DEBUG: show key_root on screen
     let kr_names = ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
@@ -583,11 +749,8 @@ pub fn render_score(
         egui::Color32::RED,
     );
 
-    // Draw label rows, staff, clefs, and finger labels
-    draw_row_labels(painter, layout);
+    // Draw staff (no clefs or row labels — stem direction encodes hand)
     draw_staff(painter, layout, view_width);
-    draw_clefs(painter, layout);
-    draw_finger_labels(painter, layout);
 
     // Draw playhead
     let playhead_x = layout.beat_x(current_beat, scroll_offset);
@@ -608,50 +771,35 @@ pub fn render_score(
                 if x > -50.0 && x < view_width + 50.0 {
                     let str_offset = crate::abc::STRING_NUMBER_OFFSET;
 
-                    if *is_chord_change && !rh_strings.is_empty() {
-                        // DEBUG: show computation for first RH string
-                        if beat_time < 1.0 {
-                            let kr_names = ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
-                            for &s in rh_strings {
-                                let abs_str = s + str_offset - 1;
-                                let raw_midi = crate::music::harp_string_to_midi(abs_str, key_root);
-                                let display_midi = raw_midi + 12;
-                                let note = kr_names[display_midi as usize % 12];
-                                let oct = display_midi / 12 - 1;
-                                painter.text(
-                                    egui::Pos2::new(x, layout.finger_top_y + 110.0 + s as f32 * 12.0),
-                                    egui::Align2::CENTER_TOP,
-                                    &format!("s{}→a{}→r{}→d{}={}{}",s,abs_str,raw_midi,display_midi,note,oct),
-                                    egui::FontId::monospace(8.0),
-                                    egui::Color32::RED,
-                                );
-                            }
-                        }
+                    // Truncate to the selected finger count
+                    // RH: take from top (melody first = thumb, then fingers 2,3,4)
+                    let rh_used: Vec<i32> = rh_strings.iter().take(rh_fingers).copied().collect();
+                    // LH: take from bottom (bass first = pinky, then fingers 3,2,thumb)
+                    let lh_len = lh_strings.len();
+                    let lh_skip = lh_len.saturating_sub(lh_fingers);
+                    let lh_used: Vec<i32> = lh_strings.iter().skip(lh_skip).copied().collect();
 
-                        // At chord changes: draw full RH voicing from string numbers
-                        for &s in rh_strings {
+                    if *is_chord_change && !rh_used.is_empty() {
+                        // At chord changes: draw RH voicing (stems up = right hand)
+                        for &s in &rh_used {
                             let abs_str = s + str_offset - 1;
                             let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
-                            if display_midi >= 60 {
-                                let y = treble_y(midi_to_staff_pos(display_midi), layout.treble_top_y);
-                                draw_note(painter, x, y, *beats, display_midi, is_active, layout);
-                            }
+                            let y = note_y_on_best_staff(display_midi, layout);
+                            draw_note_stem_up(painter, x, y, *beats, display_midi, is_active, layout);
                         }
 
-                        // Draw full LH voicing from string numbers
-                        for &s in lh_strings {
+                        // Draw LH voicing (stems down = left hand)
+                        // LH notes go on whichever staff fits their pitch — stem direction tells the player it's LH
+                        for &s in &lh_used {
                             let abs_str = s + str_offset - 1;
                             let display_midi = crate::music::harp_string_to_midi(abs_str, key_root) + 12;
-                            if display_midi <= 59 {
-                                let y = bass_y(midi_to_staff_pos(display_midi), layout.bass_top_y);
-                                draw_note_at(painter, x, y, *beats, display_midi, is_active, layout, false);
-                            }
+                            let y = note_y_on_best_staff(display_midi, layout);
+                            draw_note_stem_down(painter, x, y, *beats, display_midi, is_active, layout);
                         }
                     } else {
-                        // Between chord changes: draw melody note only (on treble)
-                        // melody_midi is from ABC base 60, correct pitch
-                        let y = treble_y(midi_to_staff_pos(*melody_midi), layout.treble_top_y);
-                        draw_note(painter, x, y, *beats, *melody_midi, is_active, layout);
+                        // Between chord changes: draw melody note only (stems up = RH)
+                        let y = note_y_on_best_staff(*melody_midi, layout);
+                        draw_note_stem_up(painter, x, y, *beats, *melody_midi, is_active, layout);
                     }
 
                     // Label rows above + finger numbers below at chord changes
@@ -661,14 +809,14 @@ pub fn render_score(
                             chord_name.as_deref().unwrap_or(""),
                             rh_chord.as_deref().unwrap_or(""),
                             lh_chord.as_deref().unwrap_or(""),
-                            rh_strings,
-                            lh_strings,
+                            &rh_used,
+                            &lh_used,
                             is_active,
                         );
                         draw_finger_values(
                             painter, layout, x,
-                            rh_strings,
-                            lh_strings,
+                            &rh_used,
+                            &lh_used,
                             is_active,
                         );
                     }

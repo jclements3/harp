@@ -35,6 +35,9 @@ pub fn run_app(options: eframe::NativeOptions) -> eframe::Result {
 }
 
 fn apply_style(ctx: &egui::Context) {
+    // Scale UI for tablet readability (notation sizes are set independently)
+    ctx.set_pixels_per_point(1.5);
+
     let mut style = (*ctx.style()).clone();
     style.spacing.item_spacing = egui::Vec2::new(6.0, 4.0);
     style.spacing.button_padding = egui::Vec2::new(10.0, 6.0);
@@ -65,7 +68,7 @@ fn apply_style(ctx: &egui::Context) {
 }
 
 const ALL_KEYS: [&str; 12] = ["C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
-const MODE_NAMES: [&str; 7] = ["Ionian","Dorian","Phrygian","Lydian","Mixolydian","Aeolian","Locrian"];
+const MODE_NAMES: [&str; 7] = ["Ion","Dor","Phr","Lyd","Mix","Aeo","Loc"];
 
 struct PlayerApp {
     scores: Vec<Score>,
@@ -81,12 +84,17 @@ struct PlayerApp {
     current_key: String,
     mode_offset: i32,
 
+    // Voicing
+    rh_fingers: i32,
+    lh_fingers: i32,
+
     // View
     scroll_offset: f32,
     playhead_fraction: f32,
 
     search_text: String,
     status: String,
+    recent_hymns: Vec<usize>,
 }
 
 impl PlayerApp {
@@ -105,10 +113,13 @@ impl PlayerApp {
             last_frame_time: None,
             current_key: key,
             mode_offset: 0,
+            rh_fingers: 4,
+            lh_fingers: 4,
             scroll_offset: 0.0,
             playhead_fraction: 0.25,
             search_text: String::new(),
             status,
+            recent_hymns: Vec::new(),
         }
     }
 
@@ -136,6 +147,21 @@ impl PlayerApp {
         self.last_frame_time = None;
         self.playing = false;
     }
+
+    fn select_hymn(&mut self, idx: usize) {
+        if self.current_score != idx {
+            // Add to recent list (deduplicate, keep last 10)
+            self.recent_hymns.retain(|&i| i != idx);
+            self.recent_hymns.insert(0, idx);
+            self.recent_hymns.truncate(10);
+            self.current_score = idx;
+            self.reset_playback();
+            if let Some(s) = self.scores.get(idx) {
+                self.tempo_bpm = s.tempo as f32;
+                self.current_key = s.key.clone();
+            }
+        }
+    }
 }
 
 impl eframe::App for PlayerApp {
@@ -158,132 +184,195 @@ impl eframe::App for PlayerApp {
             ctx.request_repaint();
         }
 
-        // ── Top controls (2 rows) ──
+        // ── Top controls: 3 columns ──
+        // ── Top controls ──
+        // Row 1: [Hymn ▾]              [Search]
+        // Row 2: [⏮ ▶ ⏹]              [🕒 Recent ▾]        ⊙ Circle
+        // Row 3: [G ▾] 120 BPM         RH [4] LH [4]       of 5ths
+        // Row 4: [Ion][Dor][Phr][Lyd][Mix][Aeo][Loc]
         egui::TopBottomPanel::top("controls").show(ctx, |ui| {
             ui.add_space(2.0);
-
-            // Row 1: Transport + BPM + Key/Mode
             ui.horizontal(|ui| {
-                // Play/Pause
-                let play_text = if self.playing { "||" } else { ">" };
-                let play_btn = egui::Button::new(
-                    egui::RichText::new(play_text).size(14.0)
-                        .color(if self.playing { egui::Color32::WHITE } else { TEXT_PRIMARY })
-                ).fill(if self.playing { ACCENT } else { CARD_BG });
-                if ui.add(play_btn).clicked() {
-                    self.playing = !self.playing;
-                    if self.playing { self.last_frame_time = None; }
+                // ── Col 1: Circle of fifths ──
+                let selected_pc = music::key_to_pc(&self.current_key);
+                let diameter = 100.0;
+                let cof_size = diameter * 0.5;
+                let (cof_rect, _) = ui.allocate_exact_size(
+                    egui::Vec2::splat(diameter),
+                    egui::Sense::hover(),
+                );
+                let cof_center = cof_rect.center();
+                let cof_painter = ui.painter_at(cof_rect);
+                const COF_ORDER: [i32; 12] = [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5];
+                const COF_LABELS: [&str; 12] = ["C","G","D","A","E","B","F#","Db","Ab","Eb","Bb","F"];
+                let outer_r = cof_size - 2.0;
+                let inner_r = cof_size * 0.55;
+                cof_painter.circle_stroke(cof_center, outer_r, egui::Stroke::new(1.0, BORDER));
+                for (i, (&pc, &label)) in COF_ORDER.iter().zip(COF_LABELS.iter()).enumerate() {
+                    let angle = std::f32::consts::TAU * i as f32 / 12.0 - std::f32::consts::FRAC_PI_2;
+                    let label_r = (outer_r + inner_r) * 0.5;
+                    let lx = cof_center.x + label_r * angle.cos();
+                    let ly = cof_center.y + label_r * angle.sin();
+                    let is_current = pc == selected_pc;
+                    let color = if is_current { ACCENT } else { TEXT_MUTED };
+                    let font_size = if is_current { 10.0 } else { 8.0 };
+                    if is_current {
+                        cof_painter.circle_filled(
+                            egui::Pos2::new(lx, ly), 10.0,
+                            egui::Color32::from_rgb(219, 234, 254),
+                        );
+                    }
+                    cof_painter.text(
+                        egui::Pos2::new(lx, ly),
+                        egui::Align2::CENTER_CENTER,
+                        label,
+                        egui::FontId::proportional(font_size),
+                        color,
+                    );
                 }
 
-                if ui.button(egui::RichText::new("[]").size(14.0)).clicked() {
-                    self.reset_playback();
-                }
+                // ── Col 2: controls ──
+                ui.vertical(|ui| {
+                    ui.spacing_mut().item_spacing.y = 2.0;
 
-                if ui.button(egui::RichText::new("-").size(14.0)).clicked() {
-                    self.tempo_bpm = (self.tempo_bpm - 20.0).max(10.0);
-                }
-                ui.add(egui::DragValue::new(&mut self.tempo_bpm)
-                    .range(10.0..=240.0).speed(1.0).suffix(" BPM"));
-                if ui.button(egui::RichText::new("+").size(14.0)).clicked() {
-                    self.tempo_bpm = (self.tempo_bpm + 20.0).min(240.0);
-                }
-
-                ui.separator();
-
-                // Key selector
-                let mut selected_key = self.current_key.clone();
-                egui::ComboBox::from_id_salt("key_select")
-                    .selected_text(&self.current_key)
-                    .width(50.0)
-                    .show_ui(ui, |ui| {
-                        for k in ALL_KEYS {
-                            ui.selectable_value(&mut selected_key, k.to_string(), k);
+                    // Row 1: [Hymn ▾] [Search]
+                    ui.horizontal(|ui| {
+                        if !self.scores.is_empty() {
+                            let label = self.scores.get(self.current_score)
+                                .map(|s| format!("{}. {}", s.number, s.title))
+                                .unwrap_or_default();
+                            let old_score = self.current_score;
+                            egui::ComboBox::from_id_salt("score_select")
+                                .selected_text(&label)
+                                .width(150.0)
+                                .show_ui(ui, |ui| {
+                                    for (i, s) in self.scores.iter().enumerate() {
+                                        let text = format!("{}. {}", s.number, s.title);
+                                        ui.selectable_value(&mut self.current_score, i, &text);
+                                    }
+                                });
+                            if self.current_score != old_score {
+                                self.select_hymn(self.current_score);
+                            }
+                            let response = ui.add(
+                                egui::TextEdit::singleline(&mut self.search_text)
+                                    .hint_text("Search...")
+                                    .desired_width(ui.available_width() - 4.0)
+                                    .text_color(TEXT_PRIMARY)
+                                    .background_color(CARD_BG)
+                                    .font(egui::FontSelection::FontId(egui::FontId::proportional(11.0)))
+                            );
+                            if response.changed() && !self.search_text.is_empty() {
+                                let q = self.search_text.to_lowercase();
+                                if let Some(idx) = self.scores.iter().position(|s|
+                                    s.title.to_lowercase().contains(&q) || s.number.contains(&q)
+                                ) {
+                                    self.select_hymn(idx);
+                                }
+                            }
                         }
                     });
-                if selected_key != self.current_key {
-                    self.current_key = selected_key;
-                }
 
-                // Mode buttons
-                for (i, name) in MODE_NAMES.iter().enumerate() {
-                    let selected = self.mode_offset == i as i32;
-                    let btn = if selected {
-                        egui::Button::new(
-                            egui::RichText::new(*name).size(10.0).color(egui::Color32::WHITE)
-                        ).fill(ACCENT)
-                    } else {
-                        egui::Button::new(egui::RichText::new(*name).size(10.0))
-                    };
-                    if ui.add(btn).clicked() {
-                        self.mode_offset = i as i32;
-                    }
-                }
-
-                // Beat counter (right-aligned)
-                let total = self.total_beats();
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    ui.label(egui::RichText::new(
-                        format!("{:.0}/{:.0}", self.current_beat, total)
-                    ).monospace().size(11.0).color(TEXT_MUTED));
-                });
-            });
-
-            // Row 2: Hymn selector + Search
-            ui.horizontal(|ui| {
-                if !self.scores.is_empty() {
-                    let label = self.scores.get(self.current_score)
-                        .map(|s| format!("{}. {}", s.number, s.title))
-                        .unwrap_or_default();
-
-                    let old_score = self.current_score;
-                    egui::ComboBox::from_id_salt("score_select")
-                        .selected_text(&label)
-                        .width(ui.available_width() * 0.45)
-                        .show_ui(ui, |ui| {
-                            for (i, s) in self.scores.iter().enumerate() {
-                                let text = format!("{}. {}", s.number, s.title);
-                                ui.selectable_value(&mut self.current_score, i, &text);
-                            }
-                        });
-
-                    if self.current_score != old_score {
-                        self.reset_playback();
-                        if let Some(s) = self.scores.get(self.current_score) {
-                            self.tempo_bpm = s.tempo as f32;
-                            self.current_key = s.key.clone();
-                        }
-                    }
-
-                    // Search (matches hymn selector height)
-                    let response = ui.add(
-                        egui::TextEdit::singleline(&mut self.search_text)
-                            .hint_text("Search...")
-                            .desired_width(200.0)
-                            .text_color(TEXT_PRIMARY)
-                            .background_color(CARD_BG)
-                            .font(egui::FontSelection::FontId(egui::FontId::proportional(16.0)))
-                    );
-                    if response.changed() && !self.search_text.is_empty() {
-                        let q = self.search_text.to_lowercase();
-                        if let Some(idx) = self.scores.iter().position(|s|
-                            s.title.to_lowercase().contains(&q) || s.number.contains(&q)
-                        ) {
-                            self.current_score = idx;
+                    // Row 2: [⏮ ▶ ⏹] [G▾] 120BPM RH[4] LH[4] [🕒 Recent ▾]
+                    ui.horizontal(|ui| {
+                        if ui.button(egui::RichText::new("\u{23EE}").size(14.0)).clicked() {
                             self.reset_playback();
-                            if let Some(s) = self.scores.get(self.current_score) {
-                                self.tempo_bpm = s.tempo as f32;
-                                self.current_key = s.key.clone();
+                        }
+                        let play_icon = if self.playing { "\u{23F8}" } else { "\u{25B6}" };
+                        let play_btn = egui::Button::new(
+                            egui::RichText::new(play_icon).size(14.0)
+                                .color(if self.playing { egui::Color32::WHITE } else { TEXT_PRIMARY })
+                        ).fill(if self.playing { ACCENT } else { CARD_BG });
+                        if ui.add(play_btn).clicked() {
+                            self.playing = !self.playing;
+                            if self.playing { self.last_frame_time = None; }
+                        }
+                        if ui.button(egui::RichText::new("\u{23F9}").size(14.0)).clicked() {
+                            self.reset_playback();
+                        }
+
+                        ui.separator();
+
+                        let mut selected_key = self.current_key.clone();
+                        egui::ComboBox::from_id_salt("key_select")
+                            .selected_text(egui::RichText::new(&self.current_key).size(11.0))
+                            .width(40.0)
+                            .show_ui(ui, |ui| {
+                                for k in ALL_KEYS {
+                                    ui.selectable_value(&mut selected_key, k.to_string(), k);
+                                }
+                            });
+                        if selected_key != self.current_key {
+                            self.current_key = selected_key;
+                        }
+                        ui.add(egui::DragValue::new(&mut self.tempo_bpm)
+                            .range(10.0..=240.0).speed(1.0).suffix(" BPM"));
+
+                        ui.separator();
+
+                        ui.label(egui::RichText::new("RH").size(10.0).color(TEXT_MUTED));
+                        ui.add(egui::DragValue::new(&mut self.rh_fingers).range(1..=4).speed(0.1));
+                        ui.label(egui::RichText::new("LH").size(10.0).color(TEXT_MUTED));
+                        ui.add(egui::DragValue::new(&mut self.lh_fingers).range(1..=4).speed(0.1));
+
+                    });
+
+                    // Row 3: Mode buttons + Recent
+                    ui.horizontal(|ui| {
+                        for (i, name) in MODE_NAMES.iter().enumerate() {
+                            let selected = self.mode_offset == i as i32;
+                            let btn = if selected {
+                                egui::Button::new(
+                                    egui::RichText::new(*name).size(11.0).color(egui::Color32::WHITE)
+                                ).fill(ACCENT)
+                            } else {
+                                egui::Button::new(egui::RichText::new(*name).size(11.0))
+                            };
+                            if ui.add(btn).clicked() {
+                                self.mode_offset = i as i32;
                             }
                         }
-                    }
-                }
-            });
 
+                        ui.separator();
+
+                        let mut recent_pick = self.current_score;
+                        let recent_label = if self.recent_hymns.is_empty() { "Recent" } else { "\u{1F552} Recent" };
+                        egui::ComboBox::from_id_salt("recent_select")
+                            .selected_text(recent_label)
+                            .width(ui.available_width() - 4.0)
+                            .show_ui(ui, |ui| {
+                                if self.recent_hymns.is_empty() {
+                                    ui.label(egui::RichText::new("No recent hymns").color(TEXT_MUTED));
+                                }
+                                for &idx in &self.recent_hymns {
+                                    if let Some(s) = self.scores.get(idx) {
+                                        let text = format!("{}. {}", s.number, s.title);
+                                        ui.selectable_value(&mut recent_pick, idx, &text);
+                                    }
+                                }
+                            });
+                        if recent_pick != self.current_score {
+                            self.select_hymn(recent_pick);
+                        }
+                    });
+                });
+
+            });
             ui.add_space(2.0);
         });
 
-        // ── Bottom status ──
+        // ── Bottom: progress bar + status ──
         egui::TopBottomPanel::bottom("status").show(ctx, |ui| {
+            // Progress bar (full width, draggable)
+            let total = self.total_beats().max(1.0);
+            let mut progress = self.current_beat / total;
+            let slider = egui::Slider::new(&mut progress, 0.0..=1.0)
+                .show_value(false)
+                .trailing_fill(true);
+            if ui.add(slider).changed() {
+                self.current_beat = progress * total;
+            }
+
             ui.horizontal(|ui| {
                 ui.colored_label(TEXT_MUTED, &self.status);
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
@@ -319,17 +408,20 @@ impl eframe::App for PlayerApp {
                     );
 
                     let painter = ui.painter_at(rect);
-                    let layout = NotationLayout::new(rect.top() + 20.0, 40.0);
+                    let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
 
                     // Auto-scroll: keep playhead at playhead_fraction of view width
                     let view_width = rect.width();
                     let playhead_x_target = view_width * self.playhead_fraction;
-                    self.scroll_offset = self.current_beat * 40.0 - playhead_x_target + layout.left_margin;
+                    self.scroll_offset = self.current_beat * 60.0 - playhead_x_target + layout.left_margin;
                     if self.scroll_offset < 0.0 { self.scroll_offset = 0.0; }
 
                     let events = self.current_events().to_vec();
-                    let key_root = self.scores.get(self.current_score)
-                        .map(|s| s.key_root).unwrap_or(0);
+                    // Compute key_root from the user-selected key and mode
+                    // Mode offset rotates the scale: e.g. "D Dorian" uses the C major pedal setting
+                    // Parent major root = selected_key_pc - MAJOR_SCALE[mode_offset]
+                    let selected_pc = music::key_to_pc(&self.current_key);
+                    let key_root = ((selected_pc - music::MAJOR_SCALE[self.mode_offset as usize]) % 12 + 12) % 12;
 
                     render_score(
                         &painter,
@@ -339,6 +431,8 @@ impl eframe::App for PlayerApp {
                         self.current_beat,
                         view_width,
                         key_root,
+                        self.rh_fingers as usize,
+                        self.lh_fingers as usize,
                     );
                 });
         });

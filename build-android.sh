@@ -31,13 +31,15 @@ CARGO_PROFILE_FLAG=""
 BUILD_HYMNAL=true
 BUILD_TRAINER=true
 BUILD_SAMPLER=true
+BUILD_PLAYER=true
 
 for arg in "$@"; do
     case "$arg" in
         --release) PROFILE="release"; CARGO_PROFILE_FLAG="--release" ;;
-        hymnal)    BUILD_TRAINER=false; BUILD_SAMPLER=false ;;
-        trainer)   BUILD_HYMNAL=false; BUILD_SAMPLER=false ;;
-        sampler)   BUILD_HYMNAL=false; BUILD_TRAINER=false ;;
+        hymnal)    BUILD_TRAINER=false; BUILD_SAMPLER=false; BUILD_PLAYER=false ;;
+        trainer)   BUILD_HYMNAL=false; BUILD_SAMPLER=false; BUILD_PLAYER=false ;;
+        sampler)   BUILD_HYMNAL=false; BUILD_TRAINER=false; BUILD_PLAYER=false ;;
+        player)    BUILD_HYMNAL=false; BUILD_TRAINER=false; BUILD_SAMPLER=false ;;
     esac
 done
 
@@ -210,6 +212,10 @@ if $BUILD_SAMPLER; then
     build_apk "harp-sampler" "harp-sampler" "harp_sampler" "Harp Sampler" "com.harp.sampler"
 fi
 
+if $BUILD_PLAYER; then
+    build_apk "harp-player" "harp-player" "harp_player" "Harp Player" "com.harp.player"
+fi
+
 echo ""
 echo "========================================="
 echo "  Done! APKs in: $OUT_DIR/"
@@ -221,5 +227,6 @@ echo "To install on your tablet (USB connected):"
 echo "  adb install $OUT_DIR/harp-hymnal.apk"
 echo "  adb install $OUT_DIR/harp-trainer.apk"
 echo "  adb install $OUT_DIR/harp-sampler.apk"
+echo "  adb install $OUT_DIR/harp-player.apk"
 echo ""
 echo "Or copy the .apk files to the tablet and open them."
