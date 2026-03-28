@@ -739,16 +739,6 @@ pub fn render_score(
     rh_fingers: usize,
     lh_fingers: usize,
 ) {
-    // DEBUG: show key_root on screen
-    let kr_names = ["C","C#","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
-    painter.text(
-        egui::Pos2::new(view_width - 80.0, layout.label_top_y),
-        egui::Align2::LEFT_TOP,
-        &format!("kr={} ({})", key_root, kr_names[key_root as usize % 12]),
-        egui::FontId::monospace(10.0),
-        egui::Color32::RED,
-    );
-
     // Draw staff (no clefs or row labels — stem direction encodes hand)
     draw_staff(painter, layout, view_width);
 
