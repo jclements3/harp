@@ -438,7 +438,9 @@ fn draw_finger_values(
     lh_strings: &[i32],
     is_active: bool,
 ) {
-    let row_y = |row: usize| layout.finger_top_y + row as f32 * FINGER_ROW_H + FINGER_ROW_H * 0.5;
+    let rh_lh_gap = FINGER_ROW_H; // gap between RH and LH finger rows
+    let rh_row_y = |row: usize| layout.finger_top_y + row as f32 * FINGER_ROW_H + FINGER_ROW_H * 0.5;
+    let lh_row_y = |row: usize| layout.finger_top_y + (4.0 * FINGER_ROW_H) + rh_lh_gap + row as f32 * FINGER_ROW_H + FINGER_ROW_H * 0.5;
 
     // RH fingers: rows 0-3 (T, 2, 3, 4)
     for (i, &s) in rh_strings.iter().take(4).enumerate() {
@@ -446,7 +448,7 @@ fn draw_finger_values(
                     else if i == 0 { THUMB_COLOR }
                     else { FINGER_COLOR };
         painter.text(
-            egui::Pos2::new(x, row_y(i)),
+            egui::Pos2::new(x, rh_row_y(i)),
             egui::Align2::CENTER_CENTER,
             &s.to_string(),
             egui::FontId::monospace(15.0),
@@ -454,13 +456,13 @@ fn draw_finger_values(
         );
     }
 
-    // LH fingers: rows 4-7 (T, 2, 3, 4)
+    // LH fingers (below RH with gap)
     for (i, &s) in lh_strings.iter().take(4).enumerate() {
         let color = if is_active { ACTIVE_COLOR }
                     else if i == 0 { THUMB_COLOR }
                     else { FINGER_COLOR };
         painter.text(
-            egui::Pos2::new(x, row_y(4 + i)),
+            egui::Pos2::new(x, lh_row_y(i)),
             egui::Align2::CENTER_CENTER,
             &s.to_string(),
             egui::FontId::monospace(15.0),
@@ -545,22 +547,71 @@ pub fn render_score(
                 let is_active = current_beat >= beat_time && current_beat < beat_time + beats;
 
                 if x > -50.0 && x < view_width + 50.0 {
-                    // Combine all voiced strings, sorted descending (highest first)
-                    let mut all_strings: Vec<i32> = rh_strings.iter()
+                    // Build note assignments from chord tones walking down from melody.
+                    // RH thumb = melody, then next chord tones below within 10-string span.
+                    // LH continues below RH, skipping melody's pitch class.
+                    let mut all_pool: Vec<i32> = rh_strings.iter()
                         .chain(lh_strings.iter()).copied().collect();
-                    all_strings.sort_by(|a, b| b.cmp(a));
-                    all_strings.dedup();
+                    all_pool.sort_by(|a, b| b.cmp(a));
+                    all_pool.dedup();
 
-                    // RH = top rh_fingers from the top, LH = bottom lh_fingers from the bottom
-                    // No overlap: RH gets first pick, LH takes from what's left
-                    let rh_count = rh_fingers.min(4).min(all_strings.len());
-                    let rh_used: Vec<i32> = all_strings[..rh_count].to_vec();
-                    let remaining: Vec<i32> = all_strings[rh_count..].to_vec();
-                    let lh_count = lh_fingers.min(4).min(remaining.len());
-                    let lh_used: Vec<i32> = {
-                        let skip = remaining.len().saturating_sub(lh_count);
-                        remaining[skip..].to_vec()
+                    // Extract chord tone degrees (mod 7, accounting for zero-skip)
+                    let to_degree = |s: i32| -> i32 {
+                        let lin = if s > 0 { s - 1 } else { s };
+                        ((lin % 7) + 7) % 7
                     };
+                    let mut chord_degrees: Vec<i32> = all_pool.iter().map(|&s| to_degree(s)).collect();
+                    chord_degrees.sort(); chord_degrees.dedup();
+
+                    let mel = *melody_string;
+                    let mel_degree = to_degree(mel);
+
+                    // Walk down from melody through chord tones
+                    // Each hand spans up to 10 strings
+                    let rh_max = rh_fingers.min(4);
+                    let lh_max = lh_fingers.min(4);
+                    let mut rh_used: Vec<i32> = Vec::with_capacity(rh_max);
+                    let mut lh_used: Vec<i32> = Vec::with_capacity(lh_max);
+
+                    let step_down = |s: i32| -> i32 { let n = s - 1; if n == 0 { -1 } else { n } };
+
+                    // RH: melody thumb + chord tones below within 10-string span
+                    let mut s = mel;
+                    rh_used.push(s);
+                    s = step_down(s);
+                    let rh_low = mel - 10;
+                    while rh_used.len() < rh_max && s >= rh_low {
+                        if chord_degrees.contains(&to_degree(s)) {
+                            rh_used.push(s);
+                        }
+                        s = step_down(s);
+                    }
+
+                    // LH: start right below RH lowest, 10-string span from there
+                    // Skip melody degree; fall back to allowing it if can't fill
+                    let lh_start = *rh_used.last().unwrap_or(&mel) - 1;
+                    let lh_start = if lh_start == 0 { -1 } else { lh_start };
+                    let lh_low = lh_start - 10;
+                    s = lh_start;
+                    while lh_used.len() < lh_max && s >= lh_low {
+                        let deg = to_degree(s);
+                        if chord_degrees.contains(&deg) && deg != mel_degree {
+                            lh_used.push(s);
+                        }
+                        s = step_down(s);
+                    }
+                    // Fallback: if LH couldn't fill, allow melody degree
+                    if lh_used.len() < lh_max {
+                        s = lh_start;
+                        while lh_used.len() < lh_max && s >= lh_low {
+                            let deg = to_degree(s);
+                            if chord_degrees.contains(&deg) && !lh_used.contains(&s) {
+                                lh_used.push(s);
+                            }
+                            s = step_down(s);
+                        }
+                        lh_used.sort_by(|a, b| b.cmp(a));
+                    }
 
                     if *is_chord_change && !rh_used.is_empty() {
                         // RH notes on treble staff (stem up)
