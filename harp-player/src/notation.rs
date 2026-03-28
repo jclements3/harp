@@ -545,11 +545,22 @@ pub fn render_score(
                 let is_active = current_beat >= beat_time && current_beat < beat_time + beats;
 
                 if x > -50.0 && x < view_width + 50.0 {
-                    // Truncate to finger count
-                    let rh_used: Vec<i32> = rh_strings.iter().take(rh_fingers.min(4)).copied().collect();
-                    let lh_len = lh_strings.len();
-                    let lh_skip = lh_len.saturating_sub(lh_fingers);
-                    let lh_used: Vec<i32> = lh_strings.iter().skip(lh_skip).take(lh_fingers).copied().collect();
+                    // Combine all voiced strings, sorted descending (highest first)
+                    let mut all_strings: Vec<i32> = rh_strings.iter()
+                        .chain(lh_strings.iter()).copied().collect();
+                    all_strings.sort_by(|a, b| b.cmp(a));
+                    all_strings.dedup();
+
+                    // RH = top rh_fingers from the top, LH = bottom lh_fingers from the bottom
+                    // No overlap: RH gets first pick, LH takes from what's left
+                    let rh_count = rh_fingers.min(4).min(all_strings.len());
+                    let rh_used: Vec<i32> = all_strings[..rh_count].to_vec();
+                    let remaining: Vec<i32> = all_strings[rh_count..].to_vec();
+                    let lh_count = lh_fingers.min(4).min(remaining.len());
+                    let lh_used: Vec<i32> = {
+                        let skip = remaining.len().saturating_sub(lh_count);
+                        remaining[skip..].to_vec()
+                    };
 
                     if *is_chord_change && !rh_used.is_empty() {
                         // RH notes on treble staff (stem up)
