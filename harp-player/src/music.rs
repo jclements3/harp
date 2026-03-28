@@ -53,10 +53,25 @@ pub fn snap_to_diatonic(midi: i32, key_root: i32) -> i32 {
     midi
 }
 
-/// Absolute harp string number for middle C (MIDI 60) in a given key.
-/// Used as the reference point: staff_pos = abs_string - middle_c_string.
-pub fn middle_c_string(key_root: i32) -> i32 {
-    midi_to_harp_string(60, key_root).unwrap_or(21)
+/// Convert a relative string number (skips zero: ...-2,-1,1,2,3...) to staff position.
+/// Staff position 0 = middle C.
+pub fn relative_string_to_staff_pos(rel_str: i32, key_root: i32) -> i32 {
+    // Undo zero-skip to get linear index (0-based from lowest root)
+    let linear = if rel_str > 0 { rel_str - 1 } else { rel_str };
+
+    // ref_str = absolute string number of the lowest root on the harp
+    let lowest_root_midi = all_octaves(key_root, HARP_LOW_MIDI, HARP_HIGH_MIDI)
+        .into_iter().next().unwrap_or(HARP_LOW_MIDI);
+    let ref_str = midi_to_harp_string(lowest_root_midi, key_root).unwrap_or(0);
+
+    // Absolute string = ref_str + linear
+    let abs_str = ref_str + linear;
+
+    // Middle C absolute string
+    let mc_str = midi_to_harp_string(60, key_root).unwrap_or(21);
+
+    // +7 (one octave up) to match standard harp display register
+    abs_str - mc_str + 7
 }
 
 pub fn key_to_pc(key: &str) -> i32 {

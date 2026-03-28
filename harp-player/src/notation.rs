@@ -512,8 +512,7 @@ fn draw_label_values(
 }
 
 /// Render a full harp score.
-/// `mc_string` = absolute harp string number for middle C in the current key.
-/// Notes are positioned by string number: staff_pos = abs_string - mc_string.
+/// Notes are positioned by string number → staff position.
 /// RH → treble staff (stem up), LH → bass staff (stem down).
 pub fn render_score(
     painter: &egui::Painter,
@@ -522,14 +521,12 @@ pub fn render_score(
     scroll_offset: f32,
     current_beat: f32,
     view_width: f32,
-    mc_string: i32,
+    key_root: i32,
     rh_fingers: usize,
     lh_fingers: usize,
 ) {
-    let str_offset = crate::abc::STRING_NUMBER_OFFSET;
-
-    // Convert a relative string number to staff position (0 = middle C)
-    let to_pos = |s: i32| -> i32 { s + str_offset - 1 - mc_string };
+    // Convert relative string number (skips zero) to staff position (0 = middle C)
+    let to_pos = |s: i32| -> i32 { crate::music::relative_string_to_staff_pos(s, key_root) };
 
     draw_staff(painter, layout, view_width);
 
