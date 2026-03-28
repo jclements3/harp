@@ -125,6 +125,8 @@ build_apk() {
 
     <application
         android:label="$APP_LABEL"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:hasCode="false"
         android:debuggable="$([ "$PROFILE" = "debug" ] && echo true || echo false)">
 
@@ -151,15 +153,25 @@ MANIFEST
     # Step 4: Build the APK
     echo ">>> Packaging APK..."
 
-    # Compile resources (even with no res/, aapt2 needs the manifest linked)
     local UNSIGNED_APK="$WORK/${CRATE_NAME}-unsigned.apk"
     local ALIGNED_APK="$WORK/${CRATE_NAME}-aligned.apk"
     local FINAL_APK="$OUT_DIR/${CRATE_NAME}.apk"
+
+    # Compile icon resources if the crate has a res/ directory
+    local RES_DIR="$SCRIPT_DIR/$CRATE_DIR/res"
+    local LINK_RES=""
+    if [ -d "$RES_DIR" ]; then
+        local RES_COMPILED="$WORK/compiled_res"
+        mkdir -p "$RES_COMPILED"
+        "$BUILD_TOOLS/aapt2" compile --dir "$RES_DIR" -o "$RES_COMPILED/res.zip"
+        LINK_RES="-R $RES_COMPILED/res.zip"
+    fi
 
     "$BUILD_TOOLS/aapt2" link \
         -o "$UNSIGNED_APK" \
         --manifest "$WORK/AndroidManifest.xml" \
         -I "$PLATFORM_JAR" \
+        $LINK_RES \
         --min-sdk-version $MIN_SDK \
         --target-sdk-version $TARGET_SDK
 
