@@ -248,13 +248,13 @@ impl eframe::App for PlayerApp {
 
                 // Rainbow colors for 7 diatonic degrees (ROYGBIV)
                 const RAINBOW: [egui::Color32; 7] = [
-                    egui::Color32::from_rgb(255, 0, 0),     // 0 = red (root)
-                    egui::Color32::from_rgb(255, 127, 0),   // 1 = orange
-                    egui::Color32::from_rgb(255, 255, 0),   // 2 = yellow
-                    egui::Color32::from_rgb(0, 180, 0),     // 3 = green
-                    egui::Color32::from_rgb(0, 100, 255),   // 4 = blue
-                    egui::Color32::from_rgb(75, 0, 130),    // 5 = indigo
-                    egui::Color32::from_rgb(148, 0, 211),   // 6 = violet
+                    egui::Color32::from_rgb(220, 30, 30),   // 0 = red (root)
+                    egui::Color32::from_rgb(230, 120, 0),   // 1 = orange
+                    egui::Color32::from_rgb(180, 160, 0),   // 2 = dark gold (readable on white)
+                    egui::Color32::from_rgb(0, 150, 0),     // 3 = green
+                    egui::Color32::from_rgb(30, 80, 220),   // 4 = blue
+                    egui::Color32::from_rgb(90, 0, 140),    // 5 = indigo
+                    egui::Color32::from_rgb(150, 0, 180),   // 6 = violet
                 ];
 
                 // Map each COF position to its diatonic degree (-1 if not in key)
@@ -355,10 +355,9 @@ impl eframe::App for PlayerApp {
                     let is_chord_tone = degree.map_or(false, |d| self.current_chord_degrees.contains(&(d as i32)));
 
                     if let Some(deg) = degree {
-                        // Diatonic note: rainbow colored
                         let rainbow_color = RAINBOW[deg];
                         if is_chord_tone {
-                            // Chord tone: larger, with highlight circle
+                            // Chord tone: rainbow highlight circle, white text
                             cof_painter.circle_filled(
                                 egui::Pos2::new(lx, ly), 9.0, rainbow_color,
                             );
@@ -370,7 +369,7 @@ impl eframe::App for PlayerApp {
                                 egui::Color32::WHITE,
                             );
                         } else {
-                            // Diatonic but not in chord: small rainbow dot + label
+                            // Diatonic but not in chord: small rainbow dot, black text
                             cof_painter.circle_filled(
                                 egui::Pos2::new(lx, ly), 4.0, rainbow_color,
                             );
@@ -379,17 +378,17 @@ impl eframe::App for PlayerApp {
                                 egui::Align2::CENTER_CENTER,
                                 label,
                                 egui::FontId::proportional(7.0),
-                                rainbow_color,
+                                TEXT_PRIMARY,
                             );
                         }
                     } else {
-                        // Chromatic (not in key): dim
+                        // Chromatic (not in key): black, smaller
                         cof_painter.text(
                             egui::Pos2::new(lx, ly),
                             egui::Align2::CENTER_CENTER,
                             label,
                             egui::FontId::proportional(6.0),
-                            egui::Color32::from_rgb(180, 180, 180),
+                            TEXT_MUTED,
                         );
                     }
                 }

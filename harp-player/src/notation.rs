@@ -566,52 +566,77 @@ pub fn render_score(
                     let mel = *melody_string;
                     let mel_degree = to_degree(mel);
 
-                    // Walk down from melody through chord tones
-                    // Each hand spans up to 10 strings
-                    let rh_max = rh_fingers.min(4);
-                    let lh_max = lh_fingers.min(4);
-                    let mut rh_used: Vec<i32> = Vec::with_capacity(rh_max);
-                    let mut lh_used: Vec<i32> = Vec::with_capacity(lh_max);
-
+                    // Collect all chord tones within reach below a starting point
                     let step_down = |s: i32| -> i32 { let n = s - 1; if n == 0 { -1 } else { n } };
-
-                    // RH: melody thumb + chord tones below within 10-string span
-                    let mut s = mel;
-                    rh_used.push(s);
-                    s = step_down(s);
-                    let rh_low = mel - 10;
-                    while rh_used.len() < rh_max && s >= rh_low {
-                        if chord_degrees.contains(&to_degree(s)) {
-                            rh_used.push(s);
-                        }
-                        s = step_down(s);
-                    }
-
-                    // LH: start right below RH lowest, 10-string span from there
-                    // Skip melody degree; fall back to allowing it if can't fill
-                    let lh_start = *rh_used.last().unwrap_or(&mel) - 1;
-                    let lh_start = if lh_start == 0 { -1 } else { lh_start };
-                    let lh_low = lh_start - 10;
-                    s = lh_start;
-                    while lh_used.len() < lh_max && s >= lh_low {
-                        let deg = to_degree(s);
-                        if chord_degrees.contains(&deg) && deg != mel_degree {
-                            lh_used.push(s);
-                        }
-                        s = step_down(s);
-                    }
-                    // Fallback: if LH couldn't fill, allow melody degree
-                    if lh_used.len() < lh_max {
-                        s = lh_start;
-                        while lh_used.len() < lh_max && s >= lh_low {
-                            let deg = to_degree(s);
-                            if chord_degrees.contains(&deg) && !lh_used.contains(&s) {
-                                lh_used.push(s);
+                    let chord_tones_below = |start: i32, span: i32| -> Vec<i32> {
+                        let low = start - span;
+                        let mut tones = Vec::new();
+                        let mut s = start;
+                        while s >= low {
+                            if chord_degrees.contains(&to_degree(s)) {
+                                tones.push(s);
                             }
                             s = step_down(s);
                         }
-                        lh_used.sort_by(|a, b| b.cmp(a));
-                    }
+                        tones
+                    };
+
+                    let rh_max = rh_fingers.min(4);
+                    let lh_max = lh_fingers.min(4);
+
+                    // RH: melody is thumb, pick remaining fingers to maximize span
+                    // Get all chord tones within 10 strings below melody
+                    let rh_candidates = chord_tones_below(mel, 10);
+                    let rh_used = if rh_max >= rh_candidates.len() {
+                        // Take all available
+                        rh_candidates.clone()
+                    } else {
+                        // Always include melody (first) and lowest available (max span),
+                        // fill middle from remaining
+                        let mut pick = vec![rh_candidates[0]]; // melody
+                        if rh_max >= 2 {
+                            pick.push(*rh_candidates.last().unwrap()); // lowest = max span
+                        }
+                        // Fill middle fingers from candidates (skip first and last)
+                        let middle: Vec<i32> = rh_candidates[1..rh_candidates.len()-1].to_vec();
+                        // Space them evenly: pick from middle to maximize spread
+                        for &c in &middle {
+                            if pick.len() >= rh_max { break; }
+                            if !pick.contains(&c) { pick.push(c); }
+                        }
+                        pick.sort_by(|a, b| b.cmp(a));
+                        pick.truncate(rh_max);
+                        pick
+                    };
+
+                    // LH: start below RH, maximize span, skip melody degree (fallback: allow)
+                    let lh_start = *rh_used.last().unwrap_or(&mel) - 1;
+                    let lh_start = if lh_start == 0 { -1 } else { lh_start };
+                    let lh_all = chord_tones_below(lh_start, 10);
+
+                    // Prefer non-melody-degree tones
+                    let lh_no_mel: Vec<i32> = lh_all.iter()
+                        .filter(|&&s| to_degree(s) != mel_degree)
+                        .copied().collect();
+
+                    let lh_source = if lh_no_mel.len() >= lh_max { &lh_no_mel } else { &lh_all };
+                    let lh_used = if lh_max >= lh_source.len() {
+                        lh_source.clone()
+                    } else {
+                        // Include highest (thumb) and lowest (max span), fill middle
+                        let mut pick = vec![lh_source[0]]; // highest = thumb
+                        if lh_max >= 2 {
+                            pick.push(*lh_source.last().unwrap()); // lowest
+                        }
+                        let middle: Vec<i32> = lh_source[1..lh_source.len()-1].to_vec();
+                        for &c in &middle {
+                            if pick.len() >= lh_max { break; }
+                            if !pick.contains(&c) { pick.push(c); }
+                        }
+                        pick.sort_by(|a, b| b.cmp(a));
+                        pick.truncate(lh_max);
+                        pick
+                    };
 
                     if *is_chord_change && !rh_used.is_empty() {
                         // RH notes on treble staff (stem up)
