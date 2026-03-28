@@ -307,15 +307,18 @@ pub fn parse_all(text: &str) -> Vec<Score> {
                             .unwrap_or_default();
                         let is_chord_change = voicing_key != last_key;
 
-                        let rh_strs: Vec<i32> = v.rh_strings.iter().map(|&s| s - STRING_NUMBER_OFFSET).collect();
-                        let melody_str = *rh_strs.first().unwrap_or(&0);
+                        let rh_strs: Vec<i32> = v.rh_strings.iter()
+                            .map(|&s| crate::music::to_relative_string(s, key_root)).collect();
+                        let lh_strs: Vec<i32> = v.lh_strings.iter()
+                            .map(|&s| crate::music::to_relative_string(s, key_root)).collect();
+                        let melody_str = *rh_strs.first().unwrap_or(&1);
                         events.push(ScoreEvent::Note {
                             melody_midi: snapped,
                             melody_string: melody_str,
                             rh_midi: v.rh_midi.clone(),
                             lh_midi: v.lh_midi.clone(),
                             rh_strings: rh_strs,
-                            lh_strings: v.lh_strings.iter().map(|&s| s - STRING_NUMBER_OFFSET).collect(),
+                            lh_strings: lh_strs,
                             beats,
                             chord_name: if is_chord_change { Some(v.full_chord.clone()) } else { None },
                             rh_chord: if is_chord_change { Some(v.rh_chord.clone()) } else { None },
