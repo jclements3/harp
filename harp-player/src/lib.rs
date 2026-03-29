@@ -87,6 +87,7 @@ struct PlayerApp {
     // Voicing
     rh_fingers: i32,
     lh_fingers: i32,
+    random_fingers: bool,
 
     // View
     scroll_offset: f32,
@@ -119,6 +120,7 @@ impl PlayerApp {
             mode_offset: 0,
             rh_fingers: 4,
             lh_fingers: 4,
+            random_fingers: false,
             scroll_offset: 0.0,
             playhead_fraction: 0.25,
             search_text: String::new(),
@@ -518,6 +520,101 @@ impl eframe::App for PlayerApp {
                             self.select_hymn(recent_pick);
                         }
                     });
+
+                    // Row 4: Pedal diagram + Random fingers checkbox
+                    ui.horizontal(|ui| {
+                        // Pedal/lever diagram: D C B | E F G A
+                        let pedal_letters_l = ["D", "C", "B"];
+                        let pedal_letters_r = ["E", "F", "G", "A"];
+                        let key_root = music::key_to_pc(&self.current_key);
+                        let acc = music::key_sig_accidentals(&self.current_key);
+                        // Letter indices: D=1,C=0,B=6,E=2,F=3,G=4,A=5
+                        let pedal_letter_idx = [1usize, 0, 6, 2, 3, 4, 5];
+
+                        let dot_r = 3.0;
+                        let col_w = 14.0;
+                        let line_y_offset = 8.0;
+
+                        // Draw left foot pedals (D C B)
+                        for (i, letter) in pedal_letters_l.iter().enumerate() {
+                            let li = pedal_letter_idx[i];
+                            let a = acc[li];
+                            let (response, painter) = ui.allocate_painter(
+                                egui::Vec2::new(col_w, 18.0), egui::Sense::hover());
+                            let rect = response.rect;
+                            let cx = rect.center().x;
+                            let line_y = rect.top() + line_y_offset;
+
+                            // Horizontal line segment
+                            painter.line_segment(
+                                [egui::Pos2::new(rect.left(), line_y), egui::Pos2::new(rect.right(), line_y)],
+                                egui::Stroke::new(1.0, TEXT_PRIMARY));
+
+                            // Dot: above=flat, on=natural, below=sharp
+                            let dot_y = match a {
+                                -1 => line_y - 5.0,  // flat (above)
+                                 1 => line_y + 5.0,  // sharp (below)
+                                 _ => line_y,         // natural (on)
+                            };
+                            let dot_color = if a == 0 { TEXT_PRIMARY } else { ACCENT };
+                            painter.circle_filled(egui::Pos2::new(cx, dot_y), dot_r, dot_color);
+
+                            // Letter below
+                            painter.text(
+                                egui::Pos2::new(cx, rect.bottom()),
+                                egui::Align2::CENTER_BOTTOM,
+                                *letter,
+                                egui::FontId::monospace(7.0),
+                                TEXT_MUTED);
+                        }
+
+                        // Divider
+                        ui.allocate_ui(egui::Vec2::new(6.0, 18.0), |ui| {
+                            let rect = ui.available_rect_before_wrap();
+                            let line_y = rect.top() + line_y_offset;
+                            ui.painter().line_segment(
+                                [egui::Pos2::new(rect.center().x, line_y - 6.0),
+                                 egui::Pos2::new(rect.center().x, line_y + 6.0)],
+                                egui::Stroke::new(1.0, BORDER));
+                        });
+
+                        // Right foot pedals (E F G A)
+                        for (i, letter) in pedal_letters_r.iter().enumerate() {
+                            let li = pedal_letter_idx[3 + i];
+                            let a = acc[li];
+                            let (response, painter) = ui.allocate_painter(
+                                egui::Vec2::new(col_w, 18.0), egui::Sense::hover());
+                            let rect = response.rect;
+                            let cx = rect.center().x;
+                            let line_y = rect.top() + line_y_offset;
+
+                            painter.line_segment(
+                                [egui::Pos2::new(rect.left(), line_y), egui::Pos2::new(rect.right(), line_y)],
+                                egui::Stroke::new(1.0, TEXT_PRIMARY));
+
+                            let dot_y = match a {
+                                -1 => line_y - 5.0,
+                                 1 => line_y + 5.0,
+                                 _ => line_y,
+                            };
+                            let dot_color = if a == 0 { TEXT_PRIMARY } else { ACCENT };
+                            painter.circle_filled(egui::Pos2::new(cx, dot_y), dot_r, dot_color);
+
+                            painter.text(
+                                egui::Pos2::new(cx, rect.bottom()),
+                                egui::Align2::CENTER_BOTTOM,
+                                *letter,
+                                egui::FontId::monospace(7.0),
+                                TEXT_MUTED);
+                        }
+
+                        ui.add_space(8.0);
+                        ui.separator();
+                        ui.add_space(4.0);
+
+                        // Random fingers checkbox
+                        ui.checkbox(&mut self.random_fingers, "Random fingers");
+                    });
                 });
 
             });
@@ -584,6 +681,17 @@ impl eframe::App for PlayerApp {
                     let selected_pc = music::key_to_pc(&self.current_key);
                     let key_root = ((selected_pc - music::MAJOR_SCALE[self.mode_offset as usize]) % 12 + 12) % 12;
 
+                    // Randomize finger count per chord change if enabled
+                    let (rh_f, lh_f) = if self.random_fingers {
+                        // Use current beat as seed for deterministic-per-chord randomness
+                        let seed = (self.current_beat * 100.0) as u64;
+                        let rh = (seed % 3 + 2) as usize; // 2-4
+                        let lh = (seed / 3 % 3 + 2) as usize; // 2-4
+                        (rh, lh)
+                    } else {
+                        (self.rh_fingers as usize, self.lh_fingers as usize)
+                    };
+
                     render_score(
                         &painter,
                         &layout,
@@ -592,8 +700,8 @@ impl eframe::App for PlayerApp {
                         self.current_beat,
                         view_width,
                         key_root,
-                        self.rh_fingers as usize,
-                        self.lh_fingers as usize,
+                        rh_f,
+                        lh_f,
                     );
                 });
         });
