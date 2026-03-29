@@ -32,14 +32,16 @@ BUILD_HYMNAL=true
 BUILD_TRAINER=true
 BUILD_SAMPLER=true
 BUILD_PLAYER=true
+BUILD_PRACTICE=true
 
 for arg in "$@"; do
     case "$arg" in
         --release) PROFILE="release"; CARGO_PROFILE_FLAG="--release" ;;
-        hymnal)    BUILD_TRAINER=false; BUILD_SAMPLER=false; BUILD_PLAYER=false ;;
-        trainer)   BUILD_HYMNAL=false; BUILD_SAMPLER=false; BUILD_PLAYER=false ;;
-        sampler)   BUILD_HYMNAL=false; BUILD_TRAINER=false; BUILD_PLAYER=false ;;
-        player)    BUILD_HYMNAL=false; BUILD_TRAINER=false; BUILD_SAMPLER=false ;;
+        hymnal)    BUILD_TRAINER=false; BUILD_SAMPLER=false; BUILD_PLAYER=false; BUILD_PRACTICE=false ;;
+        trainer)   BUILD_HYMNAL=false; BUILD_SAMPLER=false; BUILD_PLAYER=false; BUILD_PRACTICE=false ;;
+        sampler)   BUILD_HYMNAL=false; BUILD_TRAINER=false; BUILD_PLAYER=false; BUILD_PRACTICE=false ;;
+        player)    BUILD_HYMNAL=false; BUILD_TRAINER=false; BUILD_SAMPLER=false; BUILD_PRACTICE=false ;;
+        practice)  BUILD_HYMNAL=false; BUILD_TRAINER=false; BUILD_SAMPLER=false; BUILD_PLAYER=false ;;
     esac
 done
 
@@ -83,8 +85,7 @@ build_apk() {
     cargo ndk \
         --target arm64-v8a \
         --platform $MIN_SDK \
-        $CARGO_PROFILE_FLAG \
-        -- build --lib --features android
+        -- build --lib --features android $CARGO_PROFILE_FLAG
 
     # Find the .so
     local SO_PATH="$SCRIPT_DIR/$CRATE_DIR/target/$TARGET/$PROFILE/lib${LIB_NAME}.so"
@@ -228,6 +229,10 @@ if $BUILD_PLAYER; then
     build_apk "harp-player" "harp-player" "harp_player" "Harp Player" "com.harp.player"
 fi
 
+if $BUILD_PRACTICE; then
+    build_apk "practice" "practice" "practice" "Practice" "com.harp.practice"
+fi
+
 echo ""
 echo "========================================="
 echo "  Done! APKs in: $OUT_DIR/"
@@ -240,5 +245,6 @@ echo "  adb install $OUT_DIR/harp-hymnal.apk"
 echo "  adb install $OUT_DIR/harp-trainer.apk"
 echo "  adb install $OUT_DIR/harp-sampler.apk"
 echo "  adb install $OUT_DIR/harp-player.apk"
+echo "  adb install $OUT_DIR/practice.apk"
 echo ""
 echo "Or copy the .apk files to the tablet and open them."

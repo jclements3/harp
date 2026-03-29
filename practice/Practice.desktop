@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Practice
+Comment=Harp interval and chord sight-reading drill with microphone feedback
+Exec=/home/james.clements/projects/harp/practice/target/release/practice
+Terminal=false
+Icon=/home/james.clements/projects/harp/practice/icon.png
+Categories=Audio;Music;Education;
