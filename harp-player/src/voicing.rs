@@ -20,6 +20,19 @@ pub fn voice_from_satb(
     key_root: i32,
     prev: Option<&Voicing>,
 ) -> Option<Voicing> {
+    voice_from_satb_fingers(soprano, alto, tenor, bass, key_root, prev, 4, 4)
+}
+
+pub fn voice_from_satb_fingers(
+    soprano: i32,
+    alto: Option<i32>,
+    tenor: Option<i32>,
+    bass: Option<i32>,
+    key_root: i32,
+    prev: Option<&Voicing>,
+    max_rh: usize,
+    max_lh: usize,
+) -> Option<Voicing> {
     let melody_midi = snap_to_diatonic(soprano, key_root);
     let melody_str = midi_to_harp_string(melody_midi, key_root)?;
 
@@ -58,21 +71,39 @@ pub fn voice_from_satb(
     rh_eligible.sort_by(|a, b| b.cmp(a));
     rh_eligible.truncate(6);
 
-    // Generate RH configs
-    let mut rh_configs: Vec<Vec<i32>> = vec![vec![melody_midi]];
-    for i in 0..rh_eligible.len() {
-        rh_configs.push(vec![melody_midi, rh_eligible[i]]);
-        for j in (i+1)..rh_eligible.len() {
-            rh_configs.push(vec![melody_midi, rh_eligible[i], rh_eligible[j]]);
-            for k in (j+1)..rh_eligible.len() {
-                let lo_s = midi_to_harp_string(rh_eligible[k], key_root);
-                if let Some(s) = lo_s {
-                    if melody_str - s < MAX_HAND_SPAN {
-                        rh_configs.push(vec![melody_midi, rh_eligible[i], rh_eligible[j], rh_eligible[k]]);
+    // Generate RH configs constrained by max_rh fingers
+    let mut rh_configs: Vec<Vec<i32>> = Vec::new();
+    if max_rh >= 1 {
+        rh_configs.push(vec![melody_midi]);
+    }
+    if max_rh >= 2 {
+        for i in 0..rh_eligible.len() {
+            rh_configs.push(vec![melody_midi, rh_eligible[i]]);
+        }
+    }
+    if max_rh >= 3 {
+        for i in 0..rh_eligible.len() {
+            for j in (i+1)..rh_eligible.len() {
+                rh_configs.push(vec![melody_midi, rh_eligible[i], rh_eligible[j]]);
+            }
+        }
+    }
+    if max_rh >= 4 {
+        for i in 0..rh_eligible.len() {
+            for j in (i+1)..rh_eligible.len() {
+                for k in (j+1)..rh_eligible.len() {
+                    let lo_s = midi_to_harp_string(rh_eligible[k], key_root);
+                    if let Some(s) = lo_s {
+                        if melody_str - s < MAX_HAND_SPAN {
+                            rh_configs.push(vec![melody_midi, rh_eligible[i], rh_eligible[j], rh_eligible[k]]);
+                        }
                     }
                 }
             }
         }
+    }
+    if rh_configs.is_empty() {
+        rh_configs.push(vec![melody_midi]);
     }
 
     let mut best_split: Option<(Vec<i32>, Vec<i32>)> = None;
@@ -101,18 +132,19 @@ pub fn voice_from_satb(
             lh_eligible.sort_by(|a, b| b.cmp(a));
             lh_eligible.truncate(6);
 
-            let lh_configs = generate_lh_configs(&lh_eligible, key_root, bass_pc);
+            let lh_configs = generate_lh_configs(&lh_eligible, key_root, bass_pc, max_lh);
 
             // Also try without bass constraint
             let lh_configs = if lh_configs.is_empty() {
-                generate_lh_configs_no_bass(&lh_eligible, key_root)
+                generate_lh_configs_no_bass(&lh_eligible, key_root, max_lh)
             } else {
                 lh_configs
             };
 
             for lh in &lh_configs {
                 let total = rh.len() + lh.len();
-                if total < 5 || total > 8 { continue; }
+                if rh.len() > max_rh || lh.len() > max_lh { continue; }
+                if total < 3 || total > (max_rh + max_lh) { continue; }
 
                 // Check no string collisions
                 let all_strs: Vec<Option<i32>> = rh.iter().chain(lh.iter())
@@ -291,7 +323,7 @@ pub fn voice_from_satb(
     })
 }
 
-fn generate_lh_configs(eligible: &[i32], key_root: i32, bass_pc: i32) -> Vec<Vec<i32>> {
+fn generate_lh_configs(eligible: &[i32], key_root: i32, bass_pc: i32, max_lh: usize) -> Vec<Vec<i32>> {
     let mut configs = Vec::new();
     for ti in 0..eligible.len() {
         let thumb = eligible[ti];
@@ -308,27 +340,33 @@ fn generate_lh_configs(eligible: &[i32], key_root: i32, bass_pc: i32) -> Vec<Vec
         };
 
         // 2 notes
-        for &a in &below {
-            let h = vec![thumb, a];
-            if check(&h) { configs.push(h); }
-        }
-        // 3 notes
-        for i in 0..below.len() {
-            for j in (i+1)..below.len() {
-                let h = vec![thumb, below[i], below[j]];
+        if max_lh >= 2 {
+            for &a in &below {
+                let h = vec![thumb, a];
                 if check(&h) { configs.push(h); }
             }
         }
-        // 4 notes
-        for i in 0..below.len() {
-            for j in (i+1)..below.len() {
-                for k in (j+1)..below.len() {
-                    let h = vec![thumb, below[i], below[j], below[k]];
-                    let strs: Vec<Option<i32>> = h.iter().map(|&m| midi_to_harp_string(m, key_root)).collect();
-                    if strs.iter().any(|s| s.is_none()) { continue; }
-                    let strs: Vec<i32> = strs.into_iter().map(|s| s.unwrap()).collect();
-                    if strs.iter().max().unwrap() - strs.iter().min().unwrap() >= MAX_HAND_SPAN { continue; }
+        // 3 notes
+        if max_lh >= 3 {
+            for i in 0..below.len() {
+                for j in (i+1)..below.len() {
+                    let h = vec![thumb, below[i], below[j]];
                     if check(&h) { configs.push(h); }
+                }
+            }
+        }
+        // 4 notes
+        if max_lh >= 4 {
+            for i in 0..below.len() {
+                for j in (i+1)..below.len() {
+                    for k in (j+1)..below.len() {
+                        let h = vec![thumb, below[i], below[j], below[k]];
+                        let strs: Vec<Option<i32>> = h.iter().map(|&m| midi_to_harp_string(m, key_root)).collect();
+                        if strs.iter().any(|s| s.is_none()) { continue; }
+                        let strs: Vec<i32> = strs.into_iter().map(|s| s.unwrap()).collect();
+                        if strs.iter().max().unwrap() - strs.iter().min().unwrap() >= MAX_HAND_SPAN { continue; }
+                        if check(&h) { configs.push(h); }
+                    }
                 }
             }
         }
@@ -336,7 +374,7 @@ fn generate_lh_configs(eligible: &[i32], key_root: i32, bass_pc: i32) -> Vec<Vec
     configs
 }
 
-fn generate_lh_configs_no_bass(eligible: &[i32], key_root: i32) -> Vec<Vec<i32>> {
+fn generate_lh_configs_no_bass(eligible: &[i32], key_root: i32, max_lh: usize) -> Vec<Vec<i32>> {
     let mut configs = Vec::new();
     for ti in 0..eligible.len() {
         let thumb = eligible[ti];
@@ -347,10 +385,23 @@ fn generate_lh_configs_no_bass(eligible: &[i32], key_root: i32) -> Vec<Vec<i32>>
                 s < thumb_str && thumb_str - s < MAX_HAND_SPAN
             })
             .copied().collect();
-        for &a in &below { configs.push(vec![thumb, a]); }
-        for i in 0..below.len() {
-            for j in (i+1)..below.len() {
-                configs.push(vec![thumb, below[i], below[j]]);
+        if max_lh >= 2 {
+            for &a in &below { configs.push(vec![thumb, a]); }
+        }
+        if max_lh >= 3 {
+            for i in 0..below.len() {
+                for j in (i+1)..below.len() {
+                    configs.push(vec![thumb, below[i], below[j]]);
+                }
+            }
+        }
+        if max_lh >= 4 {
+            for i in 0..below.len() {
+                for j in (i+1)..below.len() {
+                    for k in (j+1)..below.len() {
+                        configs.push(vec![thumb, below[i], below[j], below[k]]);
+                    }
+                }
             }
         }
     }

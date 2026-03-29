@@ -8,6 +8,34 @@ use eframe::egui;
 use abc::{Score, ScoreEvent, load_embedded_scores};
 use notation::{NotationLayout, render_score};
 
+// ── Persistent settings ──
+
+fn settings_path() -> std::path::PathBuf {
+    if cfg!(target_os = "android") {
+        std::path::PathBuf::from("/data/data/com.harp.player/harp_player_settings.json")
+    } else {
+        let home = std::env::var("HOME").unwrap_or_else(|_| ".".into());
+        std::path::PathBuf::from(home).join(".harp_player_settings.json")
+    }
+}
+
+fn load_saved_bpm() -> Option<f32> {
+    let text = std::fs::read_to_string(settings_path()).ok()?;
+    // Simple key:value parse — just look for "bpm":NUMBER
+    for line in text.lines() {
+        if let Some(rest) = line.trim().strip_prefix("\"bpm\":") {
+            let val = rest.trim().trim_end_matches(',');
+            return val.parse().ok();
+        }
+    }
+    None
+}
+
+fn save_bpm(bpm: f32) {
+    let content = format!("{{\n  \"bpm\": {:.0}\n}}\n", bpm);
+    let _ = std::fs::write(settings_path(), content);
+}
+
 // ── Colors ──
 const BG: egui::Color32 = egui::Color32::from_rgb(248, 246, 241);
 const CARD_BG: egui::Color32 = egui::Color32::WHITE;
@@ -78,6 +106,7 @@ struct PlayerApp {
     playing: bool,
     current_beat: f32,
     tempo_bpm: f32,
+    prev_tempo_bpm: f32,
     last_frame_time: Option<f64>,
 
     // Key/mode
@@ -87,6 +116,8 @@ struct PlayerApp {
     // Voicing
     rh_fingers: i32,
     lh_fingers: i32,
+    prev_rh_fingers: i32,
+    prev_lh_fingers: i32,
     random_fingers: bool,
 
     // View
@@ -106,7 +137,8 @@ impl PlayerApp {
     fn new() -> Self {
         let scores = load_embedded_scores();
         let status = format!("{} hymns loaded", scores.len());
-        let tempo = scores.first().map(|s| s.tempo as f32).unwrap_or(120.0);
+        // Load saved BPM from file, default to 10
+        let tempo = load_saved_bpm().unwrap_or(10.0);
         let key = scores.first().map(|s| s.key.clone()).unwrap_or("C".into());
 
         Self {
@@ -115,11 +147,14 @@ impl PlayerApp {
             playing: false,
             current_beat: 0.0,
             tempo_bpm: tempo,
+            prev_tempo_bpm: tempo,
             last_frame_time: None,
             current_key: key,
             mode_offset: 0,
             rh_fingers: 4,
             lh_fingers: 4,
+            prev_rh_fingers: 4,
+            prev_lh_fingers: 4,
             random_fingers: false,
             scroll_offset: 0.0,
             playhead_fraction: 0.25,
@@ -175,7 +210,7 @@ impl PlayerApp {
             self.current_score = idx;
             self.reset_playback();
             if let Some(s) = self.scores.get(idx) {
-                self.tempo_bpm = s.tempo as f32;
+                // Keep user's BPM — don't override with hymn's default
                 self.current_key = s.key.clone();
             }
         }
@@ -184,6 +219,22 @@ impl PlayerApp {
 
 impl eframe::App for PlayerApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        // Re-voice current hymn if finger counts changed
+        if self.rh_fingers != self.prev_rh_fingers || self.lh_fingers != self.prev_lh_fingers {
+            if let Some(score) = self.scores.get(self.current_score).cloned() {
+                let new_score = abc::revoice_score(&score, self.rh_fingers as usize, self.lh_fingers as usize);
+                self.scores[self.current_score] = new_score;
+            }
+            self.prev_rh_fingers = self.rh_fingers;
+            self.prev_lh_fingers = self.lh_fingers;
+        }
+
+        // Save BPM when it changes
+        if self.tempo_bpm != self.prev_tempo_bpm {
+            save_bpm(self.tempo_bpm);
+            self.prev_tempo_bpm = self.tempo_bpm;
+        }
+
         // Advance playback
         if self.playing {
             let now = ctx.input(|i| i.time);

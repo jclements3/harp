@@ -92,6 +92,48 @@ pub fn identify_chord(midi_notes: &[i32], key_root: i32) -> String {
     result
 }
 
+/// Identify chord using note names (e.g., "G", "Dm7", "A/C#") instead of Roman numerals.
+pub fn identify_chord_names(midi_notes: &[i32], key_root: i32) -> String {
+    if midi_notes.len() < 2 { return String::new(); }
+
+    let pcs: Vec<i32> = {
+        let mut s: Vec<i32> = midi_notes.iter().map(|&m| pitch_class(m)).collect();
+        s.sort(); s.dedup(); s
+    };
+
+    if pcs.len() < 2 { return String::new(); }
+
+    let bass_pc = pitch_class(*midi_notes.iter().min().unwrap());
+    let mut best_root = 0i32;
+    let mut best_idx = 0usize;
+    let mut best_score = i32::MIN;
+
+    for root in 0..12 {
+        let intervals: Vec<i32> = pcs.iter().map(|&p| ((p - root) % 12 + 12) % 12).collect();
+        for (idx, tmpl) in CHORD_TEMPLATES.iter().enumerate() {
+            let matched = intervals.iter().filter(|iv| tmpl.pcs.contains(iv)).count() as i32;
+            let extra = intervals.iter().filter(|iv| !tmpl.pcs.contains(iv)).count() as i32;
+            let missing = tmpl.pcs.iter().filter(|t| !intervals.contains(t)).count() as i32;
+            let mut score = matched * 3 - extra * 2 - missing;
+            if bass_pc == root { score += 4; }
+            if tmpl.pcs.len() == 3 { score += 2; }
+            score -= (idx / 10) as i32;
+            if score > best_score {
+                best_score = score;
+                best_root = root;
+                best_idx = idx;
+            }
+        }
+    }
+
+    let root_name = PC_NAMES[best_root as usize % 12];
+    let tmpl = &CHORD_TEMPLATES[best_idx];
+    let quality = tmpl.name;
+
+    // Just root + quality, no slash bass — the bass note is visible on the staff
+    format!("{}{}", root_name, quality)
+}
+
 // ── Chord symbol parser (Roman numeral notation) ──
 
 #[derive(Debug, Clone)]

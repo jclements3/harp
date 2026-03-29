@@ -4,7 +4,8 @@
 /// then wraps them with duration info for the notation renderer.
 
 use crate::music::*;
-use crate::voicing::{voice_from_satb, Voicing};
+use crate::chord::identify_chord_names;
+use crate::voicing::{voice_from_satb, voice_from_satb_fingers, Voicing};
 
 #[derive(Debug, Clone)]
 pub struct Score {
@@ -179,10 +180,24 @@ const EMBEDDED_ABC_BYTES: &[u8] = include_bytes!("../../data/OpenHymnal.abc");
 
 pub fn load_embedded_scores() -> Vec<Score> {
     let text = String::from_utf8_lossy(EMBEDDED_ABC_BYTES);
-    parse_all(&text)
+    parse_all_with_fingers(&text, 4, 4)
 }
 
-pub fn parse_all(text: &str) -> Vec<Score> {
+pub fn load_embedded_scores_fingers(rh: usize, lh: usize) -> Vec<Score> {
+    let text = String::from_utf8_lossy(EMBEDDED_ABC_BYTES);
+    parse_all_with_fingers(&text, rh, lh)
+}
+
+pub fn revoice_score(score: &Score, rh: usize, lh: usize) -> Score {
+    // Re-parse just this one hymn from the embedded ABC
+    let text = String::from_utf8_lossy(EMBEDDED_ABC_BYTES);
+    let all = parse_all_with_fingers(&text, rh, lh);
+    all.into_iter()
+        .find(|s| s.number == score.number)
+        .unwrap_or_else(|| score.clone())
+}
+
+fn parse_all_with_fingers(text: &str, max_rh: usize, max_lh: usize) -> Vec<Score> {
     let mut scores = Vec::new();
     let tunes: Vec<&str> = text.split("\nX:").collect();
 
@@ -296,7 +311,7 @@ pub fn parse_all(text: &str) -> Vec<Score> {
                     let t_midi = t_notes.get(si).copied();
                     let b_midi = b_notes.get(si).copied();
 
-                    let voicing = voice_from_satb(*s_midi, a_midi, t_midi, b_midi, key_root, last_voicing.as_ref());
+                    let voicing = voice_from_satb_fingers(*s_midi, a_midi, t_midi, b_midi, key_root, last_voicing.as_ref(), max_rh, max_lh);
                     let snapped = snap_to_diatonic(*s_midi, key_root);
 
                     if let Some(ref v) = voicing {
@@ -320,9 +335,12 @@ pub fn parse_all(text: &str) -> Vec<Score> {
                             rh_strings: rh_strs,
                             lh_strings: lh_strs,
                             beats,
-                            chord_name: if is_chord_change { Some(v.full_chord.clone()) } else { None },
-                            rh_chord: if is_chord_change { Some(v.rh_chord.clone()) } else { None },
-                            lh_chord: if is_chord_change { Some(v.lh_chord.clone()) } else { None },
+                            chord_name: if is_chord_change {
+                                let all_notes: Vec<i32> = v.rh_midi.iter().chain(v.lh_midi.iter()).copied().collect();
+                                Some(identify_chord_names(&all_notes, key_root))
+                            } else { None },
+                            rh_chord: if is_chord_change { Some(identify_chord_names(&v.rh_midi, key_root)) } else { None },
+                            lh_chord: if is_chord_change { Some(identify_chord_names(&v.lh_midi, key_root)) } else { None },
                             is_chord_change,
                         });
                         last_voicing = voicing;
