@@ -1,4 +1,5 @@
 pub mod abc;
+pub mod audio;
 pub mod chord;
 pub mod music;
 pub mod notation;
@@ -111,7 +112,9 @@ struct PlayerApp {
 
     // Key/mode
     current_key: String,
+    prev_key: String,
     mode_offset: i32,
+    prev_mode: i32,
 
     // Voicing
     rh_fingers: i32,
@@ -119,12 +122,18 @@ struct PlayerApp {
     prev_rh_fingers: i32,
     prev_lh_fingers: i32,
     random_fingers: bool,
+    random_pattern: Vec<(usize, usize)>, // per-chord (rh_count, lh_count)
+    sound_volume: f32, // 0.0 = mute, 1.0 = max
+    pre_mute_volume: f32, // remember volume before muting
+    audio_player: Option<audio::AudioPlayer>,
+    last_chord_idx: i64, // track which chord we last played sound for
 
     // View
     scroll_offset: f32,
     playhead_fraction: f32,
 
     search_text: String,
+    prev_search: String,
     status: String,
     recent_hymns: Vec<usize>,
 
@@ -149,16 +158,24 @@ impl PlayerApp {
             tempo_bpm: tempo,
             prev_tempo_bpm: tempo,
             last_frame_time: None,
-            current_key: key,
+            current_key: key.clone(),
+            prev_key: key,
             mode_offset: 0,
+            prev_mode: 0,
             rh_fingers: 4,
             lh_fingers: 4,
             prev_rh_fingers: 4,
             prev_lh_fingers: 4,
             random_fingers: false,
+            random_pattern: Vec::new(),
+            sound_volume: 0.0,
+            pre_mute_volume: 0.5,
+            audio_player: audio::AudioPlayer::new().ok(),
+            last_chord_idx: -1,
             scroll_offset: 0.0,
             playhead_fraction: 0.25,
             search_text: String::new(),
+            prev_search: String::new(),
             status,
             recent_hymns: Vec::new(),
             current_chord_degrees: vec![0, 2, 4], // default I chord
@@ -185,13 +202,26 @@ impl PlayerApp {
     }
 
     fn shuffle_fingers(&mut self) {
-        // Simple pseudo-random using system time
-        let t = std::time::SystemTime::now()
+        // Generate a random (rh, lh) finger count per chord change in the current hymn
+        let mut seed = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .unwrap_or_default()
-            .as_nanos();
-        self.rh_fingers = ((t % 3) + 2) as i32;       // 2-4
-        self.lh_fingers = (((t / 7) % 3) + 2) as i32; // 2-4
+            .as_nanos() as u64;
+
+        // Count chord changes
+        let n_chords = self.current_events().iter()
+            .filter(|e| matches!(e, ScoreEvent::Note { is_chord_change: true, .. }))
+            .count();
+
+        self.random_pattern.clear();
+        for _ in 0..n_chords.max(1) {
+            // Simple LCG random
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+            let rh = ((seed >> 16) % 3 + 2) as usize; // 2-4
+            seed = seed.wrapping_mul(6364136223846793005).wrapping_add(1442695040888963407);
+            let lh = ((seed >> 16) % 3 + 2) as usize; // 2-4
+            self.random_pattern.push((rh, lh));
+        }
     }
 
     fn reset_playback(&mut self) {
@@ -219,14 +249,38 @@ impl PlayerApp {
 
 impl eframe::App for PlayerApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        // Re-voice current hymn if finger counts changed
-        if self.rh_fingers != self.prev_rh_fingers || self.lh_fingers != self.prev_lh_fingers {
-            if let Some(score) = self.scores.get(self.current_score).cloned() {
-                let new_score = abc::revoice_score(&score, self.rh_fingers as usize, self.lh_fingers as usize);
-                self.scores[self.current_score] = new_score;
-            }
+        // Re-voice current hymn if fingers, key, or mode changed
+        // Update prev values FIRST to prevent re-triggering
+        let needs_revoice = self.rh_fingers != self.prev_rh_fingers
+            || self.lh_fingers != self.prev_lh_fingers
+            || self.current_key != self.prev_key
+            || self.mode_offset != self.prev_mode;
+
+        if needs_revoice {
+            // Set prev values immediately to prevent re-triggering next frame
             self.prev_rh_fingers = self.rh_fingers;
             self.prev_lh_fingers = self.lh_fingers;
+            self.prev_key = self.current_key.clone();
+            self.prev_mode = self.mode_offset;
+            if let Some(score) = self.scores.get(self.current_score).cloned() {
+                // Compute transposition: difference between hymn's original key and selected key
+                let original_pc = music::key_to_pc(&score.key);
+                let selected_pc = music::key_to_pc(&self.current_key);
+                let transpose = ((selected_pc - original_pc) % 12 + 12) % 12;
+
+                // Re-voice with transposition and finger constraints
+                let new_score = abc::revoice_score_transposed(
+                    &score,
+                    self.rh_fingers as usize,
+                    self.lh_fingers as usize,
+                    transpose,
+                    &self.current_key,
+                );
+                let pattern = if self.random_fingers { &self.random_pattern } else { &vec![] as &Vec<(usize,usize)> };
+                let mut new_score = new_score;
+                abc::compute_display_strings(&mut new_score, self.rh_fingers as usize, self.lh_fingers as usize, pattern);
+                self.scores[self.current_score] = new_score;
+            }
         }
 
         // Save BPM when it changes
@@ -251,6 +305,48 @@ impl eframe::App for PlayerApp {
             }
             self.last_frame_time = Some(now);
             ctx.request_repaint();
+
+            // Trigger sound at chord changes
+            if self.sound_volume > 0.0 {
+                if let Some(ref player) = self.audio_player {
+                    if let Ok(mut synth) = player.state.lock() {
+                        synth.master_volume = self.sound_volume;
+                    }
+                }
+                let events = self.current_events();
+                let mut bt = 0.0f32;
+                let mut chord_idx: i64 = 0;
+                for ev in events {
+                    match ev {
+                        ScoreEvent::Note { beats, is_chord_change: true, rh_midi, lh_midi, .. } => {
+                            if self.current_beat >= bt && self.current_beat < bt + beats {
+                                if chord_idx != self.last_chord_idx {
+                                    // New chord — play it
+                                    let all: Vec<i32> = rh_midi.iter().chain(lh_midi.iter()).copied().collect();
+                                    if let Some(ref player) = self.audio_player {
+                                        player.play_chord(&all);
+                                    }
+                                    self.last_chord_idx = chord_idx;
+                                }
+                                break;
+                            }
+                            chord_idx += 1;
+                            bt += beats;
+                        }
+                        ScoreEvent::Note { beats, .. } => bt += beats,
+                        ScoreEvent::Rest { beats } => bt += beats,
+                        ScoreEvent::Bar => {}
+                    }
+                }
+            }
+        }
+
+        // Silence when stopped
+        if !self.playing && self.last_chord_idx >= 0 {
+            if let Some(ref player) = self.audio_player {
+                player.silence();
+            }
+            self.last_chord_idx = -1;
         }
 
         // Update current chord info from the current beat
@@ -463,47 +559,57 @@ impl eframe::App for PlayerApp {
                     // Row 1: [Hymn ▾] [Search]
                     ui.horizontal(|ui| {
                         if !self.scores.is_empty() {
-                            let label = self.scores.get(self.current_score)
+                            // Current hymn label
+                            let current_label = self.scores.get(self.current_score)
                                 .map(|s| format!("{}. {}", s.number, s.title))
                                 .unwrap_or_default();
-                            let old_score = self.current_score;
-                            egui::ComboBox::from_id_salt("score_select")
-                                .selected_text(&label)
-                                .width(150.0)
-                                .show_ui(ui, |ui| {
-                                    for (i, s) in self.scores.iter().enumerate() {
-                                        let text = format!("{}. {}", s.number, s.title);
-                                        ui.selectable_value(&mut self.current_score, i, &text);
-                                    }
-                                });
-                            if self.current_score != old_score {
-                                self.select_hymn(self.current_score);
-                            }
-                            let response = ui.add(
+                            ui.label(egui::RichText::new(&current_label).strong().size(13.0));
+
+                            // Filter box
+                            ui.add(
                                 egui::TextEdit::singleline(&mut self.search_text)
-                                    .hint_text("Search...")
+                                    .hint_text("Filter...")
                                     .desired_width(ui.available_width() - 4.0)
                                     .min_size(egui::Vec2::new(0.0, 24.0))
                                     .text_color(TEXT_PRIMARY)
                                     .background_color(CARD_BG)
                                     .font(egui::FontSelection::FontId(egui::FontId::proportional(13.0)))
                             );
-                            if response.changed() && !self.search_text.is_empty() {
-                                let q = self.search_text.to_lowercase();
-                                if let Some(idx) = self.scores.iter().position(|s|
-                                    s.title.to_lowercase().contains(&q) || s.number.contains(&q)
-                                ) {
-                                    self.select_hymn(idx);
-                                }
-                            }
                         }
                     });
 
+                    // Show filtered matches as tappable buttons (only when filter has text)
+                    if !self.search_text.is_empty() {
+                        let q = self.search_text.to_lowercase();
+                        ui.horizontal_wrapped(|ui| {
+                            let mut picked = None;
+                            for (i, s) in self.scores.iter().enumerate() {
+                                if !s.title.to_lowercase().contains(&q) && !s.number.contains(&q) {
+                                    continue;
+                                }
+                                let label = format!("{}. {}", s.number, s.title);
+                                let selected = self.current_score == i;
+                                if ui.selectable_label(selected, &label).clicked() {
+                                    picked = Some(i);
+                                }
+                            }
+                            if let Some(idx) = picked {
+                                self.select_hymn(idx);
+                                self.search_text.clear();
+                            }
+                        });
+                    }
+
                     // Row 2: [⏮ ▶ ⏹] [G▾] 120BPM RH[4] LH[4] [🕒 Recent ▾]
                     ui.horizontal(|ui| {
+                        // Rewind to beginning
                         if ui.button(egui::RichText::new("\u{23EE}").size(14.0)).clicked() {
-                            self.reset_playback();
+                            self.current_beat = 0.0;
+                            self.scroll_offset = 0.0;
+                            self.last_chord_idx = -1;
+                            self.last_frame_time = None;
                         }
+                        // Play/Pause
                         let play_icon = if self.playing { "\u{23F8}" } else { "\u{25B6}" };
                         let play_btn = egui::Button::new(
                             egui::RichText::new(play_icon).size(14.0)
@@ -513,8 +619,13 @@ impl eframe::App for PlayerApp {
                             self.playing = !self.playing;
                             if self.playing { self.last_frame_time = None; }
                         }
+                        // Stop
                         if ui.button(egui::RichText::new("\u{23F9}").size(14.0)).clicked() {
-                            self.reset_playback();
+                            self.playing = false;
+                            self.current_beat = 0.0;
+                            self.scroll_offset = 0.0;
+                            self.last_chord_idx = -1;
+                            self.last_frame_time = None;
                         }
 
                         ui.separator();
@@ -545,19 +656,21 @@ impl eframe::App for PlayerApp {
 
                     // Row 3: Mode buttons + Recent
                     ui.horizontal(|ui| {
+                        ui.spacing_mut().button_padding = egui::Vec2::new(4.0, 2.0);
                         for (i, name) in MODE_NAMES.iter().enumerate() {
                             let selected = self.mode_offset == i as i32;
                             let btn = if selected {
                                 egui::Button::new(
-                                    egui::RichText::new(*name).size(11.0).color(egui::Color32::WHITE)
+                                    egui::RichText::new(*name).size(10.0).color(egui::Color32::WHITE)
                                 ).fill(ACCENT)
                             } else {
-                                egui::Button::new(egui::RichText::new(*name).size(11.0))
+                                egui::Button::new(egui::RichText::new(*name).size(10.0))
                             };
                             if ui.add(btn).clicked() {
                                 self.mode_offset = i as i32;
                             }
                         }
+                        ui.spacing_mut().button_padding = egui::Vec2::new(10.0, 6.0);
 
                         ui.separator();
 
@@ -680,11 +793,36 @@ impl eframe::App for PlayerApp {
                             // On first check, or on Shuffle press, randomize
                             if !was_random {
                                 self.shuffle_fingers();
+                                if let Some(score) = self.scores.get_mut(self.current_score) {
+                                    abc::compute_display_strings(score, self.rh_fingers as usize, self.lh_fingers as usize, &self.random_pattern);
+                                }
                             }
                             if ui.button("Shuffle").clicked() {
                                 self.shuffle_fingers();
+                                if let Some(score) = self.scores.get_mut(self.current_score) {
+                                    abc::compute_display_strings(score, self.rh_fingers as usize, self.lh_fingers as usize, &self.random_pattern);
+                                }
+                            }
+                        } else if was_random {
+                            // Turning off random — recompute with fixed fingers
+                            if let Some(score) = self.scores.get_mut(self.current_score) {
+                                abc::compute_display_strings(score, self.rh_fingers as usize, self.lh_fingers as usize, &[]);
                             }
                         }
+
+                        ui.separator();
+                        let mute_icon = if self.sound_volume > 0.0 { "\u{1F50A}" } else { "\u{1F507}" };
+                        if ui.button(egui::RichText::new(mute_icon).size(14.0)).clicked() {
+                            if self.sound_volume > 0.0 {
+                                self.pre_mute_volume = self.sound_volume;
+                                self.sound_volume = 0.0;
+                            } else {
+                                self.sound_volume = self.pre_mute_volume.max(0.3);
+                            }
+                        }
+                        ui.add(egui::Slider::new(&mut self.sound_volume, 0.0..=1.0)
+                            .show_value(false)
+                            .trailing_fill(true));
                     });
                 });
 
@@ -743,28 +881,20 @@ impl eframe::App for PlayerApp {
 
                     let view_width = rect.width();
 
-                    if self.playing {
-                        // Auto-scroll: keep playhead at playhead_fraction of view width
-                        let playhead_x_target = view_width * self.playhead_fraction;
-                        self.scroll_offset = self.current_beat * 60.0 - playhead_x_target + layout.left_margin;
-                    } else {
-                        // Manual scroll: swipe/drag to scroll
-                        if response.dragged() {
-                            self.scroll_offset -= response.drag_delta().x;
-                        }
-                        // Also update current_beat to match scroll position
-                        self.current_beat = (self.scroll_offset + view_width * self.playhead_fraction - layout.left_margin) / 60.0;
-                        self.current_beat = self.current_beat.max(0.0);
+                    // Manual drag adjusts current_beat
+                    if !self.playing && response.dragged() {
+                        let drag_beats = response.drag_delta().x / 60.0;
+                        self.current_beat = (self.current_beat - drag_beats).max(0.0);
                     }
-                    if self.scroll_offset < 0.0 { self.scroll_offset = 0.0; }
+
+                    // Scroll offset always derived from current_beat
+                    let playhead_x_target = view_width * self.playhead_fraction;
+                    self.scroll_offset = (self.current_beat * 60.0 - playhead_x_target + layout.left_margin).max(0.0);
 
                     let events = self.current_events().to_vec();
                     // Compute key_root from the user-selected key and mode
                     let selected_pc = music::key_to_pc(&self.current_key);
                     let key_root = ((selected_pc - music::MAJOR_SCALE[self.mode_offset as usize]) % 12 + 12) % 12;
-
-                    let rh_f = self.rh_fingers as usize;
-                    let lh_f = self.lh_fingers as usize;
 
                     render_score(
                         &painter,
@@ -774,8 +904,6 @@ impl eframe::App for PlayerApp {
                         self.current_beat,
                         view_width,
                         key_root,
-                        rh_f,
-                        lh_f,
                     );
                 });
         });

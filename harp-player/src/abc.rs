@@ -34,6 +34,9 @@ pub enum ScoreEvent {
         rh_chord: Option<String>,
         lh_chord: Option<String>,
         is_chord_change: bool,
+        // Pre-computed display strings (selected for finger count + max span)
+        display_rh: Vec<i32>,
+        display_lh: Vec<i32>,
     },
     Rest { beats: f32 },
     Bar,
@@ -178,9 +181,118 @@ fn parse_voice_tokens(music: &str, key_sig_acc: &[i32; 7]) -> Vec<Token> {
 /// Embedded ABC data
 const EMBEDDED_ABC_BYTES: &[u8] = include_bytes!("../../data/OpenHymnal.abc");
 
+/// Select display strings from full voicing for given finger counts.
+/// RH: melody on thumb, pick chord tones below to maximize span.
+/// LH: start below RH, pick chord tones to maximize span, avoid melody degree.
+fn select_display_strings(
+    melody_string: i32,
+    rh_strings: &[i32],
+    lh_strings: &[i32],
+    rh_fingers: usize,
+    lh_fingers: usize,
+) -> (Vec<i32>, Vec<i32>) {
+    let to_degree = |s: i32| -> i32 {
+        let lin = if s > 0 { s - 1 } else { s };
+        ((lin % 7) + 7) % 7
+    };
+    let mel = melody_string;
+    let mel_degree = to_degree(mel);
+
+    // All available chord degrees
+    let mut all_pool: Vec<i32> = rh_strings.iter().chain(lh_strings.iter()).copied().collect();
+    all_pool.sort_by(|a, b| b.cmp(a));
+    all_pool.dedup();
+    let mut chord_degrees: Vec<i32> = all_pool.iter().map(|&s| to_degree(s)).collect();
+    chord_degrees.sort(); chord_degrees.dedup();
+
+    let step_down = |s: i32| -> i32 { let n = s - 1; if n == 0 { -1 } else { n } };
+    let chord_tones_below = |start: i32, span: i32| -> Vec<i32> {
+        let low = start - span;
+        let mut tones = Vec::new();
+        let mut s = start;
+        while s >= low {
+            if chord_degrees.contains(&to_degree(s)) { tones.push(s); }
+            s = step_down(s);
+        }
+        tones
+    };
+
+    let rh_max = rh_fingers.min(4);
+    let lh_max = lh_fingers.min(4);
+
+    // RH: melody + chord tones below within 10-string span
+    let rh_candidates = chord_tones_below(mel, 10);
+    let rh_used = if rh_max >= rh_candidates.len() {
+        rh_candidates.clone()
+    } else {
+        let mut pick = vec![rh_candidates[0]]; // melody
+        if rh_max >= 2 { pick.push(*rh_candidates.last().unwrap()); }
+        let middle: Vec<i32> = rh_candidates[1..rh_candidates.len()-1].to_vec();
+        for &c in &middle {
+            if pick.len() >= rh_max { break; }
+            if !pick.contains(&c) { pick.push(c); }
+        }
+        pick.sort_by(|a, b| b.cmp(a));
+        pick.truncate(rh_max);
+        pick
+    };
+
+    // LH: below RH, maximize span, prefer non-melody-degree
+    let lh_start = *rh_used.last().unwrap_or(&mel) - 1;
+    let lh_start = if lh_start == 0 { -1 } else { lh_start };
+    let lh_all = chord_tones_below(lh_start, 10);
+    let lh_no_mel: Vec<i32> = lh_all.iter().filter(|&&s| to_degree(s) != mel_degree).copied().collect();
+    let lh_source = if lh_no_mel.len() >= lh_max { &lh_no_mel } else { &lh_all };
+    let lh_used = if lh_max >= lh_source.len() {
+        lh_source.clone()
+    } else {
+        let mut pick = vec![lh_source[0]];
+        if lh_max >= 2 { pick.push(*lh_source.last().unwrap()); }
+        let middle: Vec<i32> = lh_source[1..lh_source.len()-1].to_vec();
+        for &c in &middle {
+            if pick.len() >= lh_max { break; }
+            if !pick.contains(&c) { pick.push(c); }
+        }
+        pick.sort_by(|a, b| b.cmp(a));
+        pick.truncate(lh_max);
+        pick
+    };
+
+    (rh_used, lh_used)
+}
+
+/// Compute display_rh/display_lh for all events in a score.
+/// If random_pattern is non-empty, use per-chord finger counts.
+pub fn compute_display_strings(score: &mut Score, rh_fingers: usize, lh_fingers: usize, random_pattern: &[(usize, usize)]) {
+    let mut chord_idx = 0usize;
+    for event in &mut score.events {
+        if let ScoreEvent::Note { melody_string, rh_strings, lh_strings, is_chord_change, display_rh, display_lh, .. } = event {
+            if *is_chord_change && !rh_strings.is_empty() {
+                let (rf, lf) = if !random_pattern.is_empty() && chord_idx < random_pattern.len() {
+                    random_pattern[chord_idx]
+                } else {
+                    (rh_fingers, lh_fingers)
+                };
+                let (rh, lh) = select_display_strings(*melody_string, rh_strings, lh_strings, rf, lf);
+                *display_rh = rh;
+                *display_lh = lh;
+                chord_idx += 1;
+            } else {
+                // Non-chord-change: just melody
+                *display_rh = vec![*melody_string];
+                *display_lh = vec![];
+            }
+        }
+    }
+}
+
 pub fn load_embedded_scores() -> Vec<Score> {
     let text = String::from_utf8_lossy(EMBEDDED_ABC_BYTES);
-    parse_all_with_fingers(&text, 4, 4)
+    let mut scores = parse_all_with_fingers(&text, 4, 4);
+    for s in &mut scores {
+        compute_display_strings(s, 4, 4, &[]);
+    }
+    scores
 }
 
 pub fn load_embedded_scores_fingers(rh: usize, lh: usize) -> Vec<Score> {
@@ -195,6 +307,39 @@ pub fn revoice_score(score: &Score, rh: usize, lh: usize) -> Score {
     all.into_iter()
         .find(|s| s.number == score.number)
         .unwrap_or_else(|| score.clone())
+}
+
+pub fn revoice_score_transposed(score: &Score, rh: usize, lh: usize, transpose_semitones: i32, new_key: &str) -> Score {
+    let text = String::from_utf8_lossy(EMBEDDED_ABC_BYTES);
+    let all = parse_all_with_fingers(&text, rh, lh);
+    let mut result = all.into_iter()
+        .find(|s| s.number == score.number)
+        .unwrap_or_else(|| score.clone());
+
+    if transpose_semitones != 0 {
+        // Transpose all MIDI values and re-compute string numbers
+        let new_root = key_to_pc(new_key);
+        for event in &mut result.events {
+            if let ScoreEvent::Note { melody_midi, rh_midi, lh_midi, rh_strings, lh_strings, .. } = event {
+                *melody_midi += transpose_semitones;
+                for m in rh_midi.iter_mut() { *m += transpose_semitones; }
+                for m in lh_midi.iter_mut() { *m += transpose_semitones; }
+                // Recompute string numbers in the new key
+                *rh_strings = rh_midi.iter()
+                    .filter_map(|&m| midi_to_harp_string(m, new_root)
+                        .map(|s| to_relative_string(s, new_root) - (STRING_NUMBER_OFFSET - 7)))
+                    .collect();
+                *lh_strings = lh_midi.iter()
+                    .filter_map(|&m| midi_to_harp_string(m, new_root)
+                        .map(|s| to_relative_string(s, new_root) - (STRING_NUMBER_OFFSET - 7)))
+                    .collect();
+            }
+        }
+        result.key = new_key.to_string();
+        result.key_root = new_root;
+    }
+
+    result
 }
 
 fn parse_all_with_fingers(text: &str, max_rh: usize, max_lh: usize) -> Vec<Score> {
@@ -342,6 +487,8 @@ fn parse_all_with_fingers(text: &str, max_rh: usize, max_lh: usize) -> Vec<Score
                             rh_chord: if is_chord_change { Some(identify_chord_names(&v.rh_midi, key_root)) } else { None },
                             lh_chord: if is_chord_change { Some(identify_chord_names(&v.lh_midi, key_root)) } else { None },
                             is_chord_change,
+                            display_rh: vec![],
+                            display_lh: vec![],
                         });
                         last_voicing = voicing;
                     } else {
@@ -360,6 +507,8 @@ fn parse_all_with_fingers(text: &str, max_rh: usize, max_lh: usize) -> Vec<Score
                             rh_chord: None,
                             lh_chord: None,
                             is_chord_change: false,
+                            display_rh: vec![],
+                            display_lh: vec![],
                         });
                     }
                 }
