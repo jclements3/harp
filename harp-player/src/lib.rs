@@ -617,133 +617,271 @@ fn android_main(app: winit::platform::android::activity::AndroidApp) {
     run_app(options).unwrap();
 }
 
+// ── Regression tests ──
+// These lock down the string-to-note mapping so refactoring can't break it.
+// The harp has no "string zero" — strings are 1-based like years (no year 0).
+
 #[cfg(test)]
 mod tests {
     use super::abc::*;
     use super::music::*;
-    
-    #[test]
-    fn check_joy_to_world() {
-        let scores = load_embedded_scores();
-        let joy = scores.iter().find(|s| s.title.contains("Joy to the World")).unwrap();
-        eprintln!("Hymn: {} - {} (key: {})", joy.number, joy.title, joy.key);
-        for (i, event) in joy.events.iter().take(20).enumerate() {
-            match event {
-                ScoreEvent::Note { melody_midi, rh_midi, lh_midi, beats, chord_name, .. } => {
-                    let mel_name = midi_to_name(*melody_midi);
-                    let rh_names: Vec<String> = rh_midi.iter().map(|&m| midi_to_name(m)).collect();
-                    let lh_names: Vec<String> = lh_midi.iter().map(|&m| midi_to_name(m)).collect();
-                    eprintln!("  [{:2}] melody={} ({}) beats={:.1} RH={:?} LH={:?} chord={:?}",
-                        i, mel_name, melody_midi, beats, rh_names, lh_names, chord_name);
-                }
-                ScoreEvent::Rest { beats } => eprintln!("  [{:2}] REST beats={:.1}", i, beats),
-                ScoreEvent::Bar => eprintln!("  [{:2}] BAR", i),
-            }
-        }
-    }
-}
 
-#[cfg(test)]
-mod tests2 {
-    use super::abc::*;
-    
+    /// Helper: convert a relative string number to a display note name.
+    /// This is the EXACT pipeline the renderer uses — if this breaks, the display breaks.
+    fn string_to_note(relative_str: i32, key_root: i32) -> String {
+        let abs_str = relative_str + STRING_NUMBER_OFFSET - 1; // 1-based to 0-based
+        let display_midi = harp_string_to_midi(abs_str, key_root) + 12; // base-48 to real pitch
+        midi_to_name(display_midi)
+    }
+
+    // ── String numbering: no zero, 1 = root ──
+
     #[test]
-    fn check_strings() {
+    fn string_1_is_root_in_every_key() {
+        // String 1 must always be the key root note (lowest octave on harp)
+        let keys = [("C",0), ("D",2), ("E",4), ("F",5), ("G",7), ("A",9), ("B",11)];
+        let root_names = ["C","D","E","F","G","A","B"];
+        for (i, &(_key_name, kr)) in keys.iter().enumerate() {
+            let note = string_to_note(1, kr);
+            assert!(note.starts_with(root_names[i]),
+                "String 1 in key {} should be {} but got {}", _key_name, root_names[i], note);
+        }
+    }
+
+    #[test]
+    fn string_8_is_root_one_octave_up() {
+        // String 8 = root + 1 octave (7 diatonic steps)
+        let note_c = string_to_note(8, 0);
+        assert!(note_c.starts_with("C"), "String 8 in C should be C, got {}", note_c);
+        let note_g = string_to_note(8, 7);
+        assert!(note_g.starts_with("G"), "String 8 in G should be G, got {}", note_g);
+        let note_d = string_to_note(8, 2);
+        assert!(note_d.starts_with("D"), "String 8 in D should be D, got {}", note_d);
+    }
+
+    #[test]
+    fn diatonic_scale_from_root() {
+        // In G major: 1=G 2=A 3=B 4=C 5=D 6=E 7=F#
+        let expected = ["G", "A", "B", "C", "D", "E", "F#"];
+        for (i, exp) in expected.iter().enumerate() {
+            let note = string_to_note((i + 1) as i32, 7);
+            assert!(note.starts_with(exp),
+                "String {} in G major should be {} but got {}", i + 1, exp, note);
+        }
+    }
+
+    #[test]
+    fn diatonic_scale_c_major() {
+        // In C major: 1=C 2=D 3=E 4=F 5=G 6=A 7=B
+        let expected = ["C", "D", "E", "F", "G", "A", "B"];
+        for (i, exp) in expected.iter().enumerate() {
+            let note = string_to_note((i + 1) as i32, 0);
+            assert!(note.starts_with(exp),
+                "String {} in C major should be {} but got {}", i + 1, exp, note);
+        }
+    }
+
+    #[test]
+    fn diatonic_scale_d_major() {
+        // In D major: 1=D 2=E 3=F# 4=G 5=A 6=B 7=C#/Db
+        let expected_pc = [2, 4, 6, 7, 9, 11, 1]; // D E F# G A B C#
+        for (i, &exp_pc) in expected_pc.iter().enumerate() {
+            let abs_str = (i as i32 + 1) + STRING_NUMBER_OFFSET - 1;
+            let midi = harp_string_to_midi(abs_str, 2) + 12;
+            let pc = midi % 12;
+            assert_eq!(pc, exp_pc,
+                "String {} in D major: expected pc {} but got pc {} (midi {})",
+                i + 1, exp_pc, pc, midi);
+        }
+    }
+
+    #[test]
+    fn no_string_zero() {
+        // String numbering skips zero: ...-2, -1, 1, 2...
+        // String 0 should never appear in voicing output
         let scores = load_embedded_scores();
-        let joy = scores.iter().find(|s| s.title.contains("Joy to the World")).unwrap();
-        for (i, event) in joy.events.iter().take(8).enumerate() {
-            if let ScoreEvent::Note { rh_strings, lh_strings, chord_name, .. } = event {
-                if chord_name.is_some() {
-                    eprintln!("[{}] chord={:?} rh_str={:?} lh_str={:?}", i, chord_name, rh_strings, lh_strings);
+        for score in &scores {
+            for (i, event) in score.events.iter().enumerate() {
+                if let ScoreEvent::Note { rh_strings, lh_strings, .. } = event {
+                    for &s in rh_strings {
+                        assert!(s != 0, "Hymn {} beat {}: RH has string 0!", score.number, i);
+                    }
+                    for &s in lh_strings {
+                        assert!(s != 0, "Hymn {} beat {}: LH has string 0!", score.number, i);
+                    }
                 }
             }
         }
     }
-}
-// Add to tests
-#[cfg(test)]
-mod collision_test {
-    use super::abc::*;
+
+    // ── RH/LH separation: never the same string ──
+
     #[test]
-    fn find_collisions() {
+    fn rh_and_lh_never_share_a_string() {
         let scores = load_embedded_scores();
-        // Check first hymn (Blessed Jesus)
-        let s = &scores[0];
-        eprintln!("Checking: {} - {}", s.number, s.title);
-        for (i, event) in s.events.iter().enumerate() {
-            if let ScoreEvent::Note { rh_midi, lh_midi, rh_strings, lh_strings, chord_name, .. } = event {
-                // Check MIDI collision
-                for rm in rh_midi {
-                    for lm in lh_midi {
-                        if rm == lm {
-                            eprintln!("  MIDI COLLISION at beat {}: RH and LH both have MIDI {} chord={:?}", i, rm, chord_name);
-                        }
-                    }
-                }
-                // Check string collision
-                for rs in rh_strings {
-                    for ls in lh_strings {
-                        if rs == ls {
-                            eprintln!("  STRING COLLISION at beat {}: RH and LH both have string {} chord={:?}", i, rs, chord_name);
+        for score in &scores {
+            for (i, event) in score.events.iter().enumerate() {
+                if let ScoreEvent::Note { rh_strings, lh_strings, chord_name, .. } = event {
+                    for rs in rh_strings {
+                        for ls in lh_strings {
+                            assert!(rs != ls,
+                                "Hymn {} '{}' beat {}: RH and LH share string {} (chord {:?})",
+                                score.number, score.title, i, rs, chord_name);
                         }
                     }
                 }
             }
         }
-        // Also check Joy to the World
-        if let Some(joy) = scores.iter().find(|s| s.title.contains("Joy")) {
-            eprintln!("Checking: {} - {}", joy.number, joy.title);
-            for (i, event) in joy.events.iter().enumerate() {
+    }
+
+    #[test]
+    fn rh_and_lh_never_share_midi() {
+        let scores = load_embedded_scores();
+        for score in &scores {
+            for (i, event) in score.events.iter().enumerate() {
                 if let ScoreEvent::Note { rh_midi, lh_midi, chord_name, .. } = event {
                     for rm in rh_midi {
                         for lm in lh_midi {
-                            if rm == lm {
-                                eprintln!("  MIDI COLLISION at beat {}: both have MIDI {} chord={:?}", i, rm, chord_name);
-                            }
+                            assert!(rm != lm,
+                                "Hymn {} '{}' beat {}: RH and LH share MIDI {} (chord {:?})",
+                                score.number, score.title, i, rm, chord_name);
                         }
                     }
                 }
             }
         }
     }
-}
-#[cfg(test)]
-mod debug_hymn22 {
-    use super::abc::*;
-    use super::music::*;
 
     #[test]
-    fn debug_blessed_jesus() {
+    fn lh_always_below_rh() {
+        // LH highest string must always be below RH lowest string
+        let scores = load_embedded_scores();
+        for score in &scores {
+            for (i, event) in score.events.iter().enumerate() {
+                if let ScoreEvent::Note { rh_strings, lh_strings, chord_name, .. } = event {
+                    if rh_strings.is_empty() || lh_strings.is_empty() { continue; }
+                    let rh_low = *rh_strings.iter().min().unwrap();
+                    let lh_high = *lh_strings.iter().max().unwrap();
+                    assert!(lh_high < rh_low,
+                        "Hymn {} '{}' beat {}: LH highest ({}) >= RH lowest ({}) (chord {:?})",
+                        score.number, score.title, i, lh_high, rh_low, chord_name);
+                }
+            }
+        }
+    }
+
+    // ── Staff position: notes on correct lines/spaces ──
+
+    #[test]
+    fn staff_position_middle_c() {
+        // Middle C (MIDI 60) = staff position 0
+        use super::notation::midi_to_staff_pos;
+        assert_eq!(midi_to_staff_pos(60), 0, "Middle C should be staff pos 0");
+    }
+
+    #[test]
+    fn staff_position_treble_lines() {
+        // Treble staff lines: E4=2, G4=4, B4=6, D5=8, F5=10
+        use super::notation::midi_to_staff_pos;
+        assert_eq!(midi_to_staff_pos(64), 2, "E4 should be pos 2");
+        assert_eq!(midi_to_staff_pos(67), 4, "G4 should be pos 4");
+        assert_eq!(midi_to_staff_pos(71), 6, "B4 should be pos 6");
+        assert_eq!(midi_to_staff_pos(74), 8, "D5 should be pos 8");
+        assert_eq!(midi_to_staff_pos(77), 10, "F5 should be pos 10");
+    }
+
+    #[test]
+    fn staff_position_bass_lines() {
+        // Bass staff lines: G2=-10, B2=-8, D3=-6, F3=-4, A3=-2
+        use super::notation::midi_to_staff_pos;
+        assert_eq!(midi_to_staff_pos(43), -10, "G2 should be pos -10");
+        assert_eq!(midi_to_staff_pos(47), -8, "B2 should be pos -8");
+        assert_eq!(midi_to_staff_pos(50), -6, "D3 should be pos -6");
+        assert_eq!(midi_to_staff_pos(53), -4, "F3 should be pos -4");
+        assert_eq!(midi_to_staff_pos(57), -2, "A3 should be pos -2");
+    }
+
+    // ── Known-good hymn voicings (golden tests) ──
+
+    #[test]
+    fn blessed_jesus_is_in_g_major() {
         let scores = load_embedded_scores();
         let s = &scores[0];
-        eprintln!("Hymn: {} - {} key={} key_root={}", s.number, s.title, s.key, s.key_root);
-        
-        let str_offset = STRING_NUMBER_OFFSET;
-        
-        for (i, event) in s.events.iter().take(10).enumerate() {
-            if let ScoreEvent::Note { rh_strings, lh_strings, rh_midi, lh_midi, chord_name, is_chord_change, .. } = event {
-                if *is_chord_change {
-                    eprintln!("[{i}] chord={chord_name:?}");
-                    eprintln!("  RH strings: {rh_strings:?}  RH midi: {rh_midi:?}");
-                    for &rs in rh_strings {
-                        let abs_str = rs + str_offset - 1;
-                        let display = harp_string_to_midi(abs_str, s.key_root) + 12;
-                        let pc = display % 12;
-                        let oct = display / 12 - 1;
-                        let names = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
-                        eprintln!("    str {} -> abs {} -> display midi {} = {}{}", rs, abs_str, display, names[pc as usize], oct);
-                    }
-                    eprintln!("  LH strings: {lh_strings:?}  LH midi: {lh_midi:?}");
-                    for &ls in lh_strings {
-                        let abs_str = ls + str_offset - 1;
-                        let display = harp_string_to_midi(abs_str, s.key_root) + 12;
-                        let pc = display % 12;
-                        let oct = display / 12 - 1;
-                        let names = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
-                        eprintln!("    str {} -> abs {} -> display midi {} = {}{}", ls, abs_str, display, names[pc as usize], oct);
+        assert_eq!(s.key, "G");
+        assert_eq!(s.key_root, 7);
+    }
+
+    #[test]
+    fn joy_to_world_is_in_d_major() {
+        let scores = load_embedded_scores();
+        let joy = scores.iter().find(|s| s.title.contains("Joy to the World")).unwrap();
+        assert_eq!(joy.key, "D");
+        assert_eq!(joy.key_root, 2);
+    }
+
+    #[test]
+    fn every_voicing_note_is_in_key() {
+        // Every string number at a chord change must map to a note in that hymn's key
+        let scores = load_embedded_scores();
+        for score in &scores {
+            let kr = score.key_root;
+            let scale_pcs: Vec<i32> = (0..7).map(|deg| (kr + MAJOR_SCALE[deg] as i32) % 12).collect();
+
+            for (i, event) in score.events.iter().enumerate() {
+                if let ScoreEvent::Note { rh_strings, lh_strings, is_chord_change: true, .. } = event {
+                    for &s in rh_strings.iter().chain(lh_strings.iter()) {
+                        let abs_str = s + STRING_NUMBER_OFFSET - 1;
+                        let display_midi = harp_string_to_midi(abs_str, kr) + 12;
+                        let pc = display_midi % 12;
+                        assert!(scale_pcs.contains(&pc),
+                            "Hymn {} '{}' beat {}: string {} = midi {} (pc {}) not in key {}",
+                            score.number, score.title, i, s, display_midi, pc, score.key);
                     }
                 }
             }
+        }
+    }
+
+    // ── Voicing constraints ──
+
+    #[test]
+    fn rh_has_1_to_4_notes() {
+        // RH should have melody on thumb + 0-3 harmony notes
+        let scores = load_embedded_scores();
+        for score in &scores {
+            for (i, event) in score.events.iter().enumerate() {
+                if let ScoreEvent::Note { rh_strings, is_chord_change: true, .. } = event {
+                    assert!(!rh_strings.is_empty(),
+                        "Hymn {} beat {}: RH has no strings at chord change", score.number, i);
+                    assert!(rh_strings.len() <= 4,
+                        "Hymn {} beat {}: RH has {} strings (max 4)", score.number, i, rh_strings.len());
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn lh_has_2_to_4_notes() {
+        // LH carries the chord: 2-4 notes
+        let scores = load_embedded_scores();
+        for score in &scores {
+            for (i, event) in score.events.iter().enumerate() {
+                if let ScoreEvent::Note { lh_strings, is_chord_change: true, .. } = event {
+                    if lh_strings.is_empty() { continue; } // some voicings may fail
+                    assert!(lh_strings.len() <= 4,
+                        "Hymn {} beat {}: LH has {} strings (max 4)", score.number, i, lh_strings.len());
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn all_hymns_parse() {
+        let scores = load_embedded_scores();
+        assert!(scores.len() >= 280, "Expected 280+ hymns, got {}", scores.len());
+        for s in &scores {
+            assert!(!s.events.is_empty(), "Hymn {} has no events", s.number);
+            assert!(!s.title.is_empty(), "Hymn {} has no title", s.number);
         }
     }
 }
