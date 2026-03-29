@@ -149,6 +149,16 @@ impl PlayerApp {
         total
     }
 
+    fn shuffle_fingers(&mut self) {
+        // Simple pseudo-random using system time
+        let t = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .unwrap_or_default()
+            .as_nanos();
+        self.rh_fingers = ((t % 3) + 2) as i32;       // 2-4
+        self.lh_fingers = (((t / 7) % 3) + 2) as i32; // 2-4
+    }
+
     fn reset_playback(&mut self) {
         self.current_beat = 0.0;
         self.scroll_offset = 0.0;
@@ -612,8 +622,18 @@ impl eframe::App for PlayerApp {
                         ui.separator();
                         ui.add_space(4.0);
 
-                        // Random fingers checkbox
-                        ui.checkbox(&mut self.random_fingers, "Random fingers");
+                        // Random fingers checkbox + Shuffle button
+                        let was_random = self.random_fingers;
+                        ui.checkbox(&mut self.random_fingers, "Random");
+                        if self.random_fingers {
+                            // On first check, or on Shuffle press, randomize
+                            if !was_random {
+                                self.shuffle_fingers();
+                            }
+                            if ui.button("Shuffle").clicked() {
+                                self.shuffle_fingers();
+                            }
+                        }
                     });
                 });
 
@@ -662,7 +682,7 @@ impl eframe::App for PlayerApp {
                     color: egui::Color32::from_black_alpha(20),
                 })
                 .show(ui, |ui| {
-                    let (rect, _response) = ui.allocate_exact_size(
+                    let (rect, response) = ui.allocate_exact_size(
                         egui::Vec2::new(avail.x - 16.0, avail.y - 24.0),
                         egui::Sense::click_and_drag(),
                     );
@@ -670,10 +690,21 @@ impl eframe::App for PlayerApp {
                     let painter = ui.painter_at(rect);
                     let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
 
-                    // Auto-scroll: keep playhead at playhead_fraction of view width
                     let view_width = rect.width();
-                    let playhead_x_target = view_width * self.playhead_fraction;
-                    self.scroll_offset = self.current_beat * 60.0 - playhead_x_target + layout.left_margin;
+
+                    if self.playing {
+                        // Auto-scroll: keep playhead at playhead_fraction of view width
+                        let playhead_x_target = view_width * self.playhead_fraction;
+                        self.scroll_offset = self.current_beat * 60.0 - playhead_x_target + layout.left_margin;
+                    } else {
+                        // Manual scroll: swipe/drag to scroll
+                        if response.dragged() {
+                            self.scroll_offset -= response.drag_delta().x;
+                        }
+                        // Also update current_beat to match scroll position
+                        self.current_beat = (self.scroll_offset + view_width * self.playhead_fraction - layout.left_margin) / 60.0;
+                        self.current_beat = self.current_beat.max(0.0);
+                    }
                     if self.scroll_offset < 0.0 { self.scroll_offset = 0.0; }
 
                     let events = self.current_events().to_vec();
@@ -681,16 +712,8 @@ impl eframe::App for PlayerApp {
                     let selected_pc = music::key_to_pc(&self.current_key);
                     let key_root = ((selected_pc - music::MAJOR_SCALE[self.mode_offset as usize]) % 12 + 12) % 12;
 
-                    // Randomize finger count per chord change if enabled
-                    let (rh_f, lh_f) = if self.random_fingers {
-                        // Use current beat as seed for deterministic-per-chord randomness
-                        let seed = (self.current_beat * 100.0) as u64;
-                        let rh = (seed % 3 + 2) as usize; // 2-4
-                        let lh = (seed / 3 % 3 + 2) as usize; // 2-4
-                        (rh, lh)
-                    } else {
-                        (self.rh_fingers as usize, self.lh_fingers as usize)
-                    };
+                    let rh_f = self.rh_fingers as usize;
+                    let lh_f = self.lh_fingers as usize;
 
                     render_score(
                         &painter,
