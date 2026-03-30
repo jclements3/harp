@@ -877,7 +877,11 @@ impl eframe::App for PlayerApp {
                 if ui.add(toggle).clicked() {
                     self.drill_mode = !self.drill_mode;
                     if self.drill_mode {
-                        // Don't auto-start — wait for ▶ button
+                        // Stop song playback
+                        self.playing = false;
+                        if let Some(ref player) = self.audio_player { player.silence(); }
+                        self.last_chord_idx = -1;
+                        // Don't auto-start drill — wait for ▶ button
                         self.drill = None;
                         self.drill_paused = true;
                     } else {
