@@ -884,10 +884,30 @@ impl eframe::App for PlayerApp {
 
                 ui.separator();
 
-                // ── Col 2: Drill type + note durations ──
+                // ── Col 2: Play + Drill type + note durations ──
                 ui.vertical(|ui| {
-                    // Intervals / Chords
+                    // Play/Pause + Intervals / Chords
                     ui.horizontal(|ui| {
+                        // Play/Pause button (always visible, gray when songs mode)
+                        let drill_playing = active && self.drill.as_ref().map_or(false, |d| !d.is_finished()) && !self.drill_paused;
+                        let (ic, fl, cl) = if !active {
+                            ("\u{25B6}", egui::Color32::from_rgb(220,220,220), gray)
+                        } else if drill_playing {
+                            ("\u{23F8}", ACCENT, egui::Color32::WHITE)
+                        } else {
+                            ("\u{25B6}", egui::Color32::from_rgb(40, 167, 69), egui::Color32::WHITE)
+                        };
+                        if ui.add(egui::Button::new(egui::RichText::new(ic).size(14.0).color(cl)).fill(fl).corner_radius(6.0).min_size(egui::Vec2::new(32.0, 24.0))).clicked() && active {
+                            if self.drill.is_none() || self.drill.as_ref().map_or(false, |d| d.is_finished()) {
+                                let pedals = music::pedals_from_key(&self.current_key);
+                                self.drill = Some(drill::DrillSession::new(
+                                    self.drill_config.clone(), &pedals, &self.drill_progress));
+                                self.drill_paused = false;
+                            } else {
+                                self.drill_paused = !self.drill_paused;
+                            }
+                        }
+
                         let mk = |ui: &mut egui::Ui, lbl: &str, sel: bool, en: bool| -> bool {
                             let (fg, bg, sc) = if !en { (gray, CARD_BG, egui::Color32::from_rgb(220,220,220)) }
                                 else if sel { (egui::Color32::WHITE, ACCENT, ACCENT) }
@@ -904,7 +924,6 @@ impl eframe::App for PlayerApp {
                     });
 
                     let c = if active { TEXT_PRIMARY } else { gray };
-                    // RH durations with text labels for note values
                     ui.horizontal(|ui| {
                         ui.label(egui::RichText::new("RH").size(13.0).strong().color(c));
                         ui.checkbox(&mut self.rh_whole, egui::RichText::new("W").size(11.0).color(c));
@@ -912,7 +931,6 @@ impl eframe::App for PlayerApp {
                         ui.checkbox(&mut self.rh_quarter, egui::RichText::new("Q").size(11.0).color(c));
                         ui.checkbox(&mut self.rh_eighth, egui::RichText::new("8").size(11.0).color(c));
                     });
-                    // LH durations
                     ui.horizontal(|ui| {
                         ui.label(egui::RichText::new("LH").size(13.0).strong().color(c));
                         ui.checkbox(&mut self.lh_whole, egui::RichText::new("W").size(11.0).color(c));
@@ -924,13 +942,14 @@ impl eframe::App for PlayerApp {
 
                 ui.separator();
 
-                // ── Col 3: Two progress bars ──
+                // ── Col 3: Two progress bars (use all remaining width) ──
                 ui.vertical(|ui| {
+                    let bar_w = ui.available_width();
                     let (streak_pct, level_pct, npm_text, level_text) = if active {
                         if let Some(ref d) = self.drill {
                             let sp = (d.streak as f32 / 4.0 * 100.0).min(100.0);
                             let lp = if d.level > 0 { ((d.notes_per_minute() / (d.level as f32 * 20.0 + 20.0)) * 100.0).min(100.0) } else { 0.0 };
-                            (sp, lp, format!("{:.0} NPM \u{00b7} {} done", d.notes_per_minute(), d.challenges_completed),
+                            (sp, lp, format!("{:.0} NPM  \u{00b7}  {} done", d.notes_per_minute(), d.challenges_completed),
                              format!("Level {}", d.level))
                         } else { (0.0, 0.0, "0 NPM".into(), "Level 0".into()) }
                     } else {
@@ -940,26 +959,23 @@ impl eframe::App for PlayerApp {
                          format!("Level {}", self.drill_progress.level))
                     };
 
-                    let bar_c = if active { ACCENT } else { gray };
                     let track = egui::Color32::from_rgb(232, 232, 232);
+                    let txt_c = if active { TEXT_PRIMARY } else { gray };
+                    let lvl_c = if active { ACCENT } else { gray };
 
-                    // Progress bar 1: streak toward level-up
-                    ui.label(egui::RichText::new(&npm_text).size(11.0).color(if active { TEXT_PRIMARY } else { gray }));
-                    let (r1, _) = ui.allocate_exact_size(egui::Vec2::new(ui.available_width().min(140.0), 10.0), egui::Sense::hover());
+                    ui.label(egui::RichText::new(&npm_text).size(13.0).strong().color(txt_c));
+                    let (r1, _) = ui.allocate_exact_size(egui::Vec2::new(bar_w, 12.0), egui::Sense::hover());
                     let p = ui.painter_at(r1);
-                    p.rect_filled(r1, 5.0, track);
-                    let f1 = egui::Rect::from_min_size(r1.min, egui::Vec2::new(r1.width() * streak_pct / 100.0, r1.height()));
-                    p.rect_filled(f1, 5.0, egui::Color32::from_rgb(40, 167, 69));
+                    p.rect_filled(r1, 6.0, track);
+                    p.rect_filled(egui::Rect::from_min_size(r1.min, egui::Vec2::new(r1.width() * streak_pct / 100.0, r1.height())), 6.0, egui::Color32::from_rgb(40, 167, 69));
 
                     ui.add_space(4.0);
 
-                    // Progress bar 2: level
-                    ui.label(egui::RichText::new(&level_text).size(11.0).color(if active { ACCENT } else { gray }));
-                    let (r2, _) = ui.allocate_exact_size(egui::Vec2::new(ui.available_width().min(140.0), 10.0), egui::Sense::hover());
+                    ui.label(egui::RichText::new(&level_text).size(13.0).strong().color(lvl_c));
+                    let (r2, _) = ui.allocate_exact_size(egui::Vec2::new(bar_w, 12.0), egui::Sense::hover());
                     let p2 = ui.painter_at(r2);
-                    p2.rect_filled(r2, 5.0, track);
-                    let f2 = egui::Rect::from_min_size(r2.min, egui::Vec2::new(r2.width() * level_pct / 100.0, r2.height()));
-                    p2.rect_filled(f2, 5.0, bar_c);
+                    p2.rect_filled(r2, 6.0, track);
+                    p2.rect_filled(egui::Rect::from_min_size(r2.min, egui::Vec2::new(r2.width() * level_pct / 100.0, r2.height())), 6.0, if active { ACCENT } else { gray });
                 });
             });
 
@@ -1056,7 +1072,7 @@ impl eframe::App for PlayerApp {
                                 let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
                                 let view_width = rect.width();
                                 notation::draw_staff(&painter, &layout, view_width);
-                                notation::draw_clefs(&painter, &layout);
+                                // No clefs in drill mode
 
                                 let playhead_x = rect.left() + view_width * 0.25;
                                 let elapsed = if self.drill_paused {
@@ -1064,7 +1080,7 @@ impl eframe::App for PlayerApp {
                                 } else {
                                     drill.elapsed()
                                 };
-                                let gap = 110.0f32;
+                                let gap = 60.0f32;
                                 let frac = drill.current_challenge().map_or(0.0, |tc|
                                     ((elapsed - tc.start_time) / tc.duration).clamp(0.0, 1.0));
 
