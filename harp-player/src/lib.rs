@@ -877,10 +877,9 @@ impl eframe::App for PlayerApp {
                 if ui.add(toggle).clicked() {
                     self.drill_mode = !self.drill_mode;
                     if self.drill_mode {
-                        let pedals = music::pedals_from_key(&self.current_key);
-                        self.drill = Some(drill::DrillSession::new(
-                            self.drill_config.clone(), &pedals, &self.drill_progress));
-                        self.drill_paused = false;
+                        // Don't auto-start — wait for ▶ button
+                        self.drill = None;
+                        self.drill_paused = true;
                     } else {
                         if let Some(ref d) = self.drill { self.drill_progress = d.save_to_progress(); }
                         self.drill = None;
@@ -1106,60 +1105,42 @@ impl eframe::App for PlayerApp {
                     let key_root = ((selected_pc - music::MAJOR_SCALE[self.mode_offset as usize]) % 12 + 12) % 12;
 
                     if self.drill_mode {
-                        // ── Drill: scrolling random challenges ──
-                        if let Some(ref drill) = self.drill {
-                            if !drill.is_finished() {
-                                let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
-                                let view_width = rect.width();
-                                notation::draw_staff(&painter, &layout, view_width);
-                                // No clefs in drill mode
+                        // ── Drill: use render_score with generated ScoreEvents ──
+                        let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
+                        let view_width = rect.width();
 
-                                let playhead_x = rect.left() + view_width * 0.25;
+                        if let Some(ref drill_session) = self.drill {
+                            if !drill_session.is_finished() {
+                                // Generate ScoreEvents from drill timeline
+                                let events = drill::timeline_to_events(
+                                    &drill_session.timeline,
+                                    key_root,
+                                    self.rh_fingers as usize,
+                                    self.lh_fingers as usize,
+                                );
+
+                                // Compute current_beat from drill elapsed time
                                 let elapsed = if self.drill_paused {
-                                    drill.current_challenge().map_or(0.0, |tc| tc.start_time)
+                                    drill_session.current_challenge().map_or(0.0, |tc| tc.start_time)
                                 } else {
-                                    drill.elapsed()
+                                    drill_session.elapsed()
                                 };
-                                let gap = 60.0f32;
-                                let frac = drill.current_challenge().map_or(0.0, |tc|
-                                    ((elapsed - tc.start_time) / tc.duration).clamp(0.0, 1.0));
 
-                                for (i, tc) in drill.timeline.iter().enumerate() {
-                                    let x = playhead_x + (i as f32 - drill.current_idx as f32 - frac) * gap;
-                                    if x < rect.left() - 40.0 || x > rect.right() + 40.0 { continue; }
+                                // Map elapsed time to beat position
+                                // Each challenge has duration target_secs, beats = target_secs
+                                // So current_beat ≈ elapsed (since beats = seconds in drill)
+                                let drill_beat = elapsed;
 
-                                    let is_current = i == drill.current_idx;
-                                    let is_past = i < drill.current_idx;
-                                    let ch = &tc.challenge;
+                                let playhead_x_target = view_width * self.playhead_fraction;
+                                let scroll = (drill_beat * 60.0 - playhead_x_target + layout.left_margin).max(0.0);
 
-                                    // Label above
-                                    let label_y = layout.label_top_y + 10.0;
-                                    let lc = if is_current { ACCENT } else if is_past {
-                                        egui::Color32::from_rgba_premultiplied(100,100,100,60)
-                                    } else { TEXT_MUTED };
-                                    painter.text(egui::Pos2::new(x, label_y), egui::Align2::CENTER_CENTER,
-                                        &ch.label, egui::FontId::proportional(if is_current { 14.0 } else { 11.0 }), lc);
-
-                                    // Notes
-                                    for (ni, &midi) in ch.notes.iter().enumerate() {
-                                        let active = is_current && ni == ch.next_finger;
-                                        let pos = notation::midi_to_staff_pos(midi as i32);
-                                        let on_treble = midi >= 60;
-                                        if on_treble {
-                                            notation::draw_note_stem_up(&painter, &layout, x, pos, true, 1.0, active);
-                                        } else {
-                                            notation::draw_note_stem_down(&painter, &layout, x, pos, false, 1.0, active);
-                                        }
-                                    }
-                                }
-
-                                // Playhead
-                                notation::draw_playhead(&painter, playhead_x, &layout);
+                                render_score(
+                                    &painter, &layout, &events,
+                                    scroll, drill_beat, view_width, key_root,
+                                );
                             } else {
-                                // Drill finished
                                 painter.text(rect.center(), egui::Align2::CENTER_CENTER,
-                                    format!("{:.1} NPM \u{00b7} Lv {} \u{00b7} Tap Drill to restart",
-                                        drill.notes_per_minute(), drill.level),
+                                    format!("{:.1} NPM \u{00b7} Tap Drill to restart", drill_session.notes_per_minute()),
                                     egui::FontId::proportional(16.0), ACCENT);
                             }
                         }

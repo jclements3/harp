@@ -555,3 +555,100 @@ fn generate_chord(rng: &mut impl rand::Rng, available: &[u8], chord_size: usize,
     let n = chord_size.min(available.len());
     Challenge { notes: available[..n].to_vec(), label: "?".into(), next_finger: 0 }
 }
+
+// ── Generate ScoreEvents from drill timeline ──────────────────────
+
+/// Convert drill challenges into ScoreEvents so render_score() can draw them
+/// identically to hymns — with chord names, string numbers, finger assignments.
+pub fn timeline_to_events(
+    timeline: &[TimedChallenge],
+    key_root: i32,
+    rh_fingers: usize,
+    lh_fingers: usize,
+) -> Vec<crate::abc::ScoreEvent> {
+    use crate::abc::ScoreEvent;
+    use crate::voicing::voice_from_satb_fingers;
+    use crate::chord::identify_chord_names;
+    use crate::music::{snap_to_diatonic, to_relative_string};
+
+    let mut events = Vec::new();
+    let mut prev_voicing: Option<crate::voicing::Voicing> = None;
+
+    for tc in timeline {
+        let ch = &tc.challenge;
+        let beats = 1.0; // one beat per challenge for consistent spacing
+
+        // Sort notes: highest = soprano, next = alto, etc.
+        let mut sorted = ch.notes.clone();
+        sorted.sort();
+        sorted.reverse(); // highest first
+
+        let soprano = snap_to_diatonic(sorted[0] as i32, key_root);
+        let alto = if sorted.len() > 1 { Some(snap_to_diatonic(sorted[1] as i32, key_root)) } else { None };
+        let tenor = if sorted.len() > 2 { Some(snap_to_diatonic(sorted[2] as i32, key_root)) } else { None };
+        let bass = if sorted.len() > 3 { Some(snap_to_diatonic(sorted[3] as i32, key_root)) } else if sorted.len() > 1 {
+            Some(snap_to_diatonic(*sorted.last().unwrap() as i32, key_root))
+        } else { None };
+
+        let voicing = voice_from_satb_fingers(
+            soprano, alto, tenor, bass, key_root,
+            prev_voicing.as_ref(),
+            rh_fingers, lh_fingers,
+        );
+
+        if let Some(ref v) = voicing {
+            let rh_strs: Vec<i32> = v.rh_strings.iter()
+                .map(|&s| to_relative_string(s, key_root)).collect();
+            let lh_strs: Vec<i32> = v.lh_strings.iter()
+                .map(|&s| to_relative_string(s, key_root)).collect();
+            let melody_str = *rh_strs.first().unwrap_or(&1);
+
+            let all_notes: Vec<i32> = v.rh_midi.iter().chain(v.lh_midi.iter()).copied().collect();
+            let chord_name = identify_chord_names(&all_notes, key_root);
+            let rh_chord = identify_chord_names(&v.rh_midi, key_root);
+            let lh_chord = identify_chord_names(&v.lh_midi, key_root);
+
+            events.push(ScoreEvent::Note {
+                melody_midi: soprano,
+                melody_string: melody_str,
+                rh_midi: v.rh_midi.clone(),
+                lh_midi: v.lh_midi.clone(),
+                rh_strings: rh_strs.clone(),
+                lh_strings: lh_strs.clone(),
+                beats,
+                chord_name: Some(chord_name),
+                rh_chord: Some(rh_chord),
+                lh_chord: Some(lh_chord),
+                is_chord_change: true,
+                display_rh: rh_strs,
+                display_lh: lh_strs,
+            });
+            prev_voicing = voicing;
+        } else {
+            // Fallback: show melody note with chord name
+            let mel_str = crate::music::midi_to_harp_string(soprano, key_root)
+                .map(|s| to_relative_string(s, key_root))
+                .unwrap_or(1);
+            events.push(ScoreEvent::Note {
+                melody_midi: soprano,
+                melody_string: mel_str,
+                rh_midi: vec![soprano],
+                lh_midi: vec![],
+                rh_strings: vec![mel_str],
+                lh_strings: vec![],
+                beats,
+                chord_name: Some(music::midi_to_name(soprano)),
+                rh_chord: None,
+                lh_chord: None,
+                is_chord_change: true,
+                display_rh: vec![mel_str],
+                display_lh: vec![],
+            });
+        }
+
+        // Bar after each challenge
+        events.push(ScoreEvent::Bar);
+    }
+
+    events
+}
