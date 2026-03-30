@@ -576,7 +576,7 @@ pub fn timeline_to_events(
 
     for tc in timeline {
         let ch = &tc.challenge;
-        let beats = 1.0; // one beat per challenge for consistent spacing
+        let beats = tc.duration; // match scroll speed to drill timing
 
         // Sort notes: highest = soprano, next = alto, etc.
         let mut sorted = ch.notes.clone();

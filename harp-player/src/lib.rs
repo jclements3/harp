@@ -335,8 +335,8 @@ impl eframe::App for PlayerApp {
             self.last_frame_time = Some(now);
             ctx.request_repaint();
 
-            // Trigger sound at chord changes
-            if self.sound_volume > 0.0 {
+            // Trigger sound at chord changes (songs mode only)
+            if self.sound_volume > 0.0 && !self.drill_mode {
                 if let Some(ref player) = self.audio_player {
                     if let Ok(mut synth) = player.state.lock() {
                         synth.master_volume = self.sound_volume;
@@ -884,7 +884,7 @@ impl eframe::App for PlayerApp {
                         let pedals = music::pedals_from_key(&self.current_key);
                         self.drill = Some(drill::DrillSession::new(
                             self.drill_config.clone(), &pedals, &self.drill_progress));
-                        self.drill_paused = false;
+                        self.playing = false; // show notes, wait for ▶
                     } else {
                         if let Some(ref d) = self.drill { self.drill_progress = d.save_to_progress(); }
                         self.drill = None;
@@ -899,25 +899,28 @@ impl eframe::App for PlayerApp {
                 ui.vertical(|ui| {
                     // Row 1: Play + Intervals + Chords
                     ui.horizontal(|ui| {
-                        let drill_playing = active && self.drill.as_ref().map_or(false, |d| !d.is_finished()) && !self.drill_paused;
-                        let is_playing = if active { drill_playing } else { self.playing };
+                        let is_playing = self.playing;
                         let (ic, fl, cl) = if is_playing {
                             ("\u{23F8}", ACCENT, egui::Color32::WHITE)
                         } else {
                             ("\u{25B6}", egui::Color32::from_rgb(40, 167, 69), egui::Color32::WHITE)
                         };
                         if ui.add(egui::Button::new(egui::RichText::new(ic).size(14.0).color(cl)).fill(fl).corner_radius(6.0).min_size(egui::Vec2::new(32.0, 24.0))).clicked() {
-                            if !active {
-                                self.playing = !self.playing;
-                                if self.playing { self.last_frame_time = None; }
-                            } else {
-                                if self.drill.is_none() || self.drill.as_ref().map_or(false, |d| d.is_finished()) {
-                                    let pedals = music::pedals_from_key(&self.current_key);
-                                    self.drill = Some(drill::DrillSession::new(
-                                        self.drill_config.clone(), &pedals, &self.drill_progress));
-                                    self.drill_paused = false;
-                                } else {
-                                    self.drill_paused = !self.drill_paused;
+                            if active && (self.drill.is_none() || self.drill.as_ref().map_or(false, |d| d.is_finished())) {
+                                // Create new drill session
+                                let pedals = music::pedals_from_key(&self.current_key);
+                                self.drill = Some(drill::DrillSession::new(
+                                    self.drill_config.clone(), &pedals, &self.drill_progress));
+                            }
+                            // Toggle play for both songs and drills
+                            self.playing = !self.playing;
+                            if self.playing {
+                                self.last_frame_time = None;
+                                // Reset drill clock when starting
+                                if active {
+                                    if let Some(ref mut d) = self.drill {
+                                        d.start_time = std::time::Instant::now();
+                                    }
                                 }
                             }
                         }
@@ -1083,7 +1086,7 @@ impl eframe::App for PlayerApp {
         // ── Drill input processing ──
         if self.drill_mode {
             if let Some(ref mut d) = self.drill {
-                if !d.is_finished() && !self.drill_paused {
+                if !d.is_finished() && self.playing {
                     if ctx.input(|i| i.key_pressed(egui::Key::Space)) { d.advance_manual(); }
                     d.check_auto_advance();
                 }
@@ -1133,7 +1136,7 @@ impl eframe::App for PlayerApp {
                                 );
 
                                 // Compute current_beat from drill elapsed time
-                                let elapsed = if self.drill_paused {
+                                let elapsed = if !self.playing {
                                     drill_session.current_challenge().map_or(0.0, |tc| tc.start_time)
                                 } else {
                                     drill_session.elapsed()
