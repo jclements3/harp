@@ -870,27 +870,30 @@ impl eframe::App for PlayerApp {
                 ui.set_min_height(90.0);
 
                 // ── Col 1: Toggle button (fills height) ──
-                let label = if self.drill_mode { "Drill" } else { "Songs" };
+                let label = if self.drill_mode { "Songs" } else { "Drill" };
                 let toggle = egui::Button::new(
                     egui::RichText::new(label).size(18.0).strong().color(egui::Color32::WHITE)
                 ).fill(ACCENT).corner_radius(10.0).min_size(egui::Vec2::new(80.0, 85.0));
                 if ui.add(toggle).clicked() {
                     self.drill_mode = !self.drill_mode;
                     if self.drill_mode {
-                        // Stop song playback
+                        // Stop song playback and auto-start drill
                         self.playing = false;
                         if let Some(ref player) = self.audio_player { player.silence(); }
                         self.last_chord_idx = -1;
-                        // Don't auto-start drill — wait for ▶ button
-                        self.drill = None;
-                        self.drill_paused = true;
+                        let pedals = music::pedals_from_key(&self.current_key);
+                        self.drill = Some(drill::DrillSession::new(
+                            self.drill_config.clone(), &pedals, &self.drill_progress));
+                        self.drill_paused = false;
                     } else {
                         if let Some(ref d) = self.drill { self.drill_progress = d.save_to_progress(); }
                         self.drill = None;
                     }
                 }
 
+                ui.add_space(12.0);
                 ui.separator();
+                ui.add_space(4.0);
 
                 // ── Col 2: ▶ Intervals Chords / RH notes / LH notes ──
                 ui.vertical(|ui| {
@@ -1005,16 +1008,22 @@ impl eframe::App for PlayerApp {
                     let txt_c = if active { TEXT_PRIMARY } else { gray };
                     let bar_c = if active { ACCENT } else { gray };
 
-                    // Bar 1
-                    if !npm_text.is_empty() { ui.label(egui::RichText::new(&npm_text).size(11.0).color(txt_c)); }
+                    // Bar 1: Streak
+                    ui.label(egui::RichText::new(if npm_text.is_empty() { "Streak".into() } else { npm_text }).size(11.0).color(txt_c));
                     let (r1, _) = ui.allocate_exact_size(egui::Vec2::new(bar_w, 12.0), egui::Sense::hover());
                     let p = ui.painter_at(r1);
                     p.rect_filled(r1, 6.0, track);
                     p.rect_filled(egui::Rect::from_min_size(r1.min, egui::Vec2::new(r1.width() * streak_pct / 100.0, r1.height())), 6.0, egui::Color32::from_rgb(40, 167, 69));
 
-                    ui.add_space(6.0);
+                    ui.add_space(4.0);
 
-                    // Bar 2
+                    // Bar 2: Progress
+                    let progress_label = if active {
+                        self.drill.as_ref().map_or("Progress".into(), |d| format!("{:.0}% accuracy", d.accuracy()))
+                    } else {
+                        format!("{} sessions", self.drill_progress.total_sessions)
+                    };
+                    ui.label(egui::RichText::new(progress_label).size(11.0).color(bar_c));
                     let (r2, _) = ui.allocate_exact_size(egui::Vec2::new(bar_w, 12.0), egui::Sense::hover());
                     let p2 = ui.painter_at(r2);
                     p2.rect_filled(r2, 6.0, track);
