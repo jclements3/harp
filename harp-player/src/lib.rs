@@ -144,12 +144,11 @@ struct PlayerApp {
     current_melody_degree: i32,       // melody's diatonic degree (0-6)
 
     // Drill mode
-    drill_mode: bool,  // false = Songs, true = Drill
-    drill: Option<drill::DrillSession>,
+    drill_mode: bool,
+    drill_score: Option<abc::Score>,  // random score, same type as hymns
     drill_progress: drill::Progress,
     drill_config: drill::DrillConfig,
-    drill_paused: bool,
-    drill_name: usize, // index into DRILL_NAMES
+    drill_name: usize,
     use_mic: bool,
     // Note duration checkboxes per hand
     rh_whole: bool,
@@ -201,10 +200,9 @@ impl PlayerApp {
             current_chord_degrees: vec![0, 2, 4], // default I chord
             current_melody_degree: 0,
             drill_mode: false,
-            drill: None,
+            drill_score: None,
             drill_progress: drill::load_progress(),
             drill_config: drill::DrillConfig::default(),
-            drill_paused: false,
             drill_name: 0,
             use_mic: false,
             rh_whole: true, rh_half: true, rh_quarter: true, rh_eighth: false,
@@ -877,17 +875,19 @@ impl eframe::App for PlayerApp {
                 if ui.add(toggle).clicked() {
                     self.drill_mode = !self.drill_mode;
                     if self.drill_mode {
-                        // Stop song playback and auto-start drill
+                        // Stop song playback, generate random drill score
                         self.playing = false;
                         if let Some(ref player) = self.audio_player { player.silence(); }
                         self.last_chord_idx = -1;
-                        let pedals = music::pedals_from_key(&self.current_key);
-                        self.drill = Some(drill::DrillSession::new(
-                            self.drill_config.clone(), &pedals, &self.drill_progress));
-                        self.playing = false; // show notes, wait for ▶
+                        self.current_beat = 0.0;
+                        self.scroll_offset = 0.0;
+                        self.last_frame_time = None;
+                        self.drill_score = Some(drill::generate_random_score(
+                            &self.current_key, self.mode_offset, 32, 4,
+                            self.rh_fingers as usize, self.lh_fingers as usize,
+                        ));
                     } else {
-                        if let Some(ref d) = self.drill { self.drill_progress = d.save_to_progress(); }
-                        self.drill = None;
+                        self.drill_score = None;
                     }
                 }
 
@@ -906,23 +906,8 @@ impl eframe::App for PlayerApp {
                             ("\u{25B6}", egui::Color32::from_rgb(40, 167, 69), egui::Color32::WHITE)
                         };
                         if ui.add(egui::Button::new(egui::RichText::new(ic).size(14.0).color(cl)).fill(fl).corner_radius(6.0).min_size(egui::Vec2::new(32.0, 24.0))).clicked() {
-                            if active && (self.drill.is_none() || self.drill.as_ref().map_or(false, |d| d.is_finished())) {
-                                // Create new drill session
-                                let pedals = music::pedals_from_key(&self.current_key);
-                                self.drill = Some(drill::DrillSession::new(
-                                    self.drill_config.clone(), &pedals, &self.drill_progress));
-                            }
-                            // Toggle play for both songs and drills
                             self.playing = !self.playing;
-                            if self.playing {
-                                self.last_frame_time = None;
-                                // Reset drill clock when starting
-                                if active {
-                                    if let Some(ref mut d) = self.drill {
-                                        d.start_time = std::time::Instant::now();
-                                    }
-                                }
-                            }
+                            if self.playing { self.last_frame_time = None; }
                         }
 
                         let mk = |ui: &mut egui::Ui, lbl: &str, sel: bool, en: bool| -> bool {
@@ -993,20 +978,13 @@ impl eframe::App for PlayerApp {
                     let bar_w = ui.available_width();
                     let track = egui::Color32::from_rgb(232, 232, 232);
 
-                    let (streak_pct, npm_text) = if active {
-                        if let Some(ref d) = self.drill {
-                            let sp = (d.streak as f32 / 4.0 * 100.0).min(100.0);
-                            (sp, format!("{:.0} NPM \u{00b7} {} done", d.notes_per_minute(), d.challenges_completed))
-                        } else { (0.0, "".into()) }
-                    } else {
-                        (0.0, if self.drill_progress.best_npm > 0.0 { format!("Best {:.0} NPM", self.drill_progress.best_npm) } else { "".into() })
-                    };
-
-                    let level_pct = if active {
-                        self.drill.as_ref().map_or(0.0, |d| if d.level > 0 { ((d.notes_per_minute() / (d.level as f32 * 20.0 + 20.0)) * 100.0).min(100.0) } else { 0.0 })
-                    } else {
-                        if self.drill_progress.best_npm > 0.0 { ((self.drill_progress.best_npm / 60.0) * 100.0).min(100.0) } else { 0.0 }
-                    };
+                    let npm_text = if self.drill_progress.best_npm > 0.0 {
+                        format!("Best {:.0} NPM", self.drill_progress.best_npm)
+                    } else { "Streak".into() };
+                    let streak_pct = 0.0f32; // TODO: track streak
+                    let level_pct = if self.drill_progress.best_npm > 0.0 {
+                        ((self.drill_progress.best_npm / 60.0) * 100.0).min(100.0)
+                    } else { 0.0 };
 
                     let txt_c = if active { TEXT_PRIMARY } else { gray };
                     let bar_c = if active { ACCENT } else { gray };
@@ -1021,11 +999,7 @@ impl eframe::App for PlayerApp {
                     ui.add_space(4.0);
 
                     // Bar 2: Progress
-                    let progress_label = if active {
-                        self.drill.as_ref().map_or("Progress".into(), |d| format!("{:.0}% accuracy", d.accuracy()))
-                    } else {
-                        format!("{} sessions", self.drill_progress.total_sessions)
-                    };
+                    let progress_label = format!("{} sessions", self.drill_progress.total_sessions);
                     ui.label(egui::RichText::new(progress_label).size(11.0).color(bar_c));
                     let (r2, _) = ui.allocate_exact_size(egui::Vec2::new(bar_w, 12.0), egui::Sense::hover());
                     let p2 = ui.painter_at(r2);
@@ -1057,14 +1031,17 @@ impl eframe::App for PlayerApp {
                     });
                 });
             } else {
-                // Drill mode: scroll bar to review missed challenges
-                if let Some(ref drill) = self.drill {
-                    let total_time = drill.timeline.last().map_or(1.0, |tc| tc.start_time + tc.duration);
-                    let mut frac = (drill.elapsed() / total_time).clamp(0.0, 1.0);
-                    let slider = egui::Slider::new(&mut frac, 0.0..=1.0)
-                        .show_value(false)
-                        .trailing_fill(true);
-                    ui.add(slider);
+                // Drill mode: same progress slider
+                if let Some(ref ds) = self.drill_score {
+                    let total = ds.events.iter().map(|e| match e {
+                        ScoreEvent::Note { beats, .. } => *beats,
+                        ScoreEvent::Rest { beats } => *beats,
+                        _ => 0.0,
+                    }).sum::<f32>().max(1.0);
+                    let mut progress = self.current_beat / total;
+                    let slider = egui::Slider::new(&mut progress, 0.0..=1.0)
+                        .show_value(false).trailing_fill(true);
+                    if ui.add(slider).changed() { self.current_beat = progress * total; }
                 }
                 // Drill progress status line
                 ui.horizontal(|ui| {
@@ -1082,19 +1059,6 @@ impl eframe::App for PlayerApp {
             }
             ui.add_space(4.0);
         });
-
-        // ── Drill input processing ──
-        if self.drill_mode {
-            if let Some(ref mut d) = self.drill {
-                if !d.is_finished() && self.playing {
-                    if ctx.input(|i| i.key_pressed(egui::Key::Space)) { d.advance_manual(); }
-                    d.check_auto_advance();
-                }
-                if d.is_finished() && d.challenges_completed > 0 {
-                    self.drill_progress = d.save_to_progress();
-                }
-            }
-        }
 
         // ── Central score view ──
         egui::CentralPanel::default().show(ctx, |ui| {
@@ -1120,58 +1084,8 @@ impl eframe::App for PlayerApp {
                     let selected_pc = music::key_to_pc(&self.current_key);
                     let key_root = ((selected_pc - music::MAJOR_SCALE[self.mode_offset as usize]) % 12 + 12) % 12;
 
-                    if self.drill_mode {
-                        // ── Drill: use render_score with generated ScoreEvents ──
-                        let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
-                        let view_width = rect.width();
-
-                        if let Some(ref drill_session) = self.drill {
-                            if !drill_session.is_finished() {
-                                // Generate ScoreEvents from drill timeline
-                                let events = drill::timeline_to_events(
-                                    &drill_session.timeline,
-                                    key_root,
-                                    self.rh_fingers as usize,
-                                    self.lh_fingers as usize,
-                                );
-
-                                // Compute current_beat from drill elapsed time
-                                let elapsed = if !self.playing {
-                                    drill_session.current_challenge().map_or(0.0, |tc| tc.start_time)
-                                } else {
-                                    drill_session.elapsed()
-                                };
-
-                                // Map elapsed time to beat position
-                                // Each challenge has duration target_secs, beats = target_secs
-                                // So current_beat ≈ elapsed (since beats = seconds in drill)
-                                let drill_beat = elapsed;
-
-                                let playhead_x_target = view_width * self.playhead_fraction;
-                                let scroll = (drill_beat * 60.0 - playhead_x_target + layout.left_margin).max(0.0);
-
-                                render_score(
-                                    &painter, &layout, &events,
-                                    scroll, drill_beat, view_width, key_root,
-                                );
-                            } else {
-                                painter.text(rect.center(), egui::Align2::CENTER_CENTER,
-                                    format!("{:.1} NPM \u{00b7} Tap Drill to restart", drill_session.notes_per_minute()),
-                                    egui::FontId::proportional(16.0), ACCENT);
-                            }
-                        }
-
-                        // Drag to adjust pace
-                        if response.dragged() {
-                            let dy = response.drag_delta().y;
-                            if dy.abs() > 0.5 {
-                                self.drill_progress.target_secs = (self.drill_progress.target_secs + dy * 0.01).clamp(0.4, 12.0);
-                                drill::save_progress(&self.drill_progress);
-                                if let Some(ref mut d) = self.drill { d.target_secs = self.drill_progress.target_secs; }
-                            }
-                        }
-                    } else {
-                        // ── Songs: hymn score ──
+                    {
+                        // ── Same rendering for Songs and Drill ──
                         let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
                         let view_width = rect.width();
 
@@ -1183,7 +1097,12 @@ impl eframe::App for PlayerApp {
                         let playhead_x_target = view_width * self.playhead_fraction;
                         self.scroll_offset = (self.current_beat * 60.0 - playhead_x_target + layout.left_margin).max(0.0);
 
-                        let events = self.current_events().to_vec();
+                        // Use drill score or hymn score
+                        let events = if self.drill_mode {
+                            self.drill_score.as_ref().map(|s| s.events.clone()).unwrap_or_default()
+                        } else {
+                            self.current_events().to_vec()
+                        };
 
                         render_score(
                             &painter,
