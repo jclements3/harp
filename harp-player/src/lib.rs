@@ -1,6 +1,7 @@
 pub mod abc;
 pub mod audio;
 pub mod chord;
+pub mod drill;
 pub mod music;
 pub mod notation;
 pub mod voicing;
@@ -140,6 +141,22 @@ struct PlayerApp {
     // Current chord info for circle of fifths display
     current_chord_degrees: Vec<i32>,  // diatonic degrees (0-6) of current chord tones
     current_melody_degree: i32,       // melody's diatonic degree (0-6)
+
+    // Drill mode
+    drill_mode: bool,  // false = Songs, true = Drill
+    drill: Option<drill::DrillSession>,
+    drill_progress: drill::Progress,
+    drill_config: drill::DrillConfig,
+    drill_paused: bool,
+    // Note duration checkboxes per hand
+    rh_whole: bool,
+    rh_half: bool,
+    rh_quarter: bool,
+    rh_eighth: bool,
+    lh_whole: bool,
+    lh_half: bool,
+    lh_quarter: bool,
+    lh_eighth: bool,
 }
 
 impl PlayerApp {
@@ -180,6 +197,13 @@ impl PlayerApp {
             recent_hymns: Vec::new(),
             current_chord_degrees: vec![0, 2, 4], // default I chord
             current_melody_degree: 0,
+            drill_mode: false,
+            drill: None,
+            drill_progress: drill::load_progress(),
+            drill_config: drill::DrillConfig::default(),
+            drill_paused: false,
+            rh_whole: true, rh_half: true, rh_quarter: true, rh_eighth: false,
+            lh_whole: true, lh_half: false, lh_quarter: false, lh_eighth: false,
         }
     }
 
@@ -830,36 +854,181 @@ impl eframe::App for PlayerApp {
             ui.add_space(2.0);
         });
 
-        // ── Bottom: progress bar + status ──
-        egui::TopBottomPanel::bottom("status").show(ctx, |ui| {
-            // Progress bar (full width, draggable)
-            let total = self.total_beats().max(1.0);
-            let mut progress = self.current_beat / total;
-            let slider = egui::Slider::new(&mut progress, 0.0..=1.0)
-                .show_value(false)
-                .trailing_fill(true);
-            if ui.add(slider).changed() {
-                self.current_beat = progress * total;
-            }
+        // ── Drill controls + metrics panel ──
+        egui::TopBottomPanel::bottom("drill_panel").show(ctx, |ui| {
+            ui.add_space(4.0);
+
+            let active = self.drill_mode;
+            let gray = egui::Color32::from_rgb(190, 190, 190);
 
             ui.horizontal(|ui| {
-                ui.colored_label(TEXT_MUTED, &self.status);
-                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                    if let Some(s) = self.scores.get(self.current_score) {
-                        ui.label(egui::RichText::new(
-                            format!("Key: {}  Meter: {}/{}  Tempo: {} BPM",
-                                s.key, s.meter_num, s.meter_den, s.tempo)
-                        ).small().color(TEXT_MUTED));
+                ui.set_min_height(90.0);
+
+                // ── Col 1: Toggle button (fills height) ──
+                let label = if self.drill_mode { "Drill" } else { "Songs" };
+                let toggle = egui::Button::new(
+                    egui::RichText::new(label).size(18.0).strong().color(egui::Color32::WHITE)
+                ).fill(ACCENT).corner_radius(10.0).min_size(egui::Vec2::new(80.0, 85.0));
+                if ui.add(toggle).clicked() {
+                    self.drill_mode = !self.drill_mode;
+                    if self.drill_mode {
+                        let pedals = music::pedals_from_key(&self.current_key);
+                        self.drill = Some(drill::DrillSession::new(
+                            self.drill_config.clone(), &pedals, &self.drill_progress));
+                        self.drill_paused = false;
+                    } else {
+                        if let Some(ref d) = self.drill { self.drill_progress = d.save_to_progress(); }
+                        self.drill = None;
                     }
+                }
+
+                ui.separator();
+
+                // ── Col 2: Drill type + note durations ──
+                ui.vertical(|ui| {
+                    // Intervals / Chords
+                    ui.horizontal(|ui| {
+                        let mk = |ui: &mut egui::Ui, lbl: &str, sel: bool, en: bool| -> bool {
+                            let (fg, bg, sc) = if !en { (gray, CARD_BG, egui::Color32::from_rgb(220,220,220)) }
+                                else if sel { (egui::Color32::WHITE, ACCENT, ACCENT) }
+                                else { (TEXT_MUTED, CARD_BG, BORDER) };
+                            ui.add(egui::Button::new(egui::RichText::new(lbl).size(12.0).color(fg))
+                                .fill(bg).stroke(egui::Stroke::new(1.5, sc)).corner_radius(6.0)).clicked() && en
+                        };
+                        if mk(ui, "Intervals", self.drill_config.mode == drill::DrillMode::Intervals, active) {
+                            self.drill_config.mode = drill::DrillMode::Intervals;
+                        }
+                        if mk(ui, "Chords", self.drill_config.mode == drill::DrillMode::Chords, active) {
+                            self.drill_config.mode = drill::DrillMode::Chords;
+                        }
+                    });
+
+                    let c = if active { TEXT_PRIMARY } else { gray };
+                    // RH durations with text labels for note values
+                    ui.horizontal(|ui| {
+                        ui.label(egui::RichText::new("RH").size(13.0).strong().color(c));
+                        ui.checkbox(&mut self.rh_whole, egui::RichText::new("W").size(11.0).color(c));
+                        ui.checkbox(&mut self.rh_half, egui::RichText::new("H").size(11.0).color(c));
+                        ui.checkbox(&mut self.rh_quarter, egui::RichText::new("Q").size(11.0).color(c));
+                        ui.checkbox(&mut self.rh_eighth, egui::RichText::new("8").size(11.0).color(c));
+                    });
+                    // LH durations
+                    ui.horizontal(|ui| {
+                        ui.label(egui::RichText::new("LH").size(13.0).strong().color(c));
+                        ui.checkbox(&mut self.lh_whole, egui::RichText::new("W").size(11.0).color(c));
+                        ui.checkbox(&mut self.lh_half, egui::RichText::new("H").size(11.0).color(c));
+                        ui.checkbox(&mut self.lh_quarter, egui::RichText::new("Q").size(11.0).color(c));
+                        ui.checkbox(&mut self.lh_eighth, egui::RichText::new("8").size(11.0).color(c));
+                    });
+                });
+
+                ui.separator();
+
+                // ── Col 3: Two progress bars ──
+                ui.vertical(|ui| {
+                    let (streak_pct, level_pct, npm_text, level_text) = if active {
+                        if let Some(ref d) = self.drill {
+                            let sp = (d.streak as f32 / 4.0 * 100.0).min(100.0);
+                            let lp = if d.level > 0 { ((d.notes_per_minute() / (d.level as f32 * 20.0 + 20.0)) * 100.0).min(100.0) } else { 0.0 };
+                            (sp, lp, format!("{:.0} NPM \u{00b7} {} done", d.notes_per_minute(), d.challenges_completed),
+                             format!("Level {}", d.level))
+                        } else { (0.0, 0.0, "0 NPM".into(), "Level 0".into()) }
+                    } else {
+                        let lp = if self.drill_progress.best_npm > 0.0 { ((self.drill_progress.best_npm / 60.0) * 100.0).min(100.0) } else { 0.0 };
+                        (0.0, lp,
+                         if self.drill_progress.best_npm > 0.0 { format!("Best {:.0} NPM", self.drill_progress.best_npm) } else { "".into() },
+                         format!("Level {}", self.drill_progress.level))
+                    };
+
+                    let bar_c = if active { ACCENT } else { gray };
+                    let track = egui::Color32::from_rgb(232, 232, 232);
+
+                    // Progress bar 1: streak toward level-up
+                    ui.label(egui::RichText::new(&npm_text).size(11.0).color(if active { TEXT_PRIMARY } else { gray }));
+                    let (r1, _) = ui.allocate_exact_size(egui::Vec2::new(ui.available_width().min(140.0), 10.0), egui::Sense::hover());
+                    let p = ui.painter_at(r1);
+                    p.rect_filled(r1, 5.0, track);
+                    let f1 = egui::Rect::from_min_size(r1.min, egui::Vec2::new(r1.width() * streak_pct / 100.0, r1.height()));
+                    p.rect_filled(f1, 5.0, egui::Color32::from_rgb(40, 167, 69));
+
+                    ui.add_space(4.0);
+
+                    // Progress bar 2: level
+                    ui.label(egui::RichText::new(&level_text).size(11.0).color(if active { ACCENT } else { gray }));
+                    let (r2, _) = ui.allocate_exact_size(egui::Vec2::new(ui.available_width().min(140.0), 10.0), egui::Sense::hover());
+                    let p2 = ui.painter_at(r2);
+                    p2.rect_filled(r2, 5.0, track);
+                    let f2 = egui::Rect::from_min_size(r2.min, egui::Vec2::new(r2.width() * level_pct / 100.0, r2.height()));
+                    p2.rect_filled(f2, 5.0, bar_c);
                 });
             });
+
+            // Row 2: progress bar + status
+            ui.add_space(2.0);
+            if !self.drill_mode {
+                let total = self.total_beats().max(1.0);
+                let mut progress = self.current_beat / total;
+                let slider = egui::Slider::new(&mut progress, 0.0..=1.0)
+                    .show_value(false)
+                    .trailing_fill(true);
+                if ui.add(slider).changed() {
+                    self.current_beat = progress * total;
+                }
+                ui.horizontal(|ui| {
+                    ui.colored_label(TEXT_MUTED, &self.status);
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        if let Some(s) = self.scores.get(self.current_score) {
+                            ui.label(egui::RichText::new(
+                                format!("Key: {}  Meter: {}/{}  Tempo: {} BPM",
+                                    s.key, s.meter_num, s.meter_den, s.tempo)
+                            ).small().color(TEXT_MUTED));
+                        }
+                    });
+                });
+            } else {
+                // Drill mode: scroll bar to review missed challenges
+                if let Some(ref drill) = self.drill {
+                    let total_time = drill.timeline.last().map_or(1.0, |tc| tc.start_time + tc.duration);
+                    let mut frac = (drill.elapsed() / total_time).clamp(0.0, 1.0);
+                    let slider = egui::Slider::new(&mut frac, 0.0..=1.0)
+                        .show_value(false)
+                        .trailing_fill(true);
+                    ui.add(slider);
+                }
+                // Drill progress status line
+                ui.horizontal(|ui| {
+                    let p = &self.drill_progress;
+                    ui.colored_label(TEXT_MUTED, format!(
+                        "Level {} \u{00b7} Best {:.0} NPM \u{00b7} {} notes \u{00b7} {} sessions",
+                        p.level, p.best_npm, p.total_notes, p.total_sessions));
+                    ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                        ui.label(egui::RichText::new(
+                            format!("Key: {} \u{00b7} {}", self.current_key,
+                                if self.drill_config.mode == drill::DrillMode::Intervals { "Intervals" } else { "Chords" })
+                        ).small().color(TEXT_MUTED));
+                    });
+                });
+            }
+            ui.add_space(4.0);
         });
+
+        // ── Drill input processing ──
+        if self.drill_mode {
+            if let Some(ref mut d) = self.drill {
+                if !d.is_finished() && !self.drill_paused {
+                    if ctx.input(|i| i.key_pressed(egui::Key::Space)) { d.advance_manual(); }
+                    d.check_auto_advance();
+                }
+                if d.is_finished() && d.challenges_completed > 0 {
+                    self.drill_progress = d.save_to_progress();
+                }
+            }
+        }
 
         // ── Central score view ──
         egui::CentralPanel::default().show(ctx, |ui| {
             let avail = ui.available_size();
 
-            // Score card
             egui::Frame::NONE
                 .fill(CARD_BG)
                 .inner_margin(8.0)
@@ -877,34 +1046,102 @@ impl eframe::App for PlayerApp {
                     );
 
                     let painter = ui.painter_at(rect);
-                    let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
-
-                    let view_width = rect.width();
-
-                    // Manual drag adjusts current_beat
-                    if !self.playing && response.dragged() {
-                        let drag_beats = response.drag_delta().x / 60.0;
-                        self.current_beat = (self.current_beat - drag_beats).max(0.0);
-                    }
-
-                    // Scroll offset always derived from current_beat
-                    let playhead_x_target = view_width * self.playhead_fraction;
-                    self.scroll_offset = (self.current_beat * 60.0 - playhead_x_target + layout.left_margin).max(0.0);
-
-                    let events = self.current_events().to_vec();
-                    // Compute key_root from the user-selected key and mode
                     let selected_pc = music::key_to_pc(&self.current_key);
                     let key_root = ((selected_pc - music::MAJOR_SCALE[self.mode_offset as usize]) % 12 + 12) % 12;
 
-                    render_score(
-                        &painter,
-                        &layout,
-                        &events,
-                        self.scroll_offset,
-                        self.current_beat,
-                        view_width,
-                        key_root,
-                    );
+                    if self.drill_mode {
+                        // ── Drill: scrolling random challenges ──
+                        if let Some(ref drill) = self.drill {
+                            if !drill.is_finished() {
+                                let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
+                                let view_width = rect.width();
+                                notation::draw_staff(&painter, &layout, view_width);
+                                notation::draw_clefs(&painter, &layout);
+
+                                let playhead_x = rect.left() + view_width * 0.25;
+                                let elapsed = if self.drill_paused {
+                                    drill.current_challenge().map_or(0.0, |tc| tc.start_time)
+                                } else {
+                                    drill.elapsed()
+                                };
+                                let gap = 110.0f32;
+                                let frac = drill.current_challenge().map_or(0.0, |tc|
+                                    ((elapsed - tc.start_time) / tc.duration).clamp(0.0, 1.0));
+
+                                for (i, tc) in drill.timeline.iter().enumerate() {
+                                    let x = playhead_x + (i as f32 - drill.current_idx as f32 - frac) * gap;
+                                    if x < rect.left() - 40.0 || x > rect.right() + 40.0 { continue; }
+
+                                    let is_current = i == drill.current_idx;
+                                    let is_past = i < drill.current_idx;
+                                    let ch = &tc.challenge;
+
+                                    // Label above
+                                    let label_y = layout.label_top_y + 10.0;
+                                    let lc = if is_current { ACCENT } else if is_past {
+                                        egui::Color32::from_rgba_premultiplied(100,100,100,60)
+                                    } else { TEXT_MUTED };
+                                    painter.text(egui::Pos2::new(x, label_y), egui::Align2::CENTER_CENTER,
+                                        &ch.label, egui::FontId::proportional(if is_current { 14.0 } else { 11.0 }), lc);
+
+                                    // Notes
+                                    for (ni, &midi) in ch.notes.iter().enumerate() {
+                                        let active = is_current && ni == ch.next_finger;
+                                        let pos = notation::midi_to_staff_pos(midi as i32);
+                                        let on_treble = midi >= 60;
+                                        if on_treble {
+                                            notation::draw_note_stem_up(&painter, &layout, x, pos, true, 1.0, active);
+                                        } else {
+                                            notation::draw_note_stem_down(&painter, &layout, x, pos, false, 1.0, active);
+                                        }
+                                    }
+                                }
+
+                                // Playhead
+                                notation::draw_playhead(&painter, playhead_x, &layout);
+                            } else {
+                                // Drill finished
+                                painter.text(rect.center(), egui::Align2::CENTER_CENTER,
+                                    format!("{:.1} NPM \u{00b7} Lv {} \u{00b7} Tap Drill to restart",
+                                        drill.notes_per_minute(), drill.level),
+                                    egui::FontId::proportional(16.0), ACCENT);
+                            }
+                        }
+
+                        // Drag to adjust pace
+                        if response.dragged() {
+                            let dy = response.drag_delta().y;
+                            if dy.abs() > 0.5 {
+                                self.drill_progress.target_secs = (self.drill_progress.target_secs + dy * 0.01).clamp(0.4, 12.0);
+                                drill::save_progress(&self.drill_progress);
+                                if let Some(ref mut d) = self.drill { d.target_secs = self.drill_progress.target_secs; }
+                            }
+                        }
+                    } else {
+                        // ── Songs: hymn score ──
+                        let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
+                        let view_width = rect.width();
+
+                        if !self.playing && response.dragged() {
+                            let drag_beats = response.drag_delta().x / 60.0;
+                            self.current_beat = (self.current_beat - drag_beats).max(0.0);
+                        }
+
+                        let playhead_x_target = view_width * self.playhead_fraction;
+                        self.scroll_offset = (self.current_beat * 60.0 - playhead_x_target + layout.left_margin).max(0.0);
+
+                        let events = self.current_events().to_vec();
+
+                        render_score(
+                            &painter,
+                            &layout,
+                            &events,
+                            self.scroll_offset,
+                            self.current_beat,
+                            view_width,
+                            key_root,
+                        );
+                    }
                 });
         });
     }

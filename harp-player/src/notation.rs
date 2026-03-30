@@ -205,7 +205,7 @@ fn draw_notehead(painter: &egui::Painter, x: f32, y: f32, filled: bool, color: e
 
 /// Draw a note with stem UP (right side) — used for RH notes.
 /// `pos` = staff position (0 = middle C), `on_treble` = which staff to draw on.
-fn draw_note_stem_up(
+pub fn draw_note_stem_up(
     painter: &egui::Painter, layout: &NotationLayout,
     x: f32, pos: i32, on_treble: bool, beats: f32, is_active: bool,
 ) {
@@ -240,7 +240,7 @@ fn draw_note_stem_up(
 
 /// Draw a note with stem DOWN (left side) — used for LH notes.
 /// `pos` = staff position (0 = middle C), `on_treble` = which staff to draw on.
-fn draw_note_stem_down(
+pub fn draw_note_stem_down(
     painter: &egui::Painter, layout: &NotationLayout,
     x: f32, pos: i32, on_treble: bool, beats: f32, is_active: bool,
 ) {

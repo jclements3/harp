@@ -118,3 +118,87 @@ pub fn to_relative_string(string_num: i32, key_root: i32) -> i32 {
     let rel = string_num - ref_str + 1;
     if rel <= 0 { rel - 1 } else { rel }
 }
+
+// ── Drill support ─────────────────────────────────────────────────
+
+pub const NOTE_NAMES: [&str; 12] = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"];
+
+const BASE_SEMI: [u8; 7] = [0, 2, 4, 5, 7, 9, 11];
+const PEDAL_LETTER_IDX: [usize; 7] = [1, 0, 6, 2, 3, 4, 5];
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PedalPos { Flat, Natural, Sharp }
+
+#[derive(Debug, Clone)]
+pub struct PedalState {
+    pub positions: [PedalPos; 7],
+}
+
+impl Default for PedalState {
+    fn default() -> Self { Self { positions: [PedalPos::Natural; 7] } }
+}
+
+impl PedalState {
+    pub fn available_pitch_classes(&self) -> [u8; 7] {
+        let mut pcs = [0u8; 7];
+        for i in 0..7 {
+            let base = BASE_SEMI[i];
+            let pidx = PEDAL_LETTER_IDX.iter().position(|&li| li == i).unwrap();
+            pcs[i] = match self.positions[pidx] {
+                PedalPos::Flat => (base + 11) % 12,
+                PedalPos::Natural => base,
+                PedalPos::Sharp => (base + 1) % 12,
+            };
+        }
+        pcs
+    }
+
+    pub fn add_sharp(&mut self) {
+        let so: [usize; 7] = [3, 0, 4, 1, 5, 2, 6];
+        let fo: [usize; 7] = [6, 2, 5, 1, 4, 0, 3];
+        let (s, f, _) = self.key_sig_info();
+        if f > 0 { let li = fo[(f-1) as usize]; let pi = PEDAL_LETTER_IDX.iter().position(|&l| l==li).unwrap(); self.positions[pi] = PedalPos::Natural; }
+        else if s < 7 { let li = so[s as usize]; let pi = PEDAL_LETTER_IDX.iter().position(|&l| l==li).unwrap(); self.positions[pi] = PedalPos::Sharp; }
+    }
+
+    pub fn add_flat(&mut self) {
+        let so: [usize; 7] = [3, 0, 4, 1, 5, 2, 6];
+        let fo: [usize; 7] = [6, 2, 5, 1, 4, 0, 3];
+        let (s, f, _) = self.key_sig_info();
+        if s > 0 { let li = so[(s-1) as usize]; let pi = PEDAL_LETTER_IDX.iter().position(|&l| l==li).unwrap(); self.positions[pi] = PedalPos::Natural; }
+        else if f < 7 { let li = fo[f as usize]; let pi = PEDAL_LETTER_IDX.iter().position(|&l| l==li).unwrap(); self.positions[pi] = PedalPos::Flat; }
+    }
+
+    fn key_sig_info(&self) -> (u8, u8, bool) {
+        let (mut s, mut f) = (0u8, 0u8);
+        for i in 0..7 {
+            let pi = PEDAL_LETTER_IDX.iter().position(|&l| l==i).unwrap();
+            match self.positions[pi] { PedalPos::Sharp => s += 1, PedalPos::Flat => f += 1, _ => {} }
+        }
+        (s, f, !(s > 0 && f > 0))
+    }
+}
+
+pub fn available_notes_in_range(pedals: &PedalState, low: u8, high: u8) -> Vec<u8> {
+    let pcs = pedals.available_pitch_classes();
+    (low..=high).filter(|m| pcs.contains(&(m % 12))).collect()
+}
+
+pub const INTERVAL_NAMES: [&str; 13] = [
+    "Unison","m2","M2","m3","M3","P4","Tritone","P5","m6","M6","m7","M7","Octave",
+];
+
+pub fn interval_name(semi: u8) -> &'static str {
+    if (semi as usize) < INTERVAL_NAMES.len() { INTERVAL_NAMES[semi as usize] } else { "?" }
+}
+
+pub fn pedals_from_key(key: &str) -> PedalState {
+    let mut p = PedalState::default();
+    for &(k,n) in &[("G",1),("D",2),("A",3),("E",4),("B",5),("F#",6)] {
+        if k == key { for _ in 0..n { p.add_sharp(); } return p; }
+    }
+    for &(k,n) in &[("F",1),("Bb",2),("Eb",3),("Ab",4),("Db",5)] {
+        if k == key { for _ in 0..n { p.add_flat(); } return p; }
+    }
+    p
+}
