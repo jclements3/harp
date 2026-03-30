@@ -99,6 +99,7 @@ fn apply_style(ctx: &egui::Context) {
 
 const ALL_KEYS: [&str; 12] = ["C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
 const MODE_NAMES: [&str; 7] = ["Ion","Dor","Phr","Lyd","Mix","Aeo","Loc"];
+const DRILL_NAMES: [&str; 1] = ["Random"];
 
 struct PlayerApp {
     scores: Vec<Score>,
@@ -148,6 +149,8 @@ struct PlayerApp {
     drill_progress: drill::Progress,
     drill_config: drill::DrillConfig,
     drill_paused: bool,
+    drill_name: usize, // index into DRILL_NAMES
+    use_mic: bool,
     // Note duration checkboxes per hand
     rh_whole: bool,
     rh_half: bool,
@@ -202,6 +205,8 @@ impl PlayerApp {
             drill_progress: drill::load_progress(),
             drill_config: drill::DrillConfig::default(),
             drill_paused: false,
+            drill_name: 0,
+            use_mic: false,
             rh_whole: true, rh_half: true, rh_quarter: true, rh_eighth: false,
             lh_whole: true, lh_half: false, lh_quarter: false, lh_eighth: false,
         }
@@ -884,27 +889,30 @@ impl eframe::App for PlayerApp {
 
                 ui.separator();
 
-                // ── Col 2: Play + Drill type + note durations ──
+                // ── Col 2: ▶ Intervals Chords / RH notes / LH notes ──
                 ui.vertical(|ui| {
-                    // Play/Pause + Intervals / Chords
+                    // Row 1: Play + Intervals + Chords
                     ui.horizontal(|ui| {
-                        // Play/Pause button (always visible, gray when songs mode)
                         let drill_playing = active && self.drill.as_ref().map_or(false, |d| !d.is_finished()) && !self.drill_paused;
-                        let (ic, fl, cl) = if !active {
-                            ("\u{25B6}", egui::Color32::from_rgb(220,220,220), gray)
-                        } else if drill_playing {
+                        let is_playing = if active { drill_playing } else { self.playing };
+                        let (ic, fl, cl) = if is_playing {
                             ("\u{23F8}", ACCENT, egui::Color32::WHITE)
                         } else {
                             ("\u{25B6}", egui::Color32::from_rgb(40, 167, 69), egui::Color32::WHITE)
                         };
-                        if ui.add(egui::Button::new(egui::RichText::new(ic).size(14.0).color(cl)).fill(fl).corner_radius(6.0).min_size(egui::Vec2::new(32.0, 24.0))).clicked() && active {
-                            if self.drill.is_none() || self.drill.as_ref().map_or(false, |d| d.is_finished()) {
-                                let pedals = music::pedals_from_key(&self.current_key);
-                                self.drill = Some(drill::DrillSession::new(
-                                    self.drill_config.clone(), &pedals, &self.drill_progress));
-                                self.drill_paused = false;
+                        if ui.add(egui::Button::new(egui::RichText::new(ic).size(14.0).color(cl)).fill(fl).corner_radius(6.0).min_size(egui::Vec2::new(32.0, 24.0))).clicked() {
+                            if !active {
+                                self.playing = !self.playing;
+                                if self.playing { self.last_frame_time = None; }
                             } else {
-                                self.drill_paused = !self.drill_paused;
+                                if self.drill.is_none() || self.drill.as_ref().map_or(false, |d| d.is_finished()) {
+                                    let pedals = music::pedals_from_key(&self.current_key);
+                                    self.drill = Some(drill::DrillSession::new(
+                                        self.drill_config.clone(), &pedals, &self.drill_progress));
+                                    self.drill_paused = false;
+                                } else {
+                                    self.drill_paused = !self.drill_paused;
+                                }
                             }
                         }
 
@@ -923,6 +931,7 @@ impl eframe::App for PlayerApp {
                         }
                     });
 
+                    // Row 2: RH durations
                     let c = if active { TEXT_PRIMARY } else { gray };
                     ui.horizontal(|ui| {
                         ui.label(egui::RichText::new("RH").size(13.0).strong().color(c));
@@ -931,6 +940,7 @@ impl eframe::App for PlayerApp {
                         ui.checkbox(&mut self.rh_quarter, egui::RichText::new("Q").size(11.0).color(c));
                         ui.checkbox(&mut self.rh_eighth, egui::RichText::new("8").size(11.0).color(c));
                     });
+                    // Row 3: LH durations
                     ui.horizontal(|ui| {
                         ui.label(egui::RichText::new("LH").size(13.0).strong().color(c));
                         ui.checkbox(&mut self.lh_whole, egui::RichText::new("W").size(11.0).color(c));
@@ -942,40 +952,70 @@ impl eframe::App for PlayerApp {
 
                 ui.separator();
 
-                // ── Col 3: Two progress bars (use all remaining width) ──
+                // ── Col 3: [Random▾] / Mic / Calibrate ──
+                ui.vertical(|ui| {
+                    // Row 1: Drill dropdown
+                    let mut dn = self.drill_name;
+                    let dn_color = if active { TEXT_PRIMARY } else { gray };
+                    egui::ComboBox::from_id_salt("drill_sel")
+                        .selected_text(egui::RichText::new(DRILL_NAMES[dn]).size(12.0).color(dn_color))
+                        .width(80.0)
+                        .show_ui(ui, |ui| {
+                            for (i, name) in DRILL_NAMES.iter().enumerate() {
+                                ui.selectable_value(&mut dn, i, *name);
+                            }
+                        });
+                    if dn != self.drill_name { self.drill_name = dn; }
+
+                    // Row 2: Mic checkbox
+                    ui.checkbox(&mut self.use_mic, egui::RichText::new("Mic").size(12.0).color(if active { TEXT_PRIMARY } else { gray }));
+
+                    // Row 3: Calibrate button
+                    let cal_c = if active { TEXT_MUTED } else { gray };
+                    ui.add(egui::Button::new(egui::RichText::new("Calibrate").size(11.0).color(cal_c))
+                        .fill(CARD_BG).stroke(egui::Stroke::new(1.0, if active { BORDER } else { egui::Color32::from_rgb(220,220,220) }))
+                        .corner_radius(6.0));
+                });
+
+                ui.separator();
+
+                // ── Col 4: Two progress bars ──
                 ui.vertical(|ui| {
                     let bar_w = ui.available_width();
-                    let (streak_pct, level_pct, npm_text, level_text) = if active {
+                    let track = egui::Color32::from_rgb(232, 232, 232);
+
+                    let (streak_pct, npm_text) = if active {
                         if let Some(ref d) = self.drill {
                             let sp = (d.streak as f32 / 4.0 * 100.0).min(100.0);
-                            let lp = if d.level > 0 { ((d.notes_per_minute() / (d.level as f32 * 20.0 + 20.0)) * 100.0).min(100.0) } else { 0.0 };
-                            (sp, lp, format!("{:.0} NPM  \u{00b7}  {} done", d.notes_per_minute(), d.challenges_completed),
-                             format!("Level {}", d.level))
-                        } else { (0.0, 0.0, "0 NPM".into(), "Level 0".into()) }
+                            (sp, format!("{:.0} NPM \u{00b7} {} done", d.notes_per_minute(), d.challenges_completed))
+                        } else { (0.0, "".into()) }
                     } else {
-                        let lp = if self.drill_progress.best_npm > 0.0 { ((self.drill_progress.best_npm / 60.0) * 100.0).min(100.0) } else { 0.0 };
-                        (0.0, lp,
-                         if self.drill_progress.best_npm > 0.0 { format!("Best {:.0} NPM", self.drill_progress.best_npm) } else { "".into() },
-                         format!("Level {}", self.drill_progress.level))
+                        (0.0, if self.drill_progress.best_npm > 0.0 { format!("Best {:.0} NPM", self.drill_progress.best_npm) } else { "".into() })
                     };
 
-                    let track = egui::Color32::from_rgb(232, 232, 232);
-                    let txt_c = if active { TEXT_PRIMARY } else { gray };
-                    let lvl_c = if active { ACCENT } else { gray };
+                    let level_pct = if active {
+                        self.drill.as_ref().map_or(0.0, |d| if d.level > 0 { ((d.notes_per_minute() / (d.level as f32 * 20.0 + 20.0)) * 100.0).min(100.0) } else { 0.0 })
+                    } else {
+                        if self.drill_progress.best_npm > 0.0 { ((self.drill_progress.best_npm / 60.0) * 100.0).min(100.0) } else { 0.0 }
+                    };
 
-                    ui.label(egui::RichText::new(&npm_text).size(13.0).strong().color(txt_c));
+                    let txt_c = if active { TEXT_PRIMARY } else { gray };
+                    let bar_c = if active { ACCENT } else { gray };
+
+                    // Bar 1
+                    if !npm_text.is_empty() { ui.label(egui::RichText::new(&npm_text).size(11.0).color(txt_c)); }
                     let (r1, _) = ui.allocate_exact_size(egui::Vec2::new(bar_w, 12.0), egui::Sense::hover());
                     let p = ui.painter_at(r1);
                     p.rect_filled(r1, 6.0, track);
                     p.rect_filled(egui::Rect::from_min_size(r1.min, egui::Vec2::new(r1.width() * streak_pct / 100.0, r1.height())), 6.0, egui::Color32::from_rgb(40, 167, 69));
 
-                    ui.add_space(4.0);
+                    ui.add_space(6.0);
 
-                    ui.label(egui::RichText::new(&level_text).size(13.0).strong().color(lvl_c));
+                    // Bar 2
                     let (r2, _) = ui.allocate_exact_size(egui::Vec2::new(bar_w, 12.0), egui::Sense::hover());
                     let p2 = ui.painter_at(r2);
                     p2.rect_filled(r2, 6.0, track);
-                    p2.rect_filled(egui::Rect::from_min_size(r2.min, egui::Vec2::new(r2.width() * level_pct / 100.0, r2.height())), 6.0, if active { ACCENT } else { gray });
+                    p2.rect_filled(egui::Rect::from_min_size(r2.min, egui::Vec2::new(r2.width() * level_pct / 100.0, r2.height())), 6.0, bar_c);
                 });
             });
 
