@@ -1,0 +1,15 @@
+X:8
+T:VIII - Fix Position Scale (Two Hands)
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Both hands ascending parallel. Hold starting position, accelerate.
+%%text RH: 4-3-2-1, LH: 1-2-3-4 (one octave lower). Apply all A-D permutations.
+V:1 clef=treble name="RH"
+!accent!C2 !accent!D2 !accent!E2 !accent!F2|!accent!GA !accent!Bc !accent!de !accent!fg|
+(3!accent!abc (3!accent!def g/a/b/c'/ d'/e'/f'/g'/|c'8|]
+V:2 clef=bass name="LH"
+!accent!C,2 !accent!D,2 !accent!E,2 !accent!F,2|!accent!G,A, !accent!B,C !accent!DE !accent!FG|
+(3!accent!ABc (3!accent!DEF G/A/B/c/ D/E/F/G/|c8|]

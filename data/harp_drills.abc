@@ -1,0 +1,144 @@
+
+X: 1001
+T: Drill: I Placing (Full)
+C: Grossi
+M: 4/4
+L: 1/4
+%%staves (S1V1 S1V2) | (S2V1 S2V2)
+V: S1V1 clef=treble
+V: S1V2
+V: S2V1 clef=bass
+V: S2V2
+K: C
+[V: S1V1] [Q:1/4=80] C D E F | D E F G | E F G A | F G A B | G A B c | A G F E | G F E D | F E D C | C4 |]
+[V: S1V2] A, B, C D | B, C D E | C D E F | D E F G | E F G A | F E D C | E D C B, | D C B, A, | A,4 |]
+[V: S2V1] F, G, A, B, | G, A, B, C | A, B, C D | B, C D E | C D E F | D C B, A, | C B, A, G, | B, A, G, F, | F,4 |]
+[V: S2V2] D, E, F, G, | E, F, G, A, | F, G, A, B, | G, A, B, C | A, B, C D | B, A, G, F, | A, G, F, E, | G, F, E, D, | D,4 |]
+
+X: 1002
+T: Drill: II Broken Thirds
+C: Grossi
+M: 4/4
+L: 1/4
+%%staves (S1V1 S1V2) | (S2V1 S2V2)
+V: S1V1 clef=treble
+V: S1V2
+V: S2V1 clef=bass
+V: S2V2
+K: C
+[V: S1V1] [Q:1/4=80] C E D F | E G F A | G B A c | B A G F | E D C2 |]
+[V: S1V2] A, C B, D | C E D F | E G F A | G F E D | C B, A,2 |]
+[V: S2V1] F, A, G, B, | A, C B, D | C E D F | E D C B, | A, G, F,2 |]
+[V: S2V2] D, F, E, G, | F, A, G, B, | A, C B, D | C B, A, G, | F, E, D,2 |]
+
+X: 1003
+T: Drill: III Block Chords
+C: Grossi
+M: 4/4
+L: 1/4
+%%staves (S1V1 S1V2) | (S2V1 S2V2)
+V: S1V1 clef=treble
+V: S1V2
+V: S2V1 clef=bass
+V: S2V2
+K: C
+[V: S1V1] [Q:1/4=72] F G A B | c B A G | F4 |]
+[V: S1V2] D E F G | A G F E | D4 |]
+[V: S2V1] B, C D E | F E D C | B,4 |]
+[V: S2V2] G, A, B, C | D C B, A, | G,4 |]
+
+X: 1004
+T: Drill: IV Arpeggios Up
+C: Grossi
+M: 4/4
+L: 1/4
+%%staves (S1V1 S1V2) | (S2V1 S2V2)
+V: S1V1 clef=treble
+V: S1V2
+V: S2V1 clef=bass
+V: S2V2
+K: C
+[V: S1V1] [Q:1/4=80] C E G c | D F A d | E G B e | F A c f | e c A F | d B G E | c A F D | C4 |]
+[V: S1V2] A, C E A | B, D F B | C E G C | D F A D | C A F D | B G E C | A F D B, | A,4 |]
+[V: S2V1] F, A, C F | G, B, D G | A, C E A | B, D F B | A F D B, | G E C A, | F D B, G, | F,4 |]
+[V: S2V2] D, F, A, D | E, G, B, E | F, A, C F | G, B, D G | F D B, G, | E C A, F, | D B, G, E, | D,4 |]
+
+X: 1005
+T: Drill: V Arpeggios Down
+C: Grossi
+M: 4/4
+L: 1/4
+%%staves (S1V1 S1V2) | (S2V1 S2V2)
+V: S1V1 clef=treble
+V: S1V2
+V: S2V1 clef=bass
+V: S2V2
+K: C
+[V: S1V1] [Q:1/4=80] c G E C | d A F D | e B G E | f c A F | F A c f | E G B e | D F A d | C4 |]
+[V: S1V2] A E C A, | B F D B, | C G E C | D A F D | D F A D | C E G C | B, D F B | A,4 |]
+[V: S2V1] F C A, F, | G D B, G, | A E C A, | B F D B, | B, D F B | A, C E A | G, B, D G | F,4 |]
+[V: S2V2] D A, F, D, | E B, G, E, | F C A, F, | G D B, G, | G, B, D G | F, A, C F | E, G, B, E | D,4 |]
+
+X: 1006
+T: Drill: VI Zigzag
+C: Rodriguez
+M: 3/4
+L: 1/4
+%%staves (S1V1 S1V2) | (S2V1 S2V2)
+V: S1V1 clef=treble
+V: S1V2
+V: S2V1 clef=bass
+V: S2V2
+K: C
+[V: S1V1] [Q:1/4=80] C D E | F E D | E F G | A G F | G A B | c B A | B A G | F E D | C3 |]
+[V: S1V2] A, B, C | D C B, | C D E | F E D | E F G | A G F | G F E | D C B, | A,3 |]
+[V: S2V1] F, G, A, | B, A, G, | A, B, C | D C B, | C D E | F E D | E D C | B, A, G, | F,3 |]
+[V: S2V2] D, E, F, | G, F, E, | F, G, A, | B, A, G, | A, B, C | D C B, | C B, A, | G, F, E, | D,3 |]
+
+X: 1007
+T: Drill: VII Scale Up Down
+C: Rodriguez
+M: 4/4
+L: 1/4
+%%staves (S1V1 S1V2) | (S2V1 S2V2)
+V: S1V1 clef=treble
+V: S1V2
+V: S2V1 clef=bass
+V: S2V2
+K: C
+[V: S1V1] [Q:1/4=72] C D E F | G A B c | c B A G | F E D C | C4 |]
+[V: S1V2] A, B, C D | E F G A | A G F E | D C B, A, | A,4 |]
+[V: S2V1] F, G, A, B, | C D E F | F E D C | B, A, G, F, | F,4 |]
+[V: S2V2] D, E, F, G, | A, B, C D | D C B, A, | G, F, E, D, | D,4 |]
+
+X: 1008
+T: Drill: VIII Contrary Motion
+C: Rodriguez
+M: 4/4
+L: 1/4
+%%staves (S1V1 S1V2) | (S2V1 S2V2)
+V: S1V1 clef=treble
+V: S1V2
+V: S2V1 clef=bass
+V: S2V2
+K: C
+[V: S1V1] [Q:1/4=72] C D E F | G A B c | c B A G | F E D C | C4 |]
+[V: S1V2] A, B, C D | E F G A | A G F E | D C B, A, | A,4 |]
+[V: S2V1] C B, A, G, | F, E, D, C, | C, D, E, F, | G, A, B, C | C,4 |]
+[V: S2V2] A, G, F, E, | D, C, B,, A,, | A,, B,, C, D, | E, F, G, A, | A,,4 |]
+
+X: 1009
+T: Drill: IX Scale + Chord
+C: Rodriguez
+M: 4/4
+L: 1/4
+%%staves (S1V1 S1V2) | (S2V1 S2V2)
+V: S1V1 clef=treble
+V: S1V2
+V: S2V1 clef=bass
+V: S2V2
+K: C
+[V: S1V1] [Q:1/4=72] C D E F | G A B c | c4 | c B A G | F E D C | C4 |]
+[V: S1V2] A, B, C D | E F G A | A4 | A G F E | D C B, A, | A,4 |]
+[V: S2V1] F, G, A, B, | C D E F | F4 | F E D C | B, A, G, F, | F,4 |]
+[V: S2V2] D, E, F, G, | A, B, C D | D4 | D C B, A, | G, F, E, D, | D,4 |]

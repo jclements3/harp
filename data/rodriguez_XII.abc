@@ -1,0 +1,14 @@
+X:12
+T:XII - Accent Combinations
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=80
+K:C
+%%text Same scale, accents shift position each pass.
+%%text Pass 1: accent on beat 1. Pass 2: accent on beat 2. Etc.
+%%text Combine different fingerings per hand: e.g. RH 4-3-2-1, LH 2-4-3-1
+!accent!CDEF GABC|!accent!defg abc'd'|c'8|
+C!accent!DEF GABc|d!accent!efg abc'd'|c'8|
+CD!accent!EF GABc|de!accent!fg abc'd'|c'8|
+CDE!accent!F GABc|def!accent!g abc'd'|c'8|]

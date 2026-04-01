@@ -1,0 +1,14 @@
+X:13
+T:XIII - Hand Interchange
+C:Rodriguez Do Campo Method (2020)
+M:3/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Seamless hand switching. LH plays 4 notes, RH continues 4 notes.
+%%text Must sound like one continuous scale. Also practice as plaque chords.
+%%text LH(MI): 4-3-2-1, RH(MD): 1-2-3-4. Apply all permutations.
+V:1 clef=treble name="RH"
+z4 EF|GABc z2|z4 ef|gabc' z2|z4 e'f'|g'a'b'c'' z2|c''6|]
+V:2 clef=bass name="LH"
+!accent!C,D,E,F, z2|z4 !accent!CD|!accent!EFGAz2|z4 !accent!cd|!accent!efga z2|z6|z6|]

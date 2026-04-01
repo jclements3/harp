@@ -1,0 +1,14 @@
+X:14
+T:XIV - Combined Fingerings
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/4
+Q:1/4=60
+K:C
+%%text Slow scale, each hand uses DIFFERENT fingering simultaneously.
+%%text RH(desc): 4-3-2-1, LH(asc): 2-4-3-1 (or any A-D combination).
+%%text Crosshead note = replace finger 4 before thumb plays.
+V:1 clef=treble name="RH"
+!accent!C D E F|G A B c|d e f g|a b c' d'|c'4|]
+V:2 clef=bass name="LH"
+!accent!C, D, E, F,|G, A, B, C|D E F G|A B c d|c4|]

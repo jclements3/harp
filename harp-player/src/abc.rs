@@ -180,6 +180,14 @@ fn parse_voice_tokens(music: &str, key_sig_acc: &[i32; 7]) -> Vec<Token> {
 
 /// Embedded ABC data
 const EMBEDDED_ABC_BYTES: &[u8] = include_bytes!("../../data/OpenHymnal.abc");
+const EMBEDDED_DRILL_BYTES: &[u8] = include_bytes!("../../data/harp_drills.abc");
+
+fn combined_abc_text() -> String {
+    let mut text = String::from_utf8_lossy(EMBEDDED_ABC_BYTES).into_owned();
+    text.push('\n');
+    text.push_str(&String::from_utf8_lossy(EMBEDDED_DRILL_BYTES));
+    text
+}
 
 /// Select display strings from full voicing for given finger counts.
 /// RH: melody on thumb, pick chord tones below to maximize span.
@@ -287,7 +295,7 @@ pub fn compute_display_strings(score: &mut Score, rh_fingers: usize, lh_fingers:
 }
 
 pub fn load_embedded_scores() -> Vec<Score> {
-    let text = String::from_utf8_lossy(EMBEDDED_ABC_BYTES);
+    let text = combined_abc_text();
     let mut scores = parse_all_with_fingers(&text, 4, 4);
     for s in &mut scores {
         compute_display_strings(s, 4, 4, &[]);
@@ -296,13 +304,13 @@ pub fn load_embedded_scores() -> Vec<Score> {
 }
 
 pub fn load_embedded_scores_fingers(rh: usize, lh: usize) -> Vec<Score> {
-    let text = String::from_utf8_lossy(EMBEDDED_ABC_BYTES);
+    let text = combined_abc_text();
     parse_all_with_fingers(&text, rh, lh)
 }
 
 pub fn revoice_score(score: &Score, rh: usize, lh: usize) -> Score {
     // Re-parse just this one hymn from the embedded ABC
-    let text = String::from_utf8_lossy(EMBEDDED_ABC_BYTES);
+    let text = combined_abc_text();
     let all = parse_all_with_fingers(&text, rh, lh);
     all.into_iter()
         .find(|s| s.number == score.number)
@@ -310,7 +318,7 @@ pub fn revoice_score(score: &Score, rh: usize, lh: usize) -> Score {
 }
 
 pub fn revoice_score_transposed(score: &Score, rh: usize, lh: usize, transpose_semitones: i32, new_key: &str) -> Score {
-    let text = String::from_utf8_lossy(EMBEDDED_ABC_BYTES);
+    let text = combined_abc_text();
     let all = parse_all_with_fingers(&text, rh, lh);
     let mut result = all.into_iter()
         .find(|s| s.number == score.number)

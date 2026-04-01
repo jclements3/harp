@@ -1,0 +1,10 @@
+X:10
+T:X - Scale with Chords
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Ascending scale fragments alternating with block chords. Both hands.
+%%text Fingering: 4-3-2-1 scale, 1-2-3-4 chord. Apply all permutations.
+CDEF GABc|[CEGc]2 z2 defg|abc'd'e'f'g'a'|[c'e'g'c'']2 z2 c''8|]

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Harp Scale Drills - Condensed Patterns</title>
+<style>
+body { font-family: serif; max-width: 900px; margin: 0 auto; padding: 20px; }
+h1 { text-align: center; }
+h2 { margin-top: 40px; border-bottom: 2px solid #333; padding-bottom: 5px; }
+.drill { margin: 30px 0; border-bottom: 1px solid #ccc; padding-bottom: 20px; }
+.drill:last-child { border-bottom: none; }
+.error { color: red; white-space: pre-wrap; }
+table { border-collapse: collapse; margin: 10px 0; font-size: 14px; }
+th, td { border: 1px solid #ccc; padding: 4px 8px; text-align: left; }
+th { background: #f0f0f0; }
+code { background: #f5f5f5; padding: 1px 4px; font-size: 13px; }
+.fingering-ref { background: #fafafa; padding: 15px; margin: 15px 0; border: 1px solid #ddd; font-size: 14px; }
+</style>
+<script src="../node_modules/abc2svg/abc2svg-1.js"></script>
+</head>
+<body>
+<h1>Condensed Harp Scale Drills</h1>
+<p style="text-align:center; color:#666;">Core patterns from Grossi (1951) and Rodriguez Do Campo (2020)</p>
+
+<div class="fingering-ref">
+<strong>Core Fingering Permutations</strong> (apply to all exercises)<br>
+<table>
+<tr><th>ID</th><th>Descending (RH asc)</th><th>Ascending (LH asc)</th><th>Description</th></tr>
+<tr><td>A</td><td><code>4-3-2-1</code></td><td><code>1-2-3-4</code></td><td>Standard sequential</td></tr>
+<tr><td>B</td><td><code>3-4-2-1</code></td><td><code>2-1-3-4</code></td><td>Middle leads</td></tr>
+<tr><td>C</td><td><code>2-4-3-1</code></td><td><code>3-1-2-4</code></td><td>Index leads</td></tr>
+<tr><td>D</td><td><code>4-2-3-1</code></td><td><code>1-3-2-4</code></td><td>Ring-skip</td></tr>
+</table>
+<strong>Replacement Bridges</strong> (transition between hand positions)<br>
+<code>R1: 4321|4321</code> (clean) &nbsp;
+<code>R2: 43214|34123</code> (5+5) &nbsp;
+<code>R3: 43213|4123</code> (5+4) &nbsp;
+<code>R4: 432143|234123</code> (6+6) &nbsp;
+<code>R5: 432142|34123</code> (6+5)
+</div>
+
+<h2>Grossi Method (1951) &mdash; Exercises I-VI</h2>
+<div id="grossi"></div>
+
+<h2>Rodriguez Do Campo Method (2020) &mdash; Exercises VII-XV</h2>
+<div id="rodriguez"></div>
+
+<script>
+const grossi = [
+`X:1
+T:I - Placing (Full Hand)
+C:Grossi Method
+M:4/4
+L:1/8
+Q:1/4=80
+K:C
+%%text Fingers 4-3-2-1, place all four in advance, simile
+CDEF DEFG|EFGA FGAB|GABc ABcd|Bcde cdef|defg efga|
+agfe gfed|fedc edcB|dcBA cBAG|BAGF AGFE|GFED FEDC|C8|]`,
+
+`X:2
+T:II - Placing (One Finger)
+C:Grossi Method
+M:4/4
+L:1/8
+Q:1/4=80
+K:C
+%%text Place only one finger in advance
+CDEF DEFG|EFGA FGAB|GABc ABcd|Bcde cdef|defg efga|gabc' abc'd'|
+d'c'ba c'bag|bagf agfe|gfed fedc|edcB dcBA|cBAG BAGF|AGFE GFED|FEDC C4|]`,
+
+`X:3
+T:III - Broken Thirds
+C:Grossi Method
+M:4/4
+L:1/8
+Q:1/4=80
+K:C
+%%text Fingers 2-4, 3-1 alternating
+CEDF EGFA|GBAc Bdce|dfeg fagb|ac'bg afge|fdec dBcA|BGAF GEFD|EC C6|]`,
+
+`X:4
+T:IV - Block Chords
+C:Grossi Method
+M:4/4
+L:1/4
+Q:1/4=72
+K:C
+%%text Play each chord rigorously unbroken (plaque), simile
+[CDEF][DEFG][EFGA][FGAB]|[GABc][ABcd][Bcde][cdef]|[defg][efga][fgab][gabc']|
+[abc'd'][gabc'][fgab][efga]|[defg][cdef][Bcde][ABcd]|[GABc][FGAB][EFGA][DEFG]|[CDEF]4|]`,
+
+`X:5
+T:V - Ascending Arpeggios
+C:Grossi Method
+M:4/4
+L:1/8
+Q:1/4=80
+K:C
+%%text Scale-tone arpeggios ascending, simile
+CEGc DFAd|EGBe FAcf|GBdg Acea|Bdfb cegc'|
+c'gec bfdB|aecA gdBG|fcAF eBGE|dAFD cGEC|C8|]`,
+
+`X:6
+T:VI - Descending Arpeggios
+C:Grossi Method
+M:4/4
+L:1/8
+Q:1/4=80
+K:C
+%%text Scale-tone arpeggios descending, simile
+cGEC dAFD|eBGE fcAF|gdBG aecA|bfdB c'gec|
+cegc' Bdfb|Acea GBdg|FAcf EGBe|DFAd CEGc|C8|]`
+];
+
+const rodriguez = [
+`X:7
+T:VII - Accelerating Scale
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Single hand ascending. Accelerate: quarter > eighth > triplet > 16th > relax.
+%%text Fingering: 4-3-2-1 replace (R1 bridge). Apply all permutations A-D.
+!accent!C2 !accent!D2 !accent!E2 !accent!F2|!accent!GA !accent!Bc !accent!de !accent!fg|
+(3!accent!abc (3!accent!def g/a/b/c'/ d'/e'/f'/g'/|c'8|]`,
+
+`X:8
+T:VIII - Fix Position Scale (Two Hands)
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Both hands ascending parallel. Hold starting position, accelerate.
+%%text RH: 4-3-2-1, LH: 1-2-3-4 (one octave lower). Apply all A-D permutations.
+V:1 clef=treble name="RH"
+!accent!C2 !accent!D2 !accent!E2 !accent!F2|!accent!GA !accent!Bc !accent!de !accent!fg|
+(3!accent!abc (3!accent!def g/a/b/c'/ d'/e'/f'/g'/|c'8|]
+V:2 clef=bass name="LH"
+!accent!C,2 !accent!D,2 !accent!E,2 !accent!F,2|!accent!G,A, !accent!B,C !accent!DE !accent!FG|
+(3!accent!ABc (3!accent!DEF G/A/B/c/ D/E/F/G/|c8|]`,
+
+`X:9
+T:IX - Crossing Scale (Bass to Treble)
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Ascending scale crossing from bass to treble clef with hand replacement.
+%%text RH descending: 4-3-2-1, LH ascending: 1-2-3-4. Apply permutations A-D.
+V:1 clef=treble name="RH"
+z8|z8|!accent!cdef !accent!gabc'|!accent!d'e'f'g' c'8|]
+V:2 clef=bass name="LH"
+!accent!C,D,E,F, !accent!G,A,B,C|!accent!DEFG !accent!ABcd|z8|z8|]`,
+
+`X:10
+T:X - Scale with Chords
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Ascending scale fragments alternating with block chords. Both hands.
+%%text Fingering: 4-3-2-1 scale, 1-2-3-4 chord. Apply all permutations.
+CDEF GABc|[CEGc]2 z2 defg|abc'd'e'f'g'a'|[c'e'g'c'']2 z2 c''8|]`,
+
+`X:11
+T:XI - Zigzag Scale
+C:Rodriguez Do Campo Method (2020)
+M:3/4
+L:1/8
+Q:1/4=80
+K:C
+%%text Wave pattern: up 4, back 2. Net ascent of 2 per cycle.
+%%text Both hands contrary motion. RH: 4-3-2-1, LH: 1-2-3-4. Apply permutations A-D.
+CDEFED|EFGAGF|GABcBA|Bcdedc|defgfe|fgabag|
+bagfga|gfedfe|edcBcd|cBAGAB|AGFEFG|FEDC C2|]`,
+
+`X:12
+T:XII - Accent Combinations
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=80
+K:C
+%%text Same scale, accents shift position each pass.
+%%text Combine different fingerings per hand: e.g. RH 4-3-2-1, LH 2-4-3-1
+!accent!CDEF GABC|!accent!defg abc'd'|c'8|
+C!accent!DEF GABc|d!accent!efg abc'd'|c'8|
+CD!accent!EF GABc|de!accent!fg abc'd'|c'8|
+CDE!accent!F GABc|def!accent!g abc'd'|c'8|]`,
+
+`X:13
+T:XIII - Hand Interchange
+C:Rodriguez Do Campo Method (2020)
+M:3/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Seamless hand switching. LH plays 4 notes, RH continues 4 notes.
+%%text Must sound like one continuous scale. Also practice as plaque chords.
+%%text LH(MI): 4-3-2-1, RH(MD): 1-2-3-4. Apply all permutations.
+V:1 clef=treble name="RH"
+z4 EF|GABc z2|z4 ef|gabc' z2|z4 e'f'|g'a'b'c'' z2|c''6|]
+V:2 clef=bass name="LH"
+!accent!C,D,E,F, z2|z4 !accent!CD|!accent!EFGAz2|z4 !accent!cd|!accent!efga z2|z6|z6|]`,
+
+`X:14
+T:XIV - Combined Fingerings
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/4
+Q:1/4=60
+K:C
+%%text Slow scale, each hand uses DIFFERENT fingering simultaneously.
+%%text RH(desc): 4-3-2-1, LH(asc): 2-4-3-1 (or any A-D combination).
+%%text Crosshead note = replace finger 4 before thumb plays.
+V:1 clef=treble name="RH"
+!accent!C D E F|G A B c|d e f g|a b c' d'|c'4|]
+V:2 clef=bass name="LH"
+!accent!C, D, E, F,|G, A, B, C|D E F G|A B c d|c4|]`,
+
+`X:15
+T:XV - Connecting Patterns (Dotted Rhythm)
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Scale connecting to chords with dotted rhythm.
+%%text Apply rhythmic formulas from p.11: dotted-eighth+sixteenth, swing, even.
+%%text Fingering: 4-3-2-1 scale, 1-2-3-4 chord. All permutations.
+C3/D/ E3/F/ G3/A/ B3/c/|d3/e/ f3/g/ a3/b/ c'3/d'/|[CEGc]4 [DFAd]4|
+d'3/c'/ b3/a/ g3/f/ e3/d/|c3/B/ A3/G/ F3/E/ D3/C/|[CEGc]8|]`
+];
+
+function renderDrills(drillList, containerId) {
+  const container = document.getElementById(containerId);
+  drillList.forEach(function(abc) {
+    const div = document.createElement('div');
+    div.className = 'drill';
+    container.appendChild(div);
+
+    let svgOut = '';
+    let errOut = '';
+    const user = {
+      img_out: function(str) { svgOut += str; },
+      errmsg: function(msg) { errOut += msg + '\n'; },
+      page_format: true
+    };
+
+    try {
+      const inst = new abc2svg.Abc(user);
+      inst.tosvg('drill', abc);
+      if (errOut) {
+        div.innerHTML += '<div class="error">' + errOut + '</div>';
+      }
+      div.innerHTML += svgOut;
+    } catch (e) {
+      div.innerHTML = '<div class="error">Render error: ' + e.message + '</div>';
+    }
+  });
+}
+
+renderDrills(grossi, 'grossi');
+renderDrills(rodriguez, 'rodriguez');
+</script>
+</body>
+</html>

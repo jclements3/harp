@@ -1,0 +1,13 @@
+X:9
+T:IX - Crossing Scale (Bass to Treble)
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Ascending scale crossing from bass to treble clef with hand replacement.
+%%text RH descending: 4-3-2-1, LH ascending: 1-2-3-4. Apply permutations A-D.
+V:1 clef=treble name="RH"
+z8|z8|!accent!cdef !accent!gabc'|!accent!d'e'f'g' c'8|]
+V:2 clef=bass name="LH"
+!accent!C,D,E,F, !accent!G,A,B,C|!accent!DEFG !accent!ABcd|z8|z8|]

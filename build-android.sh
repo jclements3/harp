@@ -110,7 +110,7 @@ build_apk() {
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="$PACKAGE"
-    android:versionCode="1"
+    android:versionCode="138"
     android:versionName="1.0">
 
     <uses-sdk android:minSdkVersion="$MIN_SDK" android:targetSdkVersion="$TARGET_SDK" />
@@ -173,6 +173,7 @@ MANIFEST
         --manifest "$WORK/AndroidManifest.xml" \
         -I "$PLATFORM_JAR" \
         $LINK_RES \
+        --auto-add-overlay \
         --min-sdk-version $MIN_SDK \
         --target-sdk-version $TARGET_SDK
 

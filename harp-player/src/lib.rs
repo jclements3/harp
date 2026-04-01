@@ -98,7 +98,7 @@ fn apply_style(ctx: &egui::Context) {
 }
 
 const ALL_KEYS: [&str; 12] = ["C","Db","D","Eb","E","F","F#","G","Ab","A","Bb","B"];
-const MODE_NAMES: [&str; 7] = ["Ion","Dor","Phr","Lyd","Mix","Aeo","Loc"];
+const MODE_NAMES: [&str; 7] = ["Io","Do","Ph","Ly","Mi","Ae","Lo"];
 const DRILL_NAMES: [&str; 1] = ["Random"];
 
 struct PlayerApp {
@@ -417,8 +417,11 @@ impl eframe::App for PlayerApp {
             ui.add_space(2.0);
             ui.horizontal(|ui| {
                 // ── Col 1: Circle of fifths with chord polygon ──
-                let selected_pc = music::key_to_pc(&self.current_key);
-                let diameter = 100.0;
+                ui.add_space(0.0); // horizontal spacer (none needed)
+                ui.vertical(|ui| {
+                    ui.add_space(15.0); // shift circle down
+                    let selected_pc = music::key_to_pc(&self.current_key);
+                    let diameter = 100.0;
                 let cof_size = diameter * 0.5;
                 let (cof_rect, _) = ui.allocate_exact_size(
                     egui::Vec2::splat(diameter),
@@ -579,33 +582,39 @@ impl eframe::App for PlayerApp {
                     }
                 }
 
+                }); // end circle vertical wrapper
+
                 // ── Col 2: controls ──
                 ui.vertical(|ui| {
                     ui.spacing_mut().item_spacing.y = 2.0;
 
-                    // Row 1: [Hymn ▾] [Search]
+                    let half_w = ui.available_width() * 0.5;
+
+                    let pedal_w = 18.0 * 7.0 + 6.0 + 16.0; // pedal chart width + padding
+                    let title_w = half_w * 2.0 - pedal_w - 10.0; // remaining for title/recent
+
+                    // Row 1: Title + Filter
                     ui.horizontal(|ui| {
                         if !self.scores.is_empty() {
-                            // Current hymn label
                             let current_label = self.scores.get(self.current_score)
                                 .map(|s| format!("{}. {}", s.number, s.title))
                                 .unwrap_or_default();
-                            ui.label(egui::RichText::new(&current_label).strong().size(13.0));
-
-                            // Filter box
-                            ui.add(
-                                egui::TextEdit::singleline(&mut self.search_text)
-                                    .hint_text("Filter...")
-                                    .desired_width(ui.available_width() - 4.0)
-                                    .min_size(egui::Vec2::new(0.0, 24.0))
-                                    .text_color(TEXT_PRIMARY)
-                                    .background_color(CARD_BG)
-                                    .font(egui::FontSelection::FontId(egui::FontId::proportional(13.0)))
-                            );
+                            ui.add_sized([title_w - 20.0, 20.0], egui::Label::new(
+                                egui::RichText::new(&current_label).strong().size(13.0).color(TEXT_PRIMARY)
+                            ).truncate());
                         }
+                        ui.add(
+                            egui::TextEdit::singleline(&mut self.search_text)
+                                .hint_text("Filter...")
+                                .desired_width(ui.available_width() - 4.0)
+                                .min_size(egui::Vec2::new(0.0, 24.0))
+                                .text_color(TEXT_PRIMARY)
+                                .background_color(CARD_BG)
+                                .font(egui::FontSelection::FontId(egui::FontId::proportional(13.0)))
+                        );
                     });
 
-                    // Show filtered matches as tappable buttons (only when filter has text)
+                    // Show filtered matches
                     if !self.search_text.is_empty() {
                         let q = self.search_text.to_lowercase();
                         ui.horizontal_wrapped(|ui| {
@@ -627,16 +636,99 @@ impl eframe::App for PlayerApp {
                         });
                     }
 
-                    // Row 2: [⏮ ▶ ⏹] [G▾] 120BPM RH[4] LH[4] [🕒 Recent ▾]
+                    // Row 2: Recent + centered Pedal diagram
                     ui.horizontal(|ui| {
-                        // Rewind to beginning
+                        let mut recent_pick = self.current_score;
+                        egui::ComboBox::from_id_salt("recent_select")
+                            .selected_text("Recent")
+                            .width(title_w - 20.0)
+                            .show_ui(ui, |ui| {
+                                if self.recent_hymns.is_empty() {
+                                    ui.label(egui::RichText::new("No recent hymns").color(TEXT_MUTED));
+                                }
+                                for &idx in &self.recent_hymns {
+                                    if let Some(s) = self.scores.get(idx) {
+                                        let text = format!("{}. {}", s.number, s.title);
+                                        ui.selectable_value(&mut recent_pick, idx, &text);
+                                    }
+                                }
+                            });
+                        if recent_pick != self.current_score {
+                            self.select_hymn(recent_pick);
+                        }
+
+                        {
+                            let pedal_letters_l = ["D", "C", "B"];
+                            let pedal_letters_r = ["E", "F", "G", "A"];
+                            let acc = music::key_sig_accidentals(&self.current_key);
+                            let pedal_letter_idx = [1usize, 0, 6, 2, 3, 4, 5];
+                            let dot_r = 4.0;
+                            let col_w = 18.0;
+                            let line_y_offset = 10.0;
+
+                            for (i, letter) in pedal_letters_l.iter().enumerate() {
+                                let li = pedal_letter_idx[i];
+                                let a = acc[li];
+                                let (response, painter) = ui.allocate_painter(
+                                    egui::Vec2::new(col_w, 32.0), egui::Sense::hover());
+                                let rect = response.rect;
+                                let cx = rect.center().x;
+                                let line_y = rect.top() + line_y_offset;
+                                painter.line_segment(
+                                    [egui::Pos2::new(rect.left(), line_y), egui::Pos2::new(rect.right(), line_y)],
+                                    egui::Stroke::new(1.0, TEXT_PRIMARY));
+                                let dot_y = match a { -1 => line_y - 5.0, 1 => line_y + 5.0, _ => line_y };
+                                painter.circle_filled(egui::Pos2::new(cx, dot_y), dot_r, if a == 0 { TEXT_PRIMARY } else { ACCENT });
+                                painter.text(egui::Pos2::new(cx, rect.bottom() + 1.0), egui::Align2::CENTER_BOTTOM,
+                                    *letter, egui::FontId::monospace(9.0), TEXT_PRIMARY);
+                            }
+                            ui.allocate_ui(egui::Vec2::new(6.0, 32.0), |ui| {
+                                let rect = ui.available_rect_before_wrap();
+                                let line_y = rect.top() + line_y_offset;
+                                ui.painter().line_segment(
+                                    [egui::Pos2::new(rect.center().x, line_y - 6.0),
+                                     egui::Pos2::new(rect.center().x, line_y + 6.0)],
+                                    egui::Stroke::new(1.0, BORDER));
+                            });
+                            for (i, letter) in pedal_letters_r.iter().enumerate() {
+                                let li = pedal_letter_idx[3 + i];
+                                let a = acc[li];
+                                let (response, painter) = ui.allocate_painter(
+                                    egui::Vec2::new(col_w, 32.0), egui::Sense::hover());
+                                let rect = response.rect;
+                                let cx = rect.center().x;
+                                let line_y = rect.top() + line_y_offset;
+                                painter.line_segment(
+                                    [egui::Pos2::new(rect.left(), line_y), egui::Pos2::new(rect.right(), line_y)],
+                                    egui::Stroke::new(1.0, TEXT_PRIMARY));
+                                let dot_y = match a { -1 => line_y - 5.0, 1 => line_y + 5.0, _ => line_y };
+                                painter.circle_filled(egui::Pos2::new(cx, dot_y), dot_r, if a == 0 { TEXT_PRIMARY } else { ACCENT });
+                                painter.text(egui::Pos2::new(cx, rect.bottom() + 1.0), egui::Align2::CENTER_BOTTOM,
+                                    *letter, egui::FontId::monospace(9.0), TEXT_PRIMARY);
+                            }
+                        }
+
+                        // Shuffle button when random on
+                        if self.random_fingers {
+                            ui.add_space(4.0);
+                            if ui.button(egui::RichText::new("Shuffle").size(10.0)).clicked() {
+                                self.shuffle_fingers();
+                                if let Some(score) = self.scores.get_mut(self.current_score) {
+                                    abc::compute_display_strings(score, self.rh_fingers as usize, self.lh_fingers as usize, &self.random_pattern);
+                                }
+                            }
+                        }
+                    });
+
+                    // Row 3: [⏮ ▶ ⏹] [G▾] 120BPM  RH[4] LH[4] ⊙  [🔊▬▬]
+                    ui.horizontal(|ui| {
+                        ui.spacing_mut().item_spacing.x = 3.0;
                         if ui.button(egui::RichText::new("\u{23EE}").size(14.0)).clicked() {
                             self.current_beat = 0.0;
                             self.scroll_offset = 0.0;
                             self.last_chord_idx = -1;
                             self.last_frame_time = None;
                         }
-                        // Play/Pause
                         let play_icon = if self.playing { "\u{23F8}" } else { "\u{25B6}" };
                         let play_btn = egui::Button::new(
                             egui::RichText::new(play_icon).size(14.0)
@@ -646,7 +738,6 @@ impl eframe::App for PlayerApp {
                             self.playing = !self.playing;
                             if self.playing { self.last_frame_time = None; }
                         }
-                        // Stop
                         if ui.button(egui::RichText::new("\u{23F9}").size(14.0)).clicked() {
                             self.playing = false;
                             self.current_beat = 0.0;
@@ -674,172 +765,49 @@ impl eframe::App for PlayerApp {
 
                         ui.separator();
 
-                        ui.label(egui::RichText::new("RH").size(10.0).color(TEXT_MUTED));
+                        ui.label(egui::RichText::new("RH").size(11.0).strong().color(egui::Color32::BLACK));
                         ui.add(egui::DragValue::new(&mut self.rh_fingers).range(1..=4).speed(0.1));
-                        ui.label(egui::RichText::new("LH").size(10.0).color(TEXT_MUTED));
+                        ui.label(egui::RichText::new("LH").size(11.0).strong().color(egui::Color32::BLACK));
                         ui.add(egui::DragValue::new(&mut self.lh_fingers).range(1..=4).speed(0.1));
 
-                    });
-
-                    // Row 3: Mode buttons + Recent
-                    ui.horizontal(|ui| {
-                        ui.spacing_mut().button_padding = egui::Vec2::new(4.0, 2.0);
-                        for (i, name) in MODE_NAMES.iter().enumerate() {
-                            let selected = self.mode_offset == i as i32;
-                            let btn = if selected {
-                                egui::Button::new(
-                                    egui::RichText::new(*name).size(10.0).color(egui::Color32::WHITE)
-                                ).fill(ACCENT)
-                            } else {
-                                egui::Button::new(egui::RichText::new(*name).size(10.0))
-                            };
-                            if ui.add(btn).clicked() {
-                                self.mode_offset = i as i32;
-                            }
-                        }
-                        ui.spacing_mut().button_padding = egui::Vec2::new(10.0, 6.0);
-
-                        ui.separator();
-
-                        let mut recent_pick = self.current_score;
-                        let recent_label = if self.recent_hymns.is_empty() { "Recent" } else { "\u{1F552} Recent" };
-                        egui::ComboBox::from_id_salt("recent_select")
-                            .selected_text(recent_label)
-                            .width(ui.available_width() - 4.0)
-                            .show_ui(ui, |ui| {
-                                if self.recent_hymns.is_empty() {
-                                    ui.label(egui::RichText::new("No recent hymns").color(TEXT_MUTED));
-                                }
-                                for &idx in &self.recent_hymns {
-                                    if let Some(s) = self.scores.get(idx) {
-                                        let text = format!("{}. {}", s.number, s.title);
-                                        ui.selectable_value(&mut recent_pick, idx, &text);
-                                    }
-                                }
-                            });
-                        if recent_pick != self.current_score {
-                            self.select_hymn(recent_pick);
-                        }
-                    });
-
-                    // Row 4: Pedal diagram + Random fingers checkbox
-                    ui.horizontal(|ui| {
-                        // Pedal/lever diagram: D C B | E F G A
-                        let pedal_letters_l = ["D", "C", "B"];
-                        let pedal_letters_r = ["E", "F", "G", "A"];
-                        let key_root = music::key_to_pc(&self.current_key);
-                        let acc = music::key_sig_accidentals(&self.current_key);
-                        // Letter indices: D=1,C=0,B=6,E=2,F=3,G=4,A=5
-                        let pedal_letter_idx = [1usize, 0, 6, 2, 3, 4, 5];
-
-                        let dot_r = 3.0;
-                        let col_w = 14.0;
-                        let line_y_offset = 8.0;
-
-                        // Draw left foot pedals (D C B)
-                        for (i, letter) in pedal_letters_l.iter().enumerate() {
-                            let li = pedal_letter_idx[i];
-                            let a = acc[li];
-                            let (response, painter) = ui.allocate_painter(
-                                egui::Vec2::new(col_w, 18.0), egui::Sense::hover());
-                            let rect = response.rect;
-                            let cx = rect.center().x;
-                            let line_y = rect.top() + line_y_offset;
-
-                            // Horizontal line segment
-                            painter.line_segment(
-                                [egui::Pos2::new(rect.left(), line_y), egui::Pos2::new(rect.right(), line_y)],
-                                egui::Stroke::new(1.0, TEXT_PRIMARY));
-
-                            // Dot: above=flat, on=natural, below=sharp
-                            let dot_y = match a {
-                                -1 => line_y - 5.0,  // flat (above)
-                                 1 => line_y + 5.0,  // sharp (below)
-                                 _ => line_y,         // natural (on)
-                            };
-                            let dot_color = if a == 0 { TEXT_PRIMARY } else { ACCENT };
-                            painter.circle_filled(egui::Pos2::new(cx, dot_y), dot_r, dot_color);
-
-                            // Letter below
-                            painter.text(
-                                egui::Pos2::new(cx, rect.bottom()),
-                                egui::Align2::CENTER_BOTTOM,
-                                *letter,
-                                egui::FontId::monospace(7.0),
-                                TEXT_MUTED);
-                        }
-
-                        // Divider
-                        ui.allocate_ui(egui::Vec2::new(6.0, 18.0), |ui| {
-                            let rect = ui.available_rect_before_wrap();
-                            let line_y = rect.top() + line_y_offset;
-                            ui.painter().line_segment(
-                                [egui::Pos2::new(rect.center().x, line_y - 6.0),
-                                 egui::Pos2::new(rect.center().x, line_y + 6.0)],
-                                egui::Stroke::new(1.0, BORDER));
-                        });
-
-                        // Right foot pedals (E F G A)
-                        for (i, letter) in pedal_letters_r.iter().enumerate() {
-                            let li = pedal_letter_idx[3 + i];
-                            let a = acc[li];
-                            let (response, painter) = ui.allocate_painter(
-                                egui::Vec2::new(col_w, 18.0), egui::Sense::hover());
-                            let rect = response.rect;
-                            let cx = rect.center().x;
-                            let line_y = rect.top() + line_y_offset;
-
-                            painter.line_segment(
-                                [egui::Pos2::new(rect.left(), line_y), egui::Pos2::new(rect.right(), line_y)],
-                                egui::Stroke::new(1.0, TEXT_PRIMARY));
-
-                            let dot_y = match a {
-                                -1 => line_y - 5.0,
-                                 1 => line_y + 5.0,
-                                 _ => line_y,
-                            };
-                            let dot_color = if a == 0 { TEXT_PRIMARY } else { ACCENT };
-                            painter.circle_filled(egui::Pos2::new(cx, dot_y), dot_r, dot_color);
-
-                            painter.text(
-                                egui::Pos2::new(cx, rect.bottom()),
-                                egui::Align2::CENTER_BOTTOM,
-                                *letter,
-                                egui::FontId::monospace(7.0),
-                                TEXT_MUTED);
-                        }
-
-                        ui.add_space(8.0);
-                        ui.separator();
-                        ui.add_space(4.0);
-
-                        // Random fingers checkbox + Shuffle button
+                        // Random checkbox
                         let was_random = self.random_fingers;
-                        ui.checkbox(&mut self.random_fingers, "Random");
-                        if self.random_fingers {
-                            // On first check, or on Shuffle press, randomize
-                            if !was_random {
-                                self.shuffle_fingers();
-                                if let Some(score) = self.scores.get_mut(self.current_score) {
-                                    abc::compute_display_strings(score, self.rh_fingers as usize, self.lh_fingers as usize, &self.random_pattern);
-                                }
+                        ui.checkbox(&mut self.random_fingers, egui::RichText::new("Ran").size(9.0));
+                        if self.random_fingers && !was_random {
+                            self.shuffle_fingers();
+                            if let Some(score) = self.scores.get_mut(self.current_score) {
+                                abc::compute_display_strings(score, self.rh_fingers as usize, self.lh_fingers as usize, &self.random_pattern);
                             }
-                            if ui.button("Shuffle").clicked() {
-                                self.shuffle_fingers();
-                                if let Some(score) = self.scores.get_mut(self.current_score) {
-                                    abc::compute_display_strings(score, self.rh_fingers as usize, self.lh_fingers as usize, &self.random_pattern);
-                                }
-                            }
-                        } else if was_random {
-                            // Turning off random — recompute with fixed fingers
+                        } else if !self.random_fingers && was_random {
                             if let Some(score) = self.scores.get_mut(self.current_score) {
                                 abc::compute_display_strings(score, self.rh_fingers as usize, self.lh_fingers as usize, &[]);
                             }
                         }
 
-                        ui.separator();
+                    });
+
+                    // Row 4: Mode buttons + Volume slider
+                    ui.horizontal(|ui| {
+                        ui.spacing_mut().item_spacing.x = 1.0;
+                        ui.spacing_mut().button_padding = egui::Vec2::new(11.0, 3.0);
+                        for (i, name) in MODE_NAMES.iter().enumerate() {
+                            let selected = self.mode_offset == i as i32;
+                            let txt = egui::RichText::new(*name).size(9.5).color(
+                                if selected { egui::Color32::WHITE } else { egui::Color32::BLACK }
+                            );
+                            let btn = if selected {
+                                egui::Button::new(txt).fill(ACCENT).corner_radius(0.0)
+                            } else {
+                                egui::Button::new(txt).corner_radius(0.0)
+                            };
+                            if ui.add(btn).clicked() {
+                                self.mode_offset = i as i32;
+                            }
+                        }
+
+                        ui.add_space(4.0);
                         let mute_icon = if self.sound_volume > 0.0 { "\u{1F50A}" } else { "\u{1F507}" };
-                        if ui.button(egui::RichText::new(mute_icon).size(14.0)).clicked() {
+                        if ui.button(egui::RichText::new(mute_icon).size(10.0)).clicked() {
                             if self.sound_volume > 0.0 {
                                 self.pre_mute_volume = self.sound_volume;
                                 self.sound_volume = 0.0;
@@ -847,15 +815,26 @@ impl eframe::App for PlayerApp {
                                 self.sound_volume = self.pre_mute_volume.max(0.3);
                             }
                         }
+                        ui.visuals_mut().selection.bg_fill = ACCENT;
+                        ui.visuals_mut().widgets.inactive.bg_fill = egui::Color32::from_rgb(190, 215, 245);
+                        ui.style_mut().spacing.slider_width = (ui.available_width() - 8.0).max(40.0);
                         ui.add(egui::Slider::new(&mut self.sound_volume, 0.0..=1.0)
-                            .show_value(false)
-                            .trailing_fill(true));
+                            .show_value(false).trailing_fill(true));
                     });
+
+                    // (Pedal diagram moved to Row 1b)
                 });
 
             });
             ui.add_space(2.0);
         });
+
+        // ── Dark strip so Android nav icons (white) are visible ──
+        egui::TopBottomPanel::bottom("nav_bar")
+            .frame(egui::Frame::NONE.fill(egui::Color32::from_rgb(30, 30, 30)))
+            .show(ctx, |ui| {
+                ui.add_space(24.0);
+            });
 
         // ── Drill controls + metrics panel ──
         egui::TopBottomPanel::bottom("drill_panel").show(ctx, |ui| {
@@ -1008,52 +987,32 @@ impl eframe::App for PlayerApp {
                 });
             });
 
-            // Row 2: progress bar + status
+            // Row 2: status line (slider removed - swipe to scroll)
             ui.add_space(2.0);
             if !self.drill_mode {
-                let total = self.total_beats().max(1.0);
-                let mut progress = self.current_beat / total;
-                let slider = egui::Slider::new(&mut progress, 0.0..=1.0)
-                    .show_value(false)
-                    .trailing_fill(true);
-                if ui.add(slider).changed() {
-                    self.current_beat = progress * total;
-                }
                 ui.horizontal(|ui| {
-                    ui.colored_label(TEXT_MUTED, &self.status);
+                    ui.colored_label(TEXT_PRIMARY, &self.status);
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         if let Some(s) = self.scores.get(self.current_score) {
                             ui.label(egui::RichText::new(
                                 format!("Key: {}  Meter: {}/{}  Tempo: {} BPM",
                                     s.key, s.meter_num, s.meter_den, s.tempo)
-                            ).small().color(TEXT_MUTED));
+                            ).small().color(TEXT_PRIMARY));
                         }
                     });
                 });
             } else {
-                // Drill mode: same progress slider
-                if let Some(ref ds) = self.drill_score {
-                    let total = ds.events.iter().map(|e| match e {
-                        ScoreEvent::Note { beats, .. } => *beats,
-                        ScoreEvent::Rest { beats } => *beats,
-                        _ => 0.0,
-                    }).sum::<f32>().max(1.0);
-                    let mut progress = self.current_beat / total;
-                    let slider = egui::Slider::new(&mut progress, 0.0..=1.0)
-                        .show_value(false).trailing_fill(true);
-                    if ui.add(slider).changed() { self.current_beat = progress * total; }
-                }
                 // Drill progress status line
                 ui.horizontal(|ui| {
                     let p = &self.drill_progress;
-                    ui.colored_label(TEXT_MUTED, format!(
+                    ui.colored_label(TEXT_PRIMARY, format!(
                         "Level {} \u{00b7} Best {:.0} NPM \u{00b7} {} notes \u{00b7} {} sessions",
                         p.level, p.best_npm, p.total_notes, p.total_sessions));
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                         ui.label(egui::RichText::new(
                             format!("Key: {} \u{00b7} {}", self.current_key,
                                 if self.drill_config.mode == drill::DrillMode::Intervals { "Intervals" } else { "Chords" })
-                        ).small().color(TEXT_MUTED));
+                        ).small().color(TEXT_PRIMARY));
                     });
                 });
             }
@@ -1086,7 +1045,7 @@ impl eframe::App for PlayerApp {
 
                     {
                         // ── Same rendering for Songs and Drill ──
-                        let layout = NotationLayout::new(rect.top() + 20.0, 50.0);
+                        let layout = NotationLayout::new(rect.top() + 8.0, 50.0);
                         let view_width = rect.width();
 
                         if !self.playing && response.dragged() {
@@ -1094,8 +1053,7 @@ impl eframe::App for PlayerApp {
                             self.current_beat = (self.current_beat - drag_beats).max(0.0);
                         }
 
-                        let playhead_x_target = view_width * self.playhead_fraction;
-                        self.scroll_offset = (self.current_beat * 60.0 - playhead_x_target + layout.left_margin).max(0.0);
+                        self.scroll_offset = (self.current_beat * 60.0).max(0.0);
 
                         // Use drill score or hymn score
                         let events = if self.drill_mode {

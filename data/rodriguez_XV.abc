@@ -1,0 +1,12 @@
+X:15
+T:XV - Connecting Patterns (Dotted Rhythm)
+C:Rodriguez Do Campo Method (2020)
+M:4/4
+L:1/8
+Q:1/4=72
+K:C
+%%text Scale connecting to chords with dotted rhythm.
+%%text Apply rhythmic formulas from p.11: dotted-eighth+sixteenth, swing, even.
+%%text Fingering: 4-3-2-1 scale, 1-2-3-4 chord. All permutations.
+C3/D/ E3/F/ G3/A/ B3/c/|d3/e/ f3/g/ a3/b/ c'3/d'/|[CEGc]4 [DFAd]4|
+d'3/c'/ b3/a/ g3/f/ e3/d/|c3/B/ A3/G/ F3/E/ D3/C/|[CEGc]8|]

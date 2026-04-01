@@ -11,17 +11,17 @@ struct ChordTemplate {
 }
 
 const CHORD_TEMPLATES: &[ChordTemplate] = &[
-    ChordTemplate { pcs: &[0,4,7],    name: "",     lower: false, suffix: "" },
-    ChordTemplate { pcs: &[0,3,7],    name: "m",    lower: true,  suffix: "" },
-    ChordTemplate { pcs: &[0,4,7,10], name: "7",    lower: false, suffix: "7" },
-    ChordTemplate { pcs: &[0,3,7,10], name: "m7",   lower: true,  suffix: "7" },
-    ChordTemplate { pcs: &[0,4,7,11], name: "maj7", lower: false, suffix: "M7" },
-    ChordTemplate { pcs: &[0,3,6],    name: "dim",  lower: true,  suffix: "-" },
-    ChordTemplate { pcs: &[0,4,8],    name: "aug",  lower: false, suffix: "+" },
-    ChordTemplate { pcs: &[0,5,7],    name: "sus4", lower: false, suffix: "~4" },
-    ChordTemplate { pcs: &[0,2,7],    name: "sus2", lower: false, suffix: "~2" },
-    ChordTemplate { pcs: &[0,3,6,9],  name: "dim7", lower: true,  suffix: "-7" },
-    ChordTemplate { pcs: &[0,3,6,10], name: "m7b5", lower: true,  suffix: "%7" },
+    ChordTemplate { pcs: &[0,4,7],    name: "",      lower: false, suffix: "" },
+    ChordTemplate { pcs: &[0,3,7],    name: "m",     lower: true,  suffix: "" },
+    ChordTemplate { pcs: &[0,4,7,10], name: "7",     lower: false, suffix: "7" },
+    ChordTemplate { pcs: &[0,3,7,10], name: "m7",    lower: true,  suffix: "7" },
+    ChordTemplate { pcs: &[0,4,7,11], name: "\u{0394}7", lower: false, suffix: "\u{0394}7" },
+    ChordTemplate { pcs: &[0,3,6],    name: "\u{00B0}",  lower: true,  suffix: "\u{00B0}" },
+    ChordTemplate { pcs: &[0,4,8],    name: "+",     lower: false, suffix: "+" },
+    ChordTemplate { pcs: &[0,5,7],    name: "s4",    lower: false, suffix: "~4" },
+    ChordTemplate { pcs: &[0,2,7],    name: "s2",    lower: false, suffix: "~2" },
+    ChordTemplate { pcs: &[0,3,6,9],  name: "\u{00B0}7", lower: true,  suffix: "\u{00B0}7" },
+    ChordTemplate { pcs: &[0,3,6,10], name: "\u{00F8}7", lower: true,  suffix: "\u{00F8}7" },
 ];
 
 const ROMAN_STRS: [&str; 7] = ["I","II","III","IV","V","VI","VII"];

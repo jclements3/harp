@@ -17,7 +17,9 @@ const NOTEHEAD_RY: f32 = 5.5;           // notehead ellipse y-radius
 const STEM_LENGTH: f32 = 42.0;
 const FLAG_LENGTH: f32 = 18.0;
 const LEDGER_EXTEND: f32 = 6.0;         // how far ledger lines extend past notehead
-const BEAT_WIDTH: f32 = 60.0;           // pixels per beat (horizontal spacing)
+const BEAT_WIDTH: f32 = 60.0;           // pixels per beat (used for playback timing)
+const NOTE_WIDTH: f32 = 42.0;          // pixels per note (proportional spacing)
+const BAR_WIDTH: f32 = 15.0;           // pixels for a barline
 
 // ── Colors ──
 const STAFF_COLOR: egui::Color32 = egui::Color32::from_rgb(180, 180, 180);
@@ -30,7 +32,7 @@ const CHORD_NAME_COLOR: egui::Color32 = egui::Color32::from_rgb(170, 170, 170);
 const RH_LABEL_COLOR: egui::Color32 = egui::Color32::from_rgb(42, 42, 42);
 const LH_LABEL_COLOR: egui::Color32 = egui::Color32::from_rgb(42, 42, 42);
 const THUMB_COLOR: egui::Color32 = egui::Color32::from_rgb(37, 99, 235);
-const FINGER_COLOR: egui::Color32 = egui::Color32::from_rgb(100, 100, 100);
+const FINGER_COLOR: egui::Color32 = egui::Color32::from_rgb(50, 50, 50);
 
 // Label row heights above the treble staff
 const LABEL_ROW_H: f32 = 19.0;
@@ -108,9 +110,14 @@ impl NotationLayout {
         }
     }
 
-    /// X position for a beat time.
+    /// X position for a beat time (used only for playhead sync in lib.rs).
     pub fn beat_x(&self, beat_time: f32, scroll_offset: f32) -> f32 {
         self.left_margin + beat_time * BEAT_WIDTH - scroll_offset
+    }
+
+    /// X position from cumulative offset (proportional spacing).
+    pub fn prop_x(&self, cumulative_x: f32, scroll_offset: f32) -> f32 {
+        self.left_margin + cumulative_x - scroll_offset
     }
 }
 
@@ -513,6 +520,22 @@ fn draw_label_values(
     );
 }
 
+/// Interpolate a beat time to a note-index position for proportional spacing.
+fn beat_to_note_pos(beat: f32, mapping: &[(f32, usize)]) -> f32 {
+    if mapping.is_empty() { return 0.0; }
+    // Find the two entries that bracket this beat
+    for w in mapping.windows(2) {
+        let (bt0, ni0) = w[0];
+        let (bt1, ni1) = w[1];
+        if beat >= bt0 && beat < bt1 {
+            let frac = if bt1 > bt0 { (beat - bt0) / (bt1 - bt0) } else { 0.0 };
+            return ni0 as f32 + frac * (ni1 - ni0) as f32;
+        }
+    }
+    // Past the end
+    mapping.last().map(|&(_, ni)| ni as f32).unwrap_or(0.0)
+}
+
 /// Render a full harp score.
 /// Notes are positioned by string number → staff position.
 /// RH → treble staff (stem up), LH → bass staff (stem down).
@@ -530,22 +553,70 @@ pub fn render_score(
 
     draw_staff(painter, layout, view_width);
 
-    let playhead_x = layout.beat_x(current_beat, scroll_offset);
+    // Build cumulative x positions and beat→x mapping for proportional spacing
+    let mut cum_x_positions: Vec<f32> = Vec::new(); // cumulative x for each event
+    let mut beat_to_x: Vec<(f32, f32)> = Vec::new(); // (beat_time, cum_x)
+    {
+        let mut cx = 0.0f32;
+        let mut bt = 0.0f32;
+        for event in events {
+            match event {
+                ScoreEvent::Note { beats, .. } => {
+                    beat_to_x.push((bt, cx));
+                    cum_x_positions.push(cx);
+                    cx += NOTE_WIDTH;
+                    bt += beats;
+                }
+                ScoreEvent::Rest { beats } => {
+                    beat_to_x.push((bt, cx));
+                    cum_x_positions.push(cx);
+                    cx += NOTE_WIDTH;
+                    bt += beats;
+                }
+                ScoreEvent::Bar => {
+                    cum_x_positions.push(cx);
+                    cx += BAR_WIDTH;
+                }
+            }
+        }
+        beat_to_x.push((bt, cx));
+    }
+
+    // Interpolate current_beat to cumulative x
+    let beat_to_cx = |beat: f32| -> f32 {
+        for w in beat_to_x.windows(2) {
+            let (bt0, cx0) = w[0];
+            let (bt1, cx1) = w[1];
+            if beat >= bt0 && beat < bt1 {
+                let frac = if bt1 > bt0 { (beat - bt0) / (bt1 - bt0) } else { 0.0 };
+                return cx0 + frac * (cx1 - cx0);
+            }
+        }
+        beat_to_x.last().map(|&(_, cx)| cx).unwrap_or(0.0)
+    };
+
+    // scroll_offset from lib.rs is beat*BEAT_WIDTH based; convert to proportional
+    let scroll_beat = scroll_offset / BEAT_WIDTH;
+    let prop_scroll = beat_to_cx(scroll_beat);
+
+    let playhead_cx = beat_to_cx(current_beat);
+    let playhead_x = if current_beat < 0.01 { 10.0 } else { layout.prop_x(playhead_cx, prop_scroll) };
     if playhead_x > 0.0 && playhead_x < view_width {
         draw_playhead(painter, playhead_x, layout);
     }
 
     let mut beat_time: f32 = 0.0;
+    let mut ei: usize = 0;
 
     for event in events {
+        let cx = cum_x_positions.get(ei).copied().unwrap_or(0.0);
+        let x = layout.prop_x(cx, prop_scroll);
         match event {
             ScoreEvent::Note { melody_string: _, display_rh, display_lh,
                                 beats, chord_name, rh_chord, lh_chord, is_chord_change, .. } => {
-                let x = layout.beat_x(beat_time + beats / 2.0, scroll_offset);
                 let is_active = current_beat >= beat_time && current_beat < beat_time + beats;
 
                 if x > -50.0 && x < view_width + 50.0 {
-                    // Just draw what was pre-computed — no note selection here
                     let rh_used = display_rh;
                     let lh_used = display_lh;
 
@@ -559,7 +630,6 @@ pub fn render_score(
                             draw_note_stem_down(painter, layout, x, pos, false, *beats, is_active);
                         }
                     } else if !rh_used.is_empty() {
-                        // Melody only
                         let pos = to_pos(rh_used[0]);
                         draw_note_stem_up(painter, layout, x, pos, true, *beats, is_active);
                     }
@@ -585,18 +655,18 @@ pub fn render_score(
                 beat_time += beats;
             }
             ScoreEvent::Rest { beats } => {
-                let x = layout.beat_x(beat_time + beats / 2.0, scroll_offset);
                 if x > -50.0 && x < view_width + 50.0 {
                     draw_rest(painter, x, *beats, layout);
                 }
                 beat_time += beats;
             }
             ScoreEvent::Bar => {
-                let x = layout.beat_x(beat_time, scroll_offset);
-                if x > 0.0 && x < view_width {
-                    draw_barline(painter, x, layout);
+                let bx = x - BAR_WIDTH * 0.5;
+                if bx > 0.0 && bx < view_width {
+                    draw_barline(painter, bx, layout);
                 }
             }
         }
+        ei += 1;
     }
 }
